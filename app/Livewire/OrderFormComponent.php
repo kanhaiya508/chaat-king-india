@@ -579,6 +579,19 @@ class OrderFormComponent extends Component
         $this->payments[] = ['mode' => '', 'amount' => '', 'transaction_id' => '', 'note' => ''];
     }
 
+    public function addPaymentRowWithRemainingAmount()
+    {
+        $remainingAmount = $this->remainingAmount;
+        $this->payments[] = ['mode' => '', 'amount' => $remainingAmount, 'transaction_id' => '', 'note' => ''];
+    }
+
+    public function autoFillRemainingAmount($index)
+    {
+        if (isset($this->payments[$index])) {
+            $this->payments[$index]['amount'] = $this->remainingAmount;
+        }
+    }
+
     public function removePaymentRow($index)
     {
         unset($this->payments[$index]);
@@ -692,6 +705,13 @@ class OrderFormComponent extends Component
     {
         $extra = $this->paymentTotal - $this->finalTotal;
         return $extra > 0 ? round($extra, 2) : 0;
+    }
+
+    // Remaining amount (kitna aur chahiye)
+    public function getRemainingAmountProperty()
+    {
+        $remaining = $this->finalTotal - $this->paymentTotal;
+        return $remaining > 0 ? round($remaining, 2) : 0;
     }
 
     // (optional) अगर checkbox toggle हो तो payments साफ कर दो
