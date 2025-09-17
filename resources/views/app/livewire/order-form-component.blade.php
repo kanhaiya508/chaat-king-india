@@ -549,10 +549,10 @@
                                               <input type="number" class="form-control form-control-sm"
                                                   wire:model.live="payments.{{ $index }}.amount"
                                                   placeholder="Amount" @disabled($markPaidNoAmount)>
-                                              @if($remainingAmount > 0 && !$markPaidNoAmount)
+                                              @if($this->remainingAmount > 0 && !$markPaidNoAmount)
                                                   <button class="btn btn-outline-primary btn-sm" type="button"
                                                       wire:click="autoFillRemainingAmount({{ $index }})"
-                                                      title="Fill remaining amount (₹{{ $remainingAmount }})">
+                                                      title="Fill remaining amount (₹{{ $this->remainingAmount }})">
                                                       ₹
                                                   </button>
                                               @endif
@@ -577,10 +577,10 @@
                                               <div class="btn-group" role="group">
                                                   <button class="btn btn-sm btn-secondary" wire:click="addPaymentRow"
                                                       @disabled($markPaidNoAmount)>+ Add Mode</button>
-                                                  @if($remainingAmount > 0 && !$markPaidNoAmount)
+                                                  @if($this->remainingAmount > 0 && !$markPaidNoAmount)
                                                       <button class="btn btn-sm btn-primary" wire:click="addPaymentRowWithRemainingAmount"
-                                                          title="Add mode with remaining amount (₹{{ $remainingAmount }})">
-                                                          + ₹{{ $remainingAmount }}
+                                                          title="Add mode with remaining amount (₹{{ $this->remainingAmount }})">
+                                                          + ₹{{ $this->remainingAmount }}
                                                       </button>
                                                   @endif
                                               </div>
@@ -631,10 +631,10 @@
                                   <strong>Total Paid:</strong>
                                   <strong>₹{{ number_format($this->paymentTotal, 2) }}</strong>
                               </div>
-                              @if($remainingAmount > 0)
+                              @if($this->remainingAmount > 0)
                                   <div class="mb-2 d-flex justify-content-between text-warning">
                                       <strong>Remaining Amount:</strong>
-                                      <strong>₹{{ number_format($remainingAmount, 2) }}</strong>
+                                      <strong>₹{{ number_format($this->remainingAmount, 2) }}</strong>
                                   </div>
                               @endif
 
