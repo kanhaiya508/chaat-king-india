@@ -535,7 +535,7 @@
                               @foreach ($payments as $index => $payment)
                                   <div class="row g-2 align-items-center mb-2">
                                       <div class="col-md-3">
-                                          <select class="form-select form-select-sm"
+                                          <select class="form-select form-select-sm @error('payments.'.$index.'.mode') is-invalid @enderror"
                                               wire:model="payments.{{ $index }}.mode"
                                               @disabled($markPaidNoAmount)>
                                               <option value="">-- Mode --</option>
@@ -543,11 +543,17 @@
                                               <option value="UPI">UPI</option>
                                               <option value="Card">Card</option>
                                           </select>
+                                          @error('payments.'.$index.'.mode')
+                                              <div class="invalid-feedback">{{ $message }}</div>
+                                          @enderror
                                       </div>
                                       <div class="col-md-2">
-                                          <input type="number" class="form-control form-control-sm"
+                                          <input type="number" class="form-control form-control-sm @error('payments.'.$index.'.amount') is-invalid @enderror"
                                               wire:model.live="payments.{{ $index }}.amount"
                                               placeholder="Amount" @disabled($markPaidNoAmount)>
+                                          @error('payments.'.$index.'.amount')
+                                              <div class="invalid-feedback">{{ $message }}</div>
+                                          @enderror
                                       </div>
                                       <div class="col-md-2">
                                           <input type="text" class="form-control form-control-sm"
