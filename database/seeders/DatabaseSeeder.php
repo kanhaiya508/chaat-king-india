@@ -19,5 +19,10 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
         ]);
+
+        // Run the Chaat King seeder
+        $this->call([
+            ChaatKingSeeder::class,
+        ]);
     }
 }

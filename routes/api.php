@@ -53,7 +53,6 @@ Route::middleware(['api.auth', 'waiter.auth'])->group(function () {
     Route::get('/items/{id}', [ItemController::class, 'show']);
     Route::get('/items/category/{categoryId}', [ItemController::class, 'getByCategory']);
     Route::get('/items/available', [ItemController::class, 'getAvailable']);
-    Route::get('/items/type/{type}', [ItemController::class, 'getByType']);
 });
 
 

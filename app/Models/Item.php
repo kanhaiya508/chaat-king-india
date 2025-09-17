@@ -16,7 +16,6 @@ class Item extends Model
         'user_id',
         'name',
         'category_id',
-        'type',
         'is_available',
         'branch_id',
     ];
@@ -31,10 +30,6 @@ class Item extends Model
 
 
 
-    public static function allowedTypes()
-    {
-        return ['size', 'piece', 'weight', 'flavour', 'combo', 'half'];
-    }
 
     public function category()
     {

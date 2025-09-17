@@ -14,7 +14,7 @@ class ItemFormComponent extends Component
     use WithPagination;
 
     public $step = 1;
-    public $itemId, $name, $category_id, $type, $is_available = true;
+    public $itemId, $name, $category_id, $is_available = true;
     public $variants = [];
     public $addons = [];
     public $viewItem;
@@ -32,7 +32,6 @@ class ItemFormComponent extends Component
         $this->validate([
             'name' => 'required',
             'category_id' => 'required|exists:categories,id',
-            'type' => 'required',
         ]);
 
         $item = Item::updateOrCreate(
@@ -41,7 +40,6 @@ class ItemFormComponent extends Component
                 'user_id' => auth()->id(),
                 'name' => $this->name,
                 'category_id' => $this->category_id,
-                'type' => $this->type,
                 'is_available' => $this->is_available,
             ]
         );
@@ -89,7 +87,7 @@ class ItemFormComponent extends Component
             ]);
         }
 
-        $this->reset(['itemId', 'name', 'category_id', 'type', 'is_available', 'variants', 'addons']);
+        $this->reset(['itemId', 'name', 'category_id', 'is_available', 'variants', 'addons']);
         $this->step = 1;
         $this->editing = false;
         $this->dispatch('show-toast', 'Item saved successfully!');
@@ -115,7 +113,6 @@ class ItemFormComponent extends Component
         $this->itemId = $item->id;
         $this->name = $item->name;
         $this->category_id = $item->category_id;
-        $this->type = $item->type;
         $this->is_available = $item->is_available;
         $this->variants = $item->variants->toArray();
         $this->addons = $item->addons->toArray();
@@ -143,7 +140,6 @@ class ItemFormComponent extends Component
         $items = Item::with('category')->latest()->paginate(10);
         return view('app.livewire.item-form', [
             'categories' => Category::all(),
-            'types' => Item::allowedTypes(),
             'items' => $items,
         ])->layout('app.layouts.app');
     }
@@ -180,7 +176,6 @@ class ItemFormComponent extends Component
         $this->reset([
             'name',
             'category_id',
-            'type',
             'is_available',
             'variants',
             'addons',

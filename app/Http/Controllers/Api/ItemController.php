@@ -89,29 +89,4 @@ class ItemController extends Controller
         return $this->successResponse($items, 'Available items retrieved successfully');
     }
 
-    /**
-     * Get items by type
-     */
-    public function getByType($type)
-    {
-        if (!$this->hasSelectedBranch()) {
-            return $this->branchSelectionError();
-        }
-        
-        $allowedTypes = Item::allowedTypes();
-        if (!in_array($type, $allowedTypes)) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Invalid item type. Allowed types: ' . implode(', ', $allowedTypes)
-            ], 400);
-        }
-        
-        $query = Item::with(['branch', 'user', 'category', 'variants', 'addons'])
-            ->where('type', $type);
-        $query = $this->applyBranchFilter($query);
-        
-        $items = $query->get();
-        
-        return $this->successResponse($items, 'Items retrieved by type successfully');
-    }
 }

@@ -36,18 +36,6 @@
                                       @enderror
                                   </div>
 
-                                  <div class="col-md-4 mb-3">
-                                      <label>Type</label>
-                                      <select wire:model.defer="type"
-                                          class="form-select @error('type') is-invalid @enderror">
-                                          @foreach ($types as $t)
-                                              <option value="{{ $t }}">{{ ucfirst($t) }}</option>
-                                          @endforeach
-                                      </select>
-                                      @error('type')
-                                          <div class="invalid-feedback">{{ $message }}</div>
-                                      @enderror
-                                  </div>
 
                               </div>
 
@@ -183,7 +171,7 @@
                                   @endforeach
                               </tbody>
                           </table>
-                          <div class="mt-3">
+                          <div class="mt-3 px-3">
                               {{ $items->links('livewire::bootstrap') }}
                           </div>
                       </div>
@@ -205,7 +193,6 @@
                           </div>
                           <div class="modal-body">
                               <p><strong>Category:</strong> {{ $viewItem->category->name }}</p>
-                              <p><strong>Type:</strong> {{ ucfirst($viewItem->type) }}</p>
                               <p><strong>Available:</strong> {{ $viewItem->is_available ? 'Yes' : 'No' }}</p>
 
                               <hr>
