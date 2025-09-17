@@ -62,6 +62,7 @@ class OrderFormComponent extends Component
     public string $type = '';
     public string $tabelcat = '';
     public string $tabelnam = '';
+    public int $activeCategoryTab = 0; // Track which category tab is active
 
 
     public $staff_id = null;
@@ -89,6 +90,11 @@ class OrderFormComponent extends Component
         $this->selectedItemVariants = null;
         $this->selectedItemAddons = [];
         $this->showModal = true;
+    }
+
+    public function selectCategoryTab($tabIndex)
+    {
+        $this->activeCategoryTab = $tabIndex;
     }
 
 

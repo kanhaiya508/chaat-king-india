@@ -101,11 +101,12 @@
                                   id="categoryTabs" role="tablist" aria-orientation="vertical">
 
                                   @foreach ($categories as $index => $category)
-                                      <button class="nav-link text-start mb-1 {{ $loop->first ? 'active' : '' }}"
-                                          id="tab-{{ $index }}-tab" data-bs-toggle="pill"
-                                          data-bs-target="#tab-{{ $index }}" type="button" role="tab"
+                                      <button class="nav-link text-start mb-1 {{ $activeCategoryTab == $index ? 'active' : '' }}"
+                                          id="tab-{{ $index }}-tab" 
+                                          wire:click="selectCategoryTab({{ $index }})"
+                                          type="button" role="tab"
                                           aria-controls="tab-{{ $index }}"
-                                          aria-selected="{{ $loop->first ? 'true' : 'false' }}">
+                                          aria-selected="{{ $activeCategoryTab == $index ? 'true' : 'false' }}">
                                           {{ $category->name }}
                                       </button>
                                   @endforeach
@@ -117,7 +118,7 @@
                           <div class="col-md-9">
                               <div class="tab-content" id="categoryTabsContent">
                                   @foreach ($categories as $index => $category)
-                                      <div class="tab-pane fade {{ $loop->first ? 'show active' : '' }}"
+                                      <div class="tab-pane fade {{ $activeCategoryTab == $index ? 'show active' : '' }}"
                                           id="tab-{{ $index }}" role="tabpanel"
                                           aria-labelledby="tab-{{ $index }}-tab">
 
