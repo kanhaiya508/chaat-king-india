@@ -1,0 +1,145 @@
+/* Global Auth Layout Styling */
+body {
+    background: linear-gradient(135deg, #800020, #b30e35, #4d0013);
+    font-family: 'Poppins', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Auth Card Base */
+.auth-card {
+    background: #fff;
+    border-radius: 18px;
+    padding: 40px 30px;
+    box-shadow: 0 20px 40px rgba(128, 0, 32, 0.15);
+    width: 100%;
+    max-width: 420px;
+    transition: transform 0.3s ease;
+}
+.auth-card:hover {
+    transform: translateY(-4px);
+}
+
+/* Titles */
+.auth-title {
+    font-size: 28px;
+    font-weight: 700;
+    text-align: center;
+    color: #800020;
+    margin-bottom: 30px;
+}
+.select-branch-header {
+    color: #800020;
+    font-weight: 800;
+    letter-spacing: .2px;
+}
+
+/* Inputs */
+.form-control {
+    border-radius: 10px;
+    padding: 12px 14px;
+    font-size: 15px;
+    border: 1px solid #d9a3b2;
+    transition: border 0.3s ease;
+}
+.form-control:focus {
+    border-color: #800020;
+    box-shadow: 0 0 0 0.15rem rgba(128, 0, 32, 0.25);
+}
+
+/* Buttons */
+.btn-purple {
+    border-radius: 10px;
+    padding: 12px;
+    font-weight: 600;
+    background-color: #800020;
+    border: none;
+    color: #fff;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.btn-purple:hover {
+    background-color: #66001a;
+    transform: scale(1.02);
+    color: #fff;
+}
+
+/* Branch Switch Button */
+.btn-branch {
+    background: linear-gradient(135deg, #800020, #b30e35);
+    border: none;
+    border-radius: 999px;
+    padding: 8px 16px;
+    font-weight: 600;
+    box-shadow: 0 6px 16px rgba(128, 0, 32, .18);
+    transition: transform .15s ease, box-shadow .15s ease, opacity .2s ease;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+.btn-branch:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 10px 22px rgba(128, 0, 32, .22);
+    color: #fff;
+}
+.btn-branch:disabled {
+    opacity: .65;
+    box-shadow: none;
+    cursor: not-allowed;
+}
+
+/* Branch Tiles */
+.branch-tile {
+    background: #ffffff;
+    border: 1px solid rgba(128, 0, 32, 0.08);
+    border-radius: 14px;
+    padding: 14px 16px;
+    box-shadow: 0 4px 16px rgba(128, 0, 32, .06);
+    transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.branch-tile:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(128, 0, 32, .10);
+    border-color: rgba(128, 0, 32, .18);
+}
+.branch-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: #fde9ef;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    color: #800020;
+    font-size: 18px;
+}
+.badge-current {
+    background: #19a55a;
+}
+
+/* Utils */
+.text-link a {
+    color: #800020;
+    text-decoration: none;
+    font-weight: 500;
+}
+.text-link a:hover {
+    text-decoration: underline;
+}
+.input-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+}
+.form-group {
+    position: relative;
+    margin-bottom: 20px;
+}
+.form-group input {
+    padding-left: 40px;
+}
