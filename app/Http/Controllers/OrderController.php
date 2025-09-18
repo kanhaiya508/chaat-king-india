@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 
 class OrderController extends Controller
 {
-
     public function index()
     {
         $tablecategories = Tablecategory::with('tables')->get();
@@ -25,7 +24,7 @@ class OrderController extends Controller
 
     public function kotPrint($orderId)
     {
-        $order = Order::with(['items.variant', 'items.addon'])->findOrFail($orderId);
+        $order = Order::with(['items.variant'])->findOrFail($orderId);
         return view('print.kot-receipt', compact('order'));
     }
 
