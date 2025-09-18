@@ -729,8 +729,35 @@
       @push('scripts')
           <script>
               Livewire.on('orderSavedForPrint', id => {
-                  const url = `/orders/${id}/print`;
-                  window.open(url, '_blank');
+                  // Create a hidden iframe for direct printing
+                  const iframe = document.createElement('iframe');
+                  iframe.style.display = 'none';
+                  iframe.src = `/orders/${id}/print`;
+                  document.body.appendChild(iframe);
+                  
+                  iframe.onload = function() {
+                      iframe.contentWindow.print();
+                      // Remove iframe after printing
+                      setTimeout(() => {
+                          document.body.removeChild(iframe);
+                      }, 1000);
+                  };
+              });
+
+              Livewire.on('orderSavedForKOTPrint', id => {
+                  // Create a hidden iframe for direct printing
+                  const iframe = document.createElement('iframe');
+                  iframe.style.display = 'none';
+                  iframe.src = `/orders/${id}/kot-print`;
+                  document.body.appendChild(iframe);
+                  
+                  iframe.onload = function() {
+                      iframe.contentWindow.print();
+                      // Remove iframe after printing
+                      setTimeout(() => {
+                          document.body.removeChild(iframe);
+                      }, 1000);
+                  };
               });
           </script>
       @endpush
