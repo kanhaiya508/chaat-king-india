@@ -72,6 +72,7 @@ Route::middleware(['auth', 'set.current.branch'])->group(function () {
     Route::get('/event-booking-form', EventBookingForm::class)->name('event.booking.form');
 
     Route::get('/orders/{order}/print', [OrderController::class, 'print'])->name('orders.print');
+    Route::get('/orders/{order}/kot-print', [OrderController::class, 'kotPrint'])->name('orders.kot-print');
 
 
     Route::get('/tablecategories', TablecategoryManager::class)->name('tablecategories.manage');
