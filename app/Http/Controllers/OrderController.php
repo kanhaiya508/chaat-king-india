@@ -18,8 +18,8 @@ class OrderController extends Controller
 
     public function print($orderId)
     {
-        $order = Order::with(['customer'])->findOrFail($orderId);
-        return view('print.orders-receipt', compact('order'));
+        $order = Order::with(['customer', 'table', 'staff'])->findOrFail($orderId);
+        return view('print.order-receipt', compact('order'));
     }
 
     public function kotPrint($orderId)
