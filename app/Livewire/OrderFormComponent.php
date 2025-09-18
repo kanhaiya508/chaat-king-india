@@ -385,7 +385,7 @@ class OrderFormComponent extends Component
     {
 
         $this->payments = [
-            ['mode' => '', 'amount' => '', 'transaction_id' => '', 'note' => '']
+            ['mode' => 'Cash', 'amount' => $this->finalTotal, 'transaction_id' => '', 'note' => '']
         ];
 
         $this->saveandsettlement = true;
