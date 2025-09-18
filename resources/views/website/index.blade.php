@@ -248,7 +248,8 @@
                 <small
                     class="d-inline-block fw-bold text-dark text-uppercase bg-light border border-primary rounded-pill px-4 py-1 mb-3">Our
                     Menu</small>
-                <h1 class="display-5 mb-5">Most Popular Food in the World</h1>
+                <h1 class="display-5 mb-3">Authentic Indian Street Food</h1>
+                <p class="lead text-muted mb-5">Experience the rich flavors of traditional Indian chaat and street food delicacies</p>
             </div>
             <div class="tab-class text-center">
                 <ul class="nav nav-pills d-inline-flex justify-content-center mb-5 wow bounceInUp" data-wow-delay="0.1s">
@@ -267,27 +268,48 @@
                             <div class="row g-4">
                                 @forelse($category->items->take(4) as $itemIndex => $item)
                                     <div class="col-lg-6 wow bounceInUp" data-wow-delay="{{ ($itemIndex + 1) * 0.1 }}s">
-                                        <div class="menu-item d-flex align-items-center">
-                                            <div class="w-100 d-flex flex-column text-start ps-4">
-                                                <div class="d-flex justify-content-between border-bottom border-primary pb-2 mb-2">
-                                                    <h4>{{ $item->name }}</h4>
-                                                    <h4 class="text-primary">₹{{ number_format($item->price, 0) }}</h4>
+                                        <div class="menu-item bg-white rounded p-4 h-100 shadow-sm">
+                                            <div class="d-flex justify-content-between align-items-start mb-3">
+                                                <h4 class="text-dark mb-0">{{ $item->name }}</h4>
+                                                <div class="text-end">
+                                                    @if($item->variants->count() > 0)
+                                                        <span class="badge bg-primary">From ₹{{ number_format($item->variants->min('price'), 0) }}</span>
+                                                    @else
+                                                        <span class="h5 text-primary mb-0">₹{{ number_format($item->price, 0) }}</span>
+                                                    @endif
                                                 </div>
-                                                <p class="mb-0">{{ $item->description ?: 'Delicious ' . $item->name . ' prepared with authentic spices and fresh ingredients.' }}</p>
-                                                
-                                                @if($item->variants->count() > 0)
-                                                    <div class="mt-2">
-                                                        <strong class="text-dark">Available Variants:</strong>
-                                                        <div class="mt-1">
-                                                            @foreach($item->variants->take(2) as $variant)
-                                                                <div class="d-flex justify-content-between align-items-center mb-1">
-                                                                    <span class="text-dark">{{ $variant->name }}</span>
+                                            </div>
+                                            
+                                            <p class="text-muted mb-3">{{ $item->description ?: 'Delicious ' . $item->name . ' prepared with authentic spices and fresh ingredients.' }}</p>
+                                            
+                                            @if($item->variants->count() > 0)
+                                                <div class="mb-3">
+                                                    <h6 class="text-dark mb-2">
+                                                        <i class="fas fa-utensils text-primary me-2"></i>Sizes Available
+                                                    </h6>
+                                                    <div class="row g-2">
+                                                        @foreach($item->variants->take(2) as $variant)
+                                                            <div class="col-6">
+                                                                <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded border">
+                                                                    <span class="text-dark fw-medium">
+                                                                        @if(trim($variant->name) == '')
+                                                                            {{ $item->name }}
+                                                                        @else
+                                                                            {{ $variant->name }}
+                                                                        @endif
+                                                                    </span>
                                                                     <span class="text-primary fw-bold">₹{{ number_format($variant->price, 0) }}</span>
                                                                 </div>
-                                                            @endforeach
-                                                        </div>
+                                                            </div>
+                                                        @endforeach
                                                     </div>
-                                                @endif
+                                                </div>
+                                            @endif
+                                            
+                                            <div class="text-center mt-3">
+                                                <button class="btn btn-primary btn-sm rounded-pill px-4">
+                                                    <i class="fas fa-shopping-cart me-2"></i>Order Now
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
