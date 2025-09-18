@@ -739,7 +739,20 @@
 
               Livewire.on('orderSettlementCompleted', id => {
                   const url = `/orders/${id}/final-bill`;
-                  window.open(url, '_blank');
+                  
+                  // Create hidden iframe for direct printing
+                  const iframe = document.createElement('iframe');
+                  iframe.style.display = 'none';
+                  iframe.src = url;
+                  document.body.appendChild(iframe);
+                  
+                  iframe.onload = function() {
+                      iframe.contentWindow.print();
+                      // Remove iframe after printing
+                      setTimeout(() => {
+                          document.body.removeChild(iframe);
+                      }, 1000);
+                  };
               });
           </script>
       @endpush
