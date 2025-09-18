@@ -277,12 +277,15 @@
                                                 
                                                 @if($item->variants->count() > 0)
                                                     <div class="mt-2">
-                                                        <small class="text-muted">
-                                                            <strong>Variants:</strong> 
+                                                        <strong class="text-dark">Available Variants:</strong>
+                                                        <div class="mt-1">
                                                             @foreach($item->variants->take(2) as $variant)
-                                                                {{ $variant->name }} (₹{{ number_format($variant->price, 0) }}){{ !$loop->last ? ', ' : '' }}
+                                                                <div class="d-flex justify-content-between align-items-center mb-1">
+                                                                    <span class="text-dark">{{ $variant->name }}</span>
+                                                                    <span class="text-primary fw-bold">₹{{ number_format($variant->price, 0) }}</span>
+                                                                </div>
                                                             @endforeach
-                                                        </small>
+                                                        </div>
                                                     </div>
                                                 @endif
                                             </div>

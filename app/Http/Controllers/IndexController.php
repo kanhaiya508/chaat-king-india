@@ -8,8 +8,6 @@ use App\Models\Item;
 
 class IndexController extends Controller
 {
-
-
     public function index()
     {
         $categories = Category::with(['items.variants', 'items.addons'])->take(5)->get();
@@ -41,5 +39,4 @@ class IndexController extends Controller
     {
         return view('website.service');
     }
-
 }
