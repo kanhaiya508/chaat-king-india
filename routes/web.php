@@ -73,6 +73,7 @@ Route::middleware(['auth', 'set.current.branch'])->group(function () {
 
     Route::get('/orders/{order}/print', [OrderController::class, 'print'])->name('orders.print');
     Route::get('/orders/{order}/kot-print', [OrderController::class, 'kotPrint'])->name('orders.kot-print');
+    Route::get('/orders/{order}/final-bill', [OrderController::class, 'finalBill'])->name('orders.final-bill');
 
 
     Route::get('/tablecategories', TablecategoryManager::class)->name('tablecategories.manage');

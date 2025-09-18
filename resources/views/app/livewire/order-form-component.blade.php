@@ -736,6 +736,11 @@
                   const url = `/orders/${id}/kot-print`;
                   window.open(url, '_blank');
               });
+
+              Livewire.on('orderSettlementCompleted', id => {
+                  const url = `/orders/${id}/final-bill`;
+                  window.open(url, '_blank');
+              });
           </script>
       @endpush
 

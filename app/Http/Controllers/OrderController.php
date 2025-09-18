@@ -28,6 +28,12 @@ class OrderController extends Controller
         return view('print.kot-receipt', compact('order'));
     }
 
+    public function finalBill($orderId)
+    {
+        $order = Order::with(['customer', 'table', 'staff', 'payments'])->findOrFail($orderId);
+        return view('print.final-bill', compact('order'));
+    }
+
     public function share($orderId)
     {
         // Shareable web bill link
