@@ -729,35 +729,43 @@
       @push('scripts')
           <script>
               Livewire.on('orderSavedForPrint', id => {
-                  // Create a hidden iframe for direct printing
-                  const iframe = document.createElement('iframe');
-                  iframe.style.display = 'none';
-                  iframe.src = `/orders/${id}/print`;
-                  document.body.appendChild(iframe);
+                  // Create a temporary window for printing
+                  const printWindow = window.open('/orders/' + id + '/print', '_blank', 'width=1,height=1,left=-1000,top=-1000');
                   
-                  iframe.onload = function() {
-                      iframe.contentWindow.print();
-                      // Remove iframe after printing
-                      setTimeout(() => {
-                          document.body.removeChild(iframe);
-                      }, 1000);
-                  };
+                  if (printWindow) {
+                      printWindow.onload = function() {
+                          // Auto print when content loads
+                          printWindow.print();
+                          
+                          // Close window after printing
+                          setTimeout(() => {
+                              printWindow.close();
+                          }, 1000);
+                      };
+                  } else {
+                      // Fallback if popup blocked
+                      window.location.href = '/orders/' + id + '/print';
+                  }
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
-                  // Create a hidden iframe for direct printing
-                  const iframe = document.createElement('iframe');
-                  iframe.style.display = 'none';
-                  iframe.src = `/orders/${id}/kot-print`;
-                  document.body.appendChild(iframe);
+                  // Create a temporary window for KOT printing
+                  const printWindow = window.open('/orders/' + id + '/kot-print', '_blank', 'width=1,height=1,left=-1000,top=-1000');
                   
-                  iframe.onload = function() {
-                      iframe.contentWindow.print();
-                      // Remove iframe after printing
-                      setTimeout(() => {
-                          document.body.removeChild(iframe);
-                      }, 1000);
-                  };
+                  if (printWindow) {
+                      printWindow.onload = function() {
+                          // Auto print when content loads
+                          printWindow.print();
+                          
+                          // Close window after printing
+                          setTimeout(() => {
+                              printWindow.close();
+                          }, 1000);
+                      };
+                  } else {
+                      // Fallback if popup blocked
+                      window.location.href = '/orders/' + id + '/kot-print';
+                  }
               });
           </script>
       @endpush
