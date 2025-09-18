@@ -713,9 +713,8 @@
                           <x-loader-button action="saveOrder" label="Save" class="btn  btn-danger px-3" />
                           <x-loader-button action="saveOrderAndPrint" label="Save & Print"
                               class="btn  btn-info px-3" />
-                          {{-- <x-loader-button action="saveOrderAsKOT" label="KoT" class="btn  btn-info px-3" />
-                          <x-loader-button action="saveOrderAsKOTAndPrint" label="KoT & Print"
-                              class="btn  btn-info px-3" /> --}}
+                          <x-loader-button action="saveOrderAsKOTAndPrint" label="Save & KOT Print"
+                              class="btn  btn-success px-3" />
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
                       </div>
@@ -730,6 +729,11 @@
           <script>
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
+                  window.open(url, '_blank');
+              });
+
+              Livewire.on('orderSavedForKOTPrint', id => {
+                  const url = `/orders/${id}/kot-print`;
                   window.open(url, '_blank');
               });
           </script>
