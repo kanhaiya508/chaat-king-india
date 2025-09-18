@@ -45,7 +45,7 @@
         <div class="container">
             <nav class="navbar navbar-light navbar-expand-lg py-4">
                 <a href="index.html" class="navbar-brand">
-                    <h1 class="text-primary fw-bold mb-0">Cater<span class="text-dark">Serv</span> </h1>
+                    <h1 class="text-primary fw-bold mb-0">Chaat<span class="text-dark">King</span> </h1>
                 </a>
                 <button class="navbar-toggler py-2 px-3" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarCollapse">
@@ -98,7 +98,7 @@
             <div class="row">
                 <div class="col-lg-3 col-md-6">
                     <div class="footer-item">
-                        <h1 class="text-primary">Cater<span class="text-dark">Serv</span></h1>
+                        <h1 class="text-primary">Chaat<span class="text-dark">King</span></h1>
                         <p class="lh-lg mb-4">There cursus massa at urnaaculis estieSed aliquamellus vitae ultrs
                             condmentum leo massamollis its estiegittis miristum.</p>
                         <div class="footer-icon d-flex">
