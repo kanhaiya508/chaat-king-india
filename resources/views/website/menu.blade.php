@@ -25,12 +25,12 @@
                 <ul class="nav nav-pills d-inline-flex justify-content-center mb-5 wow bounceInUp" data-wow-delay="0.1s">
                     @foreach($categories as $index => $category)
                         @if($category->items->count() > 0)
-                            <li class="nav-item p-2">
+                    <li class="nav-item p-2">
                                 <a class="d-flex py-2 mx-2 border border-primary bg-white rounded-pill {{ $index === 0 ? 'active' : '' }}" 
                                    data-bs-toggle="pill" href="#tab-{{ $category->id }}">
                                     <span class="text-dark" style="width: 150px;">{{ $category->name }}</span>
-                                </a>
-                            </li>
+                        </a>
+                    </li>
                         @endif
                     @endforeach
                 </ul>
@@ -38,32 +38,34 @@
                     @foreach($categories as $index => $category)
                         @if($category->items->count() > 0)
                             <div id="tab-{{ $category->id }}" class="tab-pane fade show p-0 {{ $index === 0 ? 'active' : '' }}">
-                                <div class="row g-4">
+                        <div class="row g-4">
                                     @foreach($category->items as $itemIndex => $item)
                                         <div class="col-lg-6 wow bounceInUp" data-wow-delay="{{ ($itemIndex + 1) * 0.1 }}s">
-                                            <div class="menu-item bg-light rounded p-4 h-100">
-                                                <div class="d-flex justify-content-between align-items-start mb-3">
-                                                    <h4 class="text-dark mb-0">{{ $item->name }}</h4>
+                                            <div class="menu-item bg-white rounded shadow-sm p-4 h-100 border">
+                                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                                    <h4 class="text-dark mb-0 fw-bold">{{ $item->name }}</h4>
                                                     <div class="text-end">
                                                         @if($item->variants->count() > 0)
-                                                            <span class="badge bg-primary">From ₹{{ number_format($item->variants->min('price'), 0) }}</span>
+                                                            <span class="badge bg-primary fs-6">From ₹{{ number_format($item->variants->min('price'), 0) }}</span>
                                                         @else
-                                                            <span class="h5 text-primary mb-0">₹{{ number_format($item->price, 0) }}</span>
+                                                            <span class="h5 text-primary mb-0 fw-bold">₹{{ number_format($item->price, 0) }}</span>
                                                         @endif
                                                     </div>
                                                 </div>
                                                 
-                                                <p class="text-muted mb-3">{{ $item->description ?: 'Delicious ' . $item->name . ' prepared with authentic spices and fresh ingredients.' }}</p>
+                                                @if($item->description)
+                                                    <p class="text-muted mb-3 small">{{ $item->description }}</p>
+                                                @endif
                                                 
                                                 @if($item->variants->count() > 0)
                                                     <div class="mb-3">
-                                                        <h6 class="text-dark mb-2">
-                                                            <i class="fas fa-utensils text-primary me-2"></i>Available Sizes
+                                                        <h6 class="text-dark mb-2 fw-semibold">
+                                                            <i class="fas fa-utensils text-primary me-1"></i>Sizes
                                                         </h6>
                                                         <div class="row g-2">
                                                             @foreach($item->variants as $variant)
-                                                                <div class="col-6">
-                                                                    <div class="d-flex justify-content-between align-items-center p-2 bg-white rounded border">
+                                                                <div class="col-12">
+                                                                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
                                                                         <span class="text-dark fw-medium">
                                                                             @if(trim($variant->name) == '')
                                                                                 {{ $item->name }}
@@ -81,13 +83,13 @@
                                                 
                                                 @if($item->addons->count() > 0)
                                                     <div class="mb-3">
-                                                        <h6 class="text-dark mb-2">
-                                                            <i class="fas fa-plus-circle text-primary me-2"></i>Add-ons Available
+                                                        <h6 class="text-dark mb-2 fw-semibold">
+                                                            <i class="fas fa-plus-circle text-success me-1"></i>Add-ons
                                                         </h6>
                                                         <div class="row g-2">
                                                             @foreach($item->addons as $addon)
-                                                                <div class="col-6">
-                                                                    <div class="d-flex justify-content-between align-items-center p-2 bg-white rounded border">
+                                                                <div class="col-12">
+                                                                    <div class="d-flex justify-content-between align-items-center p-2 bg-light rounded">
                                                                         <span class="text-dark">{{ $addon->name }}</span>
                                                                         <span class="text-success fw-bold">+₹{{ number_format($addon->price, 0) }}</span>
                                                                     </div>
@@ -97,22 +99,22 @@
                                                     </div>
                                                 @endif
                                                 
-                                                <div class="text-center mt-3">
-                                                    <button class="btn btn-primary btn-sm rounded-pill px-4">
+                                                <div class="text-center mt-3 pt-3 border-top">
+                                                    <button class="btn btn-primary rounded-pill px-4">
                                                         <i class="fas fa-shopping-cart me-2"></i>Order Now
                                                     </button>
                                                 </div>
                                             </div>
                                         </div>
                                     @endforeach
+                                    </div>
                                 </div>
-                            </div>
                         @endif
                     @endforeach
-                </div>
-            </div>
-        </div>
-    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
     <!-- Menu End -->
 
     <!-- Call to Action -->
@@ -125,9 +127,9 @@
                     <a href="{{ route('contact') }}" class="btn btn-light btn-lg rounded-pill px-5">
                         <i class="fas fa-map-marker-alt me-2"></i>Find Us
                     </a>
-                </div>
-            </div>
-        </div>
-    </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
     <!-- Call to Action End -->
 @endsection
