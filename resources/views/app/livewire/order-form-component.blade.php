@@ -729,43 +729,8 @@
       @push('scripts')
           <script>
               Livewire.on('orderSavedForPrint', id => {
-                  // Create a temporary window for printing
-                  const printWindow = window.open('/orders/' + id + '/print', '_blank', 'width=1,height=1,left=-1000,top=-1000');
-                  
-                  if (printWindow) {
-                      printWindow.onload = function() {
-                          // Auto print when content loads
-                          printWindow.print();
-                          
-                          // Close window after printing
-                          setTimeout(() => {
-                              printWindow.close();
-                          }, 1000);
-                      };
-                  } else {
-                      // Fallback if popup blocked
-                      window.location.href = '/orders/' + id + '/print';
-                  }
-              });
-
-              Livewire.on('orderSavedForKOTPrint', id => {
-                  // Create a temporary window for KOT printing
-                  const printWindow = window.open('/orders/' + id + '/kot-print', '_blank', 'width=1,height=1,left=-1000,top=-1000');
-                  
-                  if (printWindow) {
-                      printWindow.onload = function() {
-                          // Auto print when content loads
-                          printWindow.print();
-                          
-                          // Close window after printing
-                          setTimeout(() => {
-                              printWindow.close();
-                          }, 1000);
-                      };
-                  } else {
-                      // Fallback if popup blocked
-                      window.location.href = '/orders/' + id + '/kot-print';
-                  }
+                  const url = `/orders/${id}/print`;
+                  window.open(url, '_blank');
               });
           </script>
       @endpush
