@@ -77,11 +77,16 @@ class OrderFormComponent extends Component
 
     public function mount()
     {
-
-
         $this->staffList = Staff::all();
         $this->tablecategories = Tablecategory::with('tables')->get();
         $this->categories = Category::with('items.variants', 'items.addons')->get();
+        
+        // Debug: Check if categories are loaded
+        if ($this->categories->isEmpty()) {
+            \Log::warning('No categories found in OrderFormComponent mount');
+        } else {
+            \Log::info('Categories loaded: ' . $this->categories->count());
+        }
     }
 
     public function openModal($itemId)
@@ -653,7 +658,7 @@ class OrderFormComponent extends Component
             foreach ($this->payments as $payment) {
                 if (empty($payment['mode']) || empty($payment['amount'])) continue;
 
-                \App\Models\OrderPayment::create([
+                OrderPayment::create([
                     'order_id'       =>  $this->order_id,
                     'mode'           =>  $payment['mode'],
                     'amount'         =>  $payment['amount'],

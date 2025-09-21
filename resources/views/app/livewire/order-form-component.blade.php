@@ -72,9 +72,14 @@
                           <div class="table-grid">
                               @forelse ($category->tables as $table)
                                   <div class="table-box-wrapper position-relative">
-                                      <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }}"
-                                          wire:click="openOrderForm({{ $table->id }})" wire:loading.attr="disabled">
+                                      <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative"
+                                          wire:click="openOrderForm({{ $table->id }})" 
+                                          wire:loading.attr="disabled" 
+                                          wire:target="openOrderForm({{ $table->id }})">
                                           <h5> {{ $table->name }}</h5>
+                                          <div wire:loading wire:target="openOrderForm({{ $table->id }})" class="position-absolute top-50 start-50 translate-middle">
+                                              <i class="fas fa-spinner fa-spin text-white"></i>
+                                          </div>
                                       </div>
                                   </div>
                               @empty
@@ -125,20 +130,9 @@
                                           <div class="row g-3">
                                               @forelse ($category->items as $item)
                                                   <div class="col-md-4 col-sm-6">
-                                                      <div class="item-box  "
+                                                      <div class="card border shadow-sm rounded-3"
                                                           wire:click="openModal({{ $item->id }})"
-                                                          wire:loading.class="disabled"
-                                                          wire:target="openModal({{ $item->id }})"
                                                           style="cursor: pointer;">
-
-                                                          <!-- Spinner -->
-                                                          <div class="position-absolute top-0 end-0 m-2">
-                                                              <div wire:loading
-                                                                  wire:target="openModal({{ $item->id }})">
-                                                                  <div class="spinner-border spinner-border-sm text-primary"
-                                                                      role="status"></div>
-                                                              </div>
-                                                          </div>
 
                                                           <div class="card-body p-3 text-center">
                                                               <p class="fw-bold mb-0">{{ $item->name }}</p>
@@ -226,8 +220,12 @@
                                       </select>
                                   </div>
 
-                                  <button class="btn btn-sm btn-outline-danger" wire:click="$set('cart', [])">
-                                      Clear All
+                                  <button class="btn btn-sm btn-outline-danger" wire:click="$set('cart', [])" 
+                                      wire:loading.attr="disabled" wire:target="$set('cart', [])">
+                                      <span wire:loading.remove wire:target="$set('cart', [])">Clear All</span>
+                                      <span wire:loading wire:target="$set('cart', [])">
+                                          <i class="fas fa-spinner fa-spin"></i> Clearing...
+                                      </span>
                                   </button>
                               </div>
 
@@ -257,47 +255,61 @@
                                                   $subtotal += $totalItemPrice;
                                               @endphp
                                               <tr>
-                                                  <td data-bs-toggle="modal"
-                                                      data-bs-target="#remarkModal{{ $index }}">
-                                                      <span class="text-danger me-2" role="button"
-                                                          wire:click="removeItem({{ $index }})">
-                                                          <i class="fas fa-trash"></i>
-                                                      </span>
+                                                  <td>
                                                       <span>
                                                           {{ $item['item']->name }}
+                                                          @if ($variant)
+                                                              <br><small class="text-muted">({{ $variant->label }})</small>
+                                                          @endif
+                                                          @if (!empty($item['addon_ids']))
+                                                              <br><small class="text-muted">
+                                                                  Addons: @foreach ($item['addon_ids'] as $addonId)
+                                                                      {{ $item['item']->addons->firstWhere('id', $addonId)?->name }},
+                                                                  @endforeach
+                                                              </small>
+                                                          @endif
+                                                          @if (!empty($item['remark']))
+                                                              <div class="text-muted small">
+                                                                  <i class="fas fa-quote-left " title="Remark"></i>
+                                                                  {{ $item['remark'] }} <i class="fas fa-quote-right "
+                                                                      title="Remark"></i>
+                                                              </div>
+                                                          @endif
                                                       </span>
-                                                      @if ($variant)
-                                                          <br><small
-                                                              class="text-muted">({{ $variant->label }})</small>
-                                                      @endif
-                                                      @if (!empty($item['addon_ids']))
-                                                          <br><small class="text-muted">
-                                                              Addons: @foreach ($item['addon_ids'] as $addonId)
-                                                                  {{ $item['item']->addons->firstWhere('id', $addonId)?->name }},
-                                                              @endforeach
-                                                          </small>
-                                                      @endif
-                                                      @if (!empty($item['remark']))
-                                                          <div class="text-muted small">
-                                                              <i class="fas fa-quote-left " title="Remark"></i>
-                                                              {{ $item['remark'] }} <i class="fas fa-quote-right "
-                                                                  title="Remark"></i>
-                                                          </div>
-                                                      @endif
-
+                                                      <button type="button" class="btn btn-sm btn-outline-primary ms-2" 
+                                                          data-bs-toggle="modal" data-bs-target="#remarkModal{{ $index }}">
+                                                          <i class="fas fa-comment"></i>
+                                                      </button>
                                                   </td>
                                                   <td>
                                                       <div class="input-group input-group-sm">
                                                           <button class="btn btn-outline-secondary"
-                                                              wire:click="decreaseQty({{ $index }})">−</button>
+                                                              wire:click="decreaseQty({{ $index }})"
+                                                              wire:loading.attr="disabled" 
+                                                              wire:target="decreaseQty({{ $index }})">−</button>
                                                           <input type="text" class="form-control text-center"
                                                               wire:model.lazy="cart.{{ $index }}.quantity" />
                                                           <button class="btn btn-outline-secondary"
-                                                              wire:click="increaseQty({{ $index }})">+</button>
+                                                              wire:click="increaseQty({{ $index }})"
+                                                              wire:loading.attr="disabled" 
+                                                              wire:target="increaseQty({{ $index }})">+</button>
                                                       </div>
                                                   </td>
                                                   <td>
-                                                      ₹{{ number_format($totalItemPrice, 2) }}
+                                                      <div class="d-flex align-items-center justify-content-between">
+                                                          <span>₹{{ number_format($totalItemPrice, 2) }}</span>
+                                                          <button type="button" class="btn btn-sm btn-outline-danger ms-2"
+                                                              wire:click="removeItem({{ $index }})"
+                                                              wire:loading.attr="disabled" 
+                                                              wire:target="removeItem({{ $index }})">
+                                                              <span wire:loading.remove wire:target="removeItem({{ $index }})">
+                                                                  <i class="fas fa-trash"></i>
+                                                              </span>
+                                                              <span wire:loading wire:target="removeItem({{ $index }})">
+                                                                  <i class="fas fa-spinner fa-spin"></i>
+                                                              </span>
+                                                          </button>
+                                                      </div>
                                                   </td>
                                               </tr>
                                           @empty
@@ -628,8 +640,13 @@
                               <button type="button" class="btn btn-secondary"
                                   wire:click="closeSettlement">Cancel</button>
                               <div class="text-end">
-                                  <button class="btn btn-primary" wire:click="savePayments">
-                                      Confirm & Save
+                                  <button class="btn btn-primary" wire:click="savePayments"
+                                      wire:loading.attr="disabled" 
+                                      wire:target="savePayments">
+                                      <span wire:loading.remove wire:target="savePayments">Confirm & Save</span>
+                                      <span wire:loading wire:target="savePayments">
+                                          <i class="fas fa-spinner fa-spin"></i> Saving...
+                                      </span>
                                   </button>
                               </div>
                           </div>
@@ -727,6 +744,16 @@
       @endif
       @push('scripts')
           <script>
+              // Debug: Check if Livewire is loaded
+              document.addEventListener('livewire:init', () => {
+                  console.log('Livewire initialized');
+              });
+              
+              // Debug: Check if component is loaded
+              Livewire.on('component-loaded', () => {
+                  console.log('OrderFormComponent loaded');
+              });
+              
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
                   window.open(url, '_blank');
