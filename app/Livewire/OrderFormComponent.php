@@ -626,7 +626,6 @@ class OrderFormComponent extends Component
             $this->resetOrderForm();
             $this->saveandsettlement = false;
             $this->dispatch('show-toast', 'Order marked paid (no payment).');
-            $this->dispatch('orderSettlementCompleted', $this->order_id);
             } else {
                 session()->flash('error', 'Failed to save payment.');
             }
@@ -677,7 +676,6 @@ class OrderFormComponent extends Component
             $this->resetOrderForm();
             $this->saveandsettlement = false;
             $this->dispatch('show-toast', 'Order paid (write-off applied if any).');
-            $this->dispatch('orderSettlementCompleted', $this->order_id);
         } else {
             session()->flash('error', 'Failed to save payment.');
         }
