@@ -546,31 +546,50 @@
 
                               @foreach ($payments as $index => $payment)
                                   <div class="row g-2 align-items-center mb-2">
-                                      <div class="col-md-3">
-                                          <select class="form-select form-select-sm @error('payments.'.$index.'.mode') is-invalid @enderror"
-                                              wire:model="payments.{{ $index }}.mode"
-                                              @disabled($markPaidNoAmount)>
-                                              <option value="">-- Mode --</option>
-                                              <option value="Cash">Cash</option>
-                                              <option value="UPI">UPI</option>
-                                              <option value="Card">Card</option>
-                                          </select>
+                                      <div class="col-md-4">
+                                          <div class="d-flex gap-3">
+                                              <div class="form-check">
+                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
+                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                      id="cash_{{ $index }}" value="Cash"
+                                                      wire:model="payments.{{ $index }}.mode"
+                                                      @disabled($markPaidNoAmount)>
+                                                  <label class="form-check-label" for="cash_{{ $index }}">
+                                                      Cash
+                                                  </label>
+                                              </div>
+                                              <div class="form-check">
+                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
+                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                      id="upi_{{ $index }}" value="UPI"
+                                                      wire:model="payments.{{ $index }}.mode"
+                                                      @disabled($markPaidNoAmount)>
+                                                  <label class="form-check-label" for="upi_{{ $index }}">
+                                                      UPI
+                                                  </label>
+                                              </div>
+                                              <div class="form-check">
+                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
+                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                      id="card_{{ $index }}" value="Card"
+                                                      wire:model="payments.{{ $index }}.mode"
+                                                      @disabled($markPaidNoAmount)>
+                                                  <label class="form-check-label" for="card_{{ $index }}">
+                                                      Card
+                                                  </label>
+                                              </div>
+                                          </div>
                                           @error('payments.'.$index.'.mode')
-                                              <div class="invalid-feedback">{{ $message }}</div>
+                                              <div class="invalid-feedback d-block">{{ $message }}</div>
                                           @enderror
                                       </div>
-                                      <div class="col-md-2">
+                                      <div class="col-md-3">
                                           <input type="number" class="form-control form-control-sm @error('payments.'.$index.'.amount') is-invalid @enderror"
                                               wire:model.live="payments.{{ $index }}.amount"
                                               placeholder="Amount" @disabled($markPaidNoAmount)>
                                           @error('payments.'.$index.'.amount')
                                               <div class="invalid-feedback">{{ $message }}</div>
                                           @enderror
-                                      </div>
-                                      <div class="col-md-2">
-                                          <input type="text" class="form-control form-control-sm"
-                                              wire:model="payments.{{ $index }}.transaction_id"
-                                              placeholder="Txn ID (Optional)" @disabled($markPaidNoAmount)>
                                       </div>
                                       <div class="col-md-3">
                                           <input type="text" class="form-control form-control-sm"

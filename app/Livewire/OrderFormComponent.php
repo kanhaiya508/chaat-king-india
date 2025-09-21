@@ -390,7 +390,7 @@ class OrderFormComponent extends Component
     {
 
         $this->payments = [
-            ['mode' => 'Cash', 'amount' => $this->finalTotal, 'transaction_id' => '', 'note' => '']
+            ['mode' => 'Cash', 'amount' => $this->finalTotal, 'note' => '']
         ];
 
         $this->saveandsettlement = true;
@@ -581,7 +581,7 @@ class OrderFormComponent extends Component
 
     public function addPaymentRow()
     {
-        $this->payments[] = ['mode' => '', 'amount' => '', 'transaction_id' => '', 'note' => ''];
+        $this->payments[] = ['mode' => '', 'amount' => '', 'note' => ''];
     }
 
     public function removePaymentRow($index)
@@ -662,7 +662,6 @@ class OrderFormComponent extends Component
                     'order_id'       =>  $this->order_id,
                     'mode'           =>  $payment['mode'],
                     'amount'         =>  $payment['amount'],
-                    'transaction_id' =>  $payment['transaction_id'] ?? null,
                     'note'           =>  $payment['note'] ?? null,
                 ]);
             }
@@ -707,7 +706,7 @@ class OrderFormComponent extends Component
         if ($val) {
             // UI साफ-सुथरा रखने के लिए rows हटा दें (ज़रूरत हो तो रख सकते हैं)
             $this->payments = [
-                ['mode' => '', 'amount' => null, 'transaction_id' => null, 'note' => null],
+                ['mode' => '', 'amount' => null, 'note' => null],
             ];
             // write_off / change वगैरह reset (ताकि validations न टकराएँ)
             $this->write_off = 0;
