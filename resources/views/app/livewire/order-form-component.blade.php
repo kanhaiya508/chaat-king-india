@@ -326,16 +326,11 @@
                                                               <div>
                                                                   <i class="fas fa-print me-2"></i>
                                                                   KOT Group: {{ $kotGroupId }}
-                                                                  @if ($isPrinted)
-                                                                      <span class="badge bg-success ms-2">Printed</span>
-                                                                  @else
-                                                                      <span class="badge bg-warning ms-2">Pending</span>
-                                                                  @endif
                                                                   <small class="text-muted ms-2">
                                                                       ({{ $groupItems->count() }} items)
                                                                   </small>
                                                               </div>
-                                                              @if (!$isPrinted)
+                                                              {{-- @if (!$isPrinted)
                                                               <button type="button" class="btn btn-sm btn-outline-primary" 
                                                                   onclick="printKOTGroup('{{ $kotGroupId }}')">
                                                                   <i class="fas fa-print me-1"></i> Print Group
@@ -344,7 +339,7 @@
                                                               <span class="text-success small">
                                                                   <i class="fas fa-check me-1"></i>Already Printed
                                                               </span>
-                                                              @endif
+                                                              @endif --}}
                                                           </div>
                                                       </td>
                                                   </tr>
