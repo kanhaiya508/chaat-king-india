@@ -421,8 +421,8 @@ class OrderFormComponent extends Component
         $orderId = $this->saveOrderData('kot_print');
 
         if ($orderId) {
-            // After saving, mark all items as printed with a new KOT group
-            $this->markItemsAsPrinted($orderId);
+            // After saving, mark all items as printed with group-wise KOT
+            $this->markItemsAsPrinted($orderId, true); // true = print all items
             
             $this->resetOrderForm();
             $this->dispatch('orderSavedForKOTPrint', $orderId);
@@ -431,10 +431,18 @@ class OrderFormComponent extends Component
         }
     }
 
-    private function markItemsAsPrinted($orderId)
+    private function markItemsAsPrinted($orderId, $printAll = false)
     {
-        // Get all items for this order
-        $items = OrderItem::where('order_id', $orderId)->get();
+        // Get items for this order
+        if ($printAll) {
+            // Get all items (for saveOrderAsKOTAndPrint)
+            $items = OrderItem::where('order_id', $orderId)->get();
+        } else {
+            // Get only unprinted items (for printUnprintedItems)
+            $items = OrderItem::where('order_id', $orderId)
+                ->where('kot_printed', false)
+                ->get();
+        }
         
         if ($items->isEmpty()) {
             return;
@@ -524,38 +532,13 @@ class OrderFormComponent extends Component
             return;
         }
 
-        // Group unprinted items by their existing kot_group_id
-        $groupedItems = $unprintedItems->groupBy('kot_group_id');
-        $printedGroups = [];
-
-        // Process each group separately
-        foreach ($groupedItems as $kotGroupId => $items) {
-            // If no kot_group_id, create a new one
-            if (!$kotGroupId) {
-                $kotGroupId = 'KOT-' . time() . '-' . rand(1000, 9999);
-            }
-
-            // Mark items as printed but keep their group ID
-            $items->each(function ($item) use ($kotGroupId) {
-                $item->update([
-                    'kot_group_id' => $kotGroupId,
-                    'kot_printed' => true,
-                    'kot_printed_at' => now(),
-                ]);
-            });
-
-            $printedGroups[] = $kotGroupId;
-        }
+        // Use the markItemsAsPrinted method for consistency
+        $this->markItemsAsPrinted($this->order_id, false); // false = print only unprinted items
 
         // Refresh the cart to show updated status
         $this->setOrderValues(Order::find($this->order_id));
-
-        // Dispatch event to print each group separately
-        foreach ($printedGroups as $kotGroupId) {
-            $this->dispatch('printKOTGroup', $kotGroupId);
-        }
         
-        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' items in ' . count($printedGroups) . ' groups.');
+        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' unprinted items.');
     }
 
 
