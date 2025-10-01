@@ -24,28 +24,61 @@
               </div>
 
               @if ($isRunningOrder)
-                  <div class="row mt-3">
-                      @forelse($runningOrders as $order)
+                  <!-- Filter and Search Section -->
+                  <div class="row mt-3 mb-3">
+                      <div class="col-12">
+                          <div class="card">
+                              <div class="card-body">
+                                  <div class="row g-3">
+                                      <div class="col-md-4">
+                                          <label class="form-label">Search Orders</label>
+                                          <input type="text" class="form-control" wire:model.live="search"
+                                              placeholder="Search by ID, Name, or Phone">
+                                      </div>
+                                      <div class="col-md-4">
+                                          <label class="form-label">Filter by Type</label>
+                                          <select class="form-select" wire:model.live="orderType">
+                                              <option value="">All Types</option>
+                                              <option value="dine-in">Dine-in</option>
+                                              <option value="takeaway">Takeaway</option>
+                                              <option value="delivery">Delivery</option>
+                                          </select>
+                                      </div>
+                                      <div class="col-md-4 d-flex align-items-end">
+                                          <button class="btn btn-outline-secondary" wire:click="loadAllOrders">
+                                              <i class="fas fa-refresh me-1"></i> Refresh
+                                          </button>
+                                      </div>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <!-- Orders Grid -->
+                  <div class="row">
+                      @forelse($allOrders as $order)
                           <div class="col-md-2 col-sm-6 mb-3" wire:click="viewOrder({{ $order->id }})"
                               style="cursor:pointer;">
                               <div class="card border shadow-sm rounded-3 h-100">
                                   <div class="card-body">
                                       <div class="d-flex justify-content-between align-items-center mb-2">
                                           <h5 class="card-title mb-0">#{{ $order->id }}</h5>
-                                          {{-- @if ($order->type == 'dine-in') --}}
                                           <span class="badge bg-primary text-dark">{{ ucfirst($order->type) }}</span>
-                                          {{-- @endif --}}
-                                          {{-- costomer  veca number if delivery --}}
-                                        
                                           <span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span>
                                       </div>
+
+                                      <p class="mb-1">
+                                          <strong>Customer:</strong>
+                                          <span class="text-primary">{{ $order->customer->name ?? 'N/A' }}</span>
+                                      </p>
 
                                       <p class="mb-1">
                                           <strong>Type:</strong>
                                           @if ($order->table_id)
                                               <span class="text-primary">Table #{{ $order->table_id }}</span>
                                           @else
-                                              <span class="text-success">Takeaway</span>
+                                              <span class="text-success">{{ ucfirst($order->type) }}</span>
                                           @endif
                                       </p>
 
@@ -54,12 +87,20 @@
                                           <span
                                               class="text-danger fw-bold">₹{{ number_format($order->total, 2) }}</span>
                                       </p>
+
+                                      <p class="mb-0">
+                                          <small class="text-muted">{{ $order->created_at->format('d M, h:i A') }}</small>
+                                      </p>
                                   </div>
                               </div>
                           </div>
                       @empty
                           <div class="col-12">
-                              <p class="text-muted">No running orders found.</p>
+                              <div class="text-center py-4">
+                                  <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
+                                  <h5 class="text-muted">No orders found</h5>
+                                  <p class="text-muted">Try adjusting your search or filter criteria</p>
+                              </div>
                           </div>
                       @endforelse
                   </div>

@@ -53,6 +53,9 @@ class OrderFormComponent extends Component
     public $saveandsettlement = false;
     public $payments = [];
     public $runningOrders = [];
+    public $allOrders = [];
+    public $search = '';
+    public $orderType = '';
 
     public ?string $deliveryPartnerName = null;
     public ?string $deliveryPartnerPhone = null;
@@ -256,6 +259,16 @@ class OrderFormComponent extends Component
                 $this->address = '';
             }
         }
+    }
+
+    public function updatedSearch()
+    {
+        $this->loadAllOrders();
+    }
+
+    public function updatedOrderType()
+    {
+        $this->loadAllOrders();
     }
 
 
@@ -576,9 +589,7 @@ class OrderFormComponent extends Component
     public function viewOrder($orderId)
     {
         $this->order_id = $orderId;
-        $order = Order::where('id', $orderId)
-            ->where('status', '!=', 'paid')
-            ->first();
+        $order = Order::with(['customer', 'items'])->find($orderId);
 
         if ($order) {
             $this->isEditing = true;
@@ -589,15 +600,36 @@ class OrderFormComponent extends Component
         $this->showForm = false;
     }
 
+    public function loadAllOrders()
+    {
+        $this->allOrders = Order::with(['customer', 'items'])
+            ->when($this->search, function ($query) {
+                $query->where(function ($q) {
+                    $q->where('id', $this->search)
+                        ->orWhereHas('customer', function ($cq) {
+                            $cq->where('name', 'like', '%' . $this->search . '%')
+                                ->orWhere('phone', 'like', '%' . $this->search . '%');
+                        });
+                });
+            })
+            ->when($this->orderType !== '', function ($q) {
+                $q->where('type', $this->orderType);
+            })
+            ->latest()
+            ->get();
+    }
+
     public function RunningOrder()
     {
         // Agar already running orders mode me hai, to tables view me wapas jao
         if ($this->isRunningOrder) {
             $this->isRunningOrder = false;
-            $this->runningOrders = [];
+            $this->allOrders = [];
+            $this->search = '';
+            $this->orderType = '';
         } else {
-            // Running orders fetch karo
-            $this->runningOrders = Order::whereNotIn('status', ['paid', 'closed'])->get();
+            // All orders fetch karo with filtering
+            $this->loadAllOrders();
             $this->isRunningOrder = true;
         }
     }
