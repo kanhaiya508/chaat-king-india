@@ -71,11 +71,10 @@
                                       </div>
 
                                       <div class="mb-2">
-                                        @if ( $order->customer->name)
+                                        @if ($order->customer && $order->customer->name)
                                         <strong class="text-muted">Customer:</strong>
-                                        <span class="text-primary">{{ $order->customer->name ?? 'N/A' }}</span>
+                                        <span class="text-primary">{{ $order->customer->name }}</span>
                                         @endif
-
                                       </div>
 
                                       <div class="mb-2">
