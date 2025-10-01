@@ -117,13 +117,15 @@ class OrderFormComponent extends Component
                 'selectedItemVariants' => 'Please select a variant.',
             ]);
         }
-        $this->cart[] = [
+        
+        // Add new item at the beginning of cart array (top of the list)
+        array_unshift($this->cart, [
             'item' => $this->selectedItem,
             'variant_id' => $this->selectedItemVariants,
             'addon_ids' => $this->selectedItemAddons,
             'quantity' => 1,
             'remark' => '',
-        ];
+        ]);
 
         $this->closeModal();
         $this->calculateTotals();
@@ -385,6 +387,16 @@ class OrderFormComponent extends Component
         }
     }
 
+    public function printKOTOnly()
+    {
+        if (!$this->order_id) {
+            session()->flash('error', 'No order selected for KOT print.');
+            return;
+        }
+
+        $this->dispatch('printKOTOnly', $this->order_id);
+    }
+
     // saveandsettlement
     public function saveandSettlement()
     {
@@ -513,6 +525,9 @@ class OrderFormComponent extends Component
                 'addon_ids' => json_decode($item->addon_ids, true) ?? [],
                 'quantity' => $item->quantity,
                 'remark' => $item->remark,
+                'kot_group_id' => $item->kot_group_id,
+                'kot_printed' => $item->kot_printed,
+                'kot_printed_at' => $item->kot_printed_at,
             ];
         })->toArray();
 
@@ -531,6 +546,9 @@ class OrderFormComponent extends Component
 
     public function addItemsToOrder($order)
     {
+        // Generate unique KOT group ID for this batch
+        $kotGroupId = 'KOT-' . $order->id . '-' . time();
+        
         foreach ($this->cart as $item) {
             $variant = $item['item']->variants->firstWhere('id', $item['variant_id']);
             $variantPrice = $variant ? $variant->price : 0;
@@ -559,6 +577,9 @@ class OrderFormComponent extends Component
                 'total_price' => ($variantPrice + $addonTotal) * $quantity,
                 'addon_ids' => json_encode($addonIds),
                 'remark' => $item['remark'] ?? null,
+                'kot_group_id' => $kotGroupId,
+                'kot_printed' => false,
+                'kot_printed_at' => null,
             ]);
         }
     }

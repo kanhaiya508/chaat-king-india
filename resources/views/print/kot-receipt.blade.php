@@ -106,7 +106,13 @@
     <div class="line"></div>
 
     <!-- Items Only -->
-    <div class="bold center" style="margin-bottom: 8px;">ITEMS TO PREPARE</div>
+    <div class="bold center" style="margin-bottom: 8px;">NEW ITEMS TO PREPARE</div>
+    
+    @if ($order->items->count() > 0)
+        <div class="muted small center" style="margin-bottom: 8px;">
+            KOT Group: {{ $order->items->first()->kot_group_id ?? 'N/A' }}
+        </div>
+    @endif
     
     <table>
         @foreach ($order->items as $item)
@@ -129,6 +135,13 @@
             @endforeach
         @endforeach
     </table>
+
+    @if ($order->items->count() == 0)
+        <div class="center muted" style="padding: 20px;">
+            <strong>No new items to prepare</strong><br>
+            <small>All items have already been printed</small>
+        </div>
+    @endif
 
     <div class="line"></div>
 

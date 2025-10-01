@@ -21,6 +21,9 @@ class OrderItem extends Model
         'addon_ids',
         'remark',
         'branch_id',
+        'kot_group_id',
+        'kot_printed',
+        'kot_printed_at',
     ];
 
 
@@ -33,6 +36,8 @@ class OrderItem extends Model
 
     protected $casts = [
         'addon_ids' => 'array',
+        'kot_printed' => 'boolean',
+        'kot_printed_at' => 'datetime',
     ];
     public function order()
     {

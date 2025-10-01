@@ -24,7 +24,24 @@ class OrderController extends Controller
 
     public function kotPrint($orderId)
     {
-        $order = Order::with(['items.variant'])->findOrFail($orderId);
+        $order = Order::with(['items' => function($query) {
+            $query->where('kot_printed', false)->orderBy('created_at', 'desc'); // सिर्फ unprinted items, newest first
+        }, 'items.variant'])->findOrFail($orderId);
+        
+        // Check if there are any unprinted items
+        if ($order->items->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No new items to print. All items have already been printed.'
+            ], 400);
+        }
+        
+        // Mark only the unprinted items as printed
+        $order->items()->where('kot_printed', false)->update([
+            'kot_printed' => true,
+            'kot_printed_at' => now(),
+        ]);
+        
         return view('print.kot-receipt', compact('order'));
     }
 

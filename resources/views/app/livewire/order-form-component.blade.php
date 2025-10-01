@@ -239,8 +239,25 @@
                                           </tr>
                                       </thead>
                                       <tbody>
-                                          @php $subtotal = 0; @endphp
-                                          @forelse ($cart as $index => $item)
+                                          @php 
+                                              $subtotal = 0;
+                                              $groupedCart = collect($cart)->groupBy('kot_group_id');
+                                          @endphp
+                                          @foreach ($groupedCart as $kotGroupId => $groupItems)
+                                              @if ($kotGroupId)
+                                                  <tr class="table-info">
+                                                      <td colspan="4" class="fw-bold">
+                                                          <i class="fas fa-print me-2"></i>
+                                                          KOT Group: {{ $kotGroupId }}
+                                                          @if ($groupItems->first()['kot_printed'] ?? false)
+                                                              <span class="badge bg-success ms-2">Printed</span>
+                                                          @else
+                                                              <span class="badge bg-warning ms-2">Pending</span>
+                                                          @endif
+                                                      </td>
+                                                  </tr>
+                                              @endif
+                                              @foreach ($groupItems as $index => $item)
                                               @php
                                                   $variant = $item['item']->variants->firstWhere(
                                                       'id',
@@ -312,13 +329,15 @@
                                                       </div>
                                                   </td>
                                               </tr>
-                                          @empty
+                                              @endforeach
+                                          @endforeach
+                                          @if (empty($cart))
                                               <tr>
                                                   <td colspan="3" class="text-center text-muted">No items
                                                       selected.
                                                   </td>
                                               </tr>
-                                          @endforelse
+                                          @endif
                                       </tbody>
                                   </table>
                               </div>
@@ -751,6 +770,11 @@
                               class="btn  btn-info px-3" />
                           <x-loader-button action="saveOrderAsKOTAndPrint" label="Save & KOT Print"
                               class="btn  btn-success px-3" />
+                          @if ($order_id)
+                              <button type="button" class="btn btn-warning px-3" wire:click="printKOTOnly">
+                                  <i class="fas fa-print me-1"></i>Print KOT Only
+                              </button>
+                          @endif
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
                       </div>
@@ -775,12 +799,17 @@
               
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
-                  window.open(url, '_blank');
+                
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
                   const url = `/orders/${id}/kot-print`;
-                  window.open(url, '_blank');
+                
+              });
+
+              Livewire.on('printKOTOnly', id => {
+                  const url = `/orders/${id}/kot-print`;
+                
               });
           </script>
       @endpush
