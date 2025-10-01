@@ -243,7 +243,7 @@
                                               $subtotal = 0;
                                               // Sort cart by kot_group_id and then by order_item_id (latest first)
                                               $sortedCart = collect($cart)->sortByDesc(function($item) {
-                                                  return $item['order_item_id'] ?? 0;
+                                                  return $item['order_item_id'] ?? 999999; // New items (null) will be first
                                               });
                                               $groupedCart = $sortedCart->groupBy('kot_group_id');
                                           @endphp
@@ -258,6 +258,14 @@
                                                           @else
                                                               <span class="badge bg-warning ms-2">Pending</span>
                                                           @endif
+                                                      </td>
+                                                  </tr>
+                                              @else
+                                                  <tr class="table-warning">
+                                                      <td colspan="4" class="fw-bold">
+                                                          <i class="fas fa-shopping-cart me-2"></i>
+                                                          New Items (Not Saved Yet)
+                                                          <span class="badge bg-info ms-2">Cart</span>
                                                       </td>
                                                   </tr>
                                               @endif

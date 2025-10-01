@@ -125,6 +125,10 @@ class OrderFormComponent extends Component
             'addon_ids' => $this->selectedItemAddons,
             'quantity' => 1,
             'remark' => '',
+            'kot_group_id' => null, // Will be set when saved
+            'kot_printed' => false,
+            'kot_printed_at' => null,
+            'order_item_id' => null, // Will be set when saved
         ]);
 
         $this->closeModal();
