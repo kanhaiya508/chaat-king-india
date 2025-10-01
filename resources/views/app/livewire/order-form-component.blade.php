@@ -786,29 +786,6 @@
               </div>
           @endforeach
 
-          <!-- Print Modal -->
-          <div wire:ignore.self class="modal fade" id="printModal" tabindex="-1" aria-labelledby="printModalLabel" aria-hidden="true">
-              <div class="modal-dialog modal-lg modal-dialog-centered">
-                  <div class="modal-content">
-                      <div class="modal-header">
-                          <h5 class="modal-title" id="printModalLabel">Print Order</h5>
-                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <div class="modal-body">
-                          <div id="printContent">
-                              <!-- Print content will be loaded here -->
-                          </div>
-                      </div>
-                      <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                          <button type="button" class="btn btn-primary" onclick="printContent()">
-                              <i class="fas fa-print me-1"></i> Print
-                          </button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-
           <!-- Sticky Order Summary Footer -->
           <div class="bg-white border-top shadow-lg fixed-bottom py-3">
               <div class="container-xxl px-4">
@@ -879,63 +856,14 @@
                   console.log('OrderFormComponent loaded');
               });
               
-              // Function to load print content in modal
-              function loadPrintContent(url, title = 'Print Order') {
-                  fetch(url)
-                      .then(response => response.text())
-                      .then(html => {
-                          document.getElementById('printContent').innerHTML = html;
-                          document.getElementById('printModalLabel').textContent = title;
-                          const printModal = new bootstrap.Modal(document.getElementById('printModal'));
-                          printModal.show();
-                      })
-                      .catch(error => {
-                          console.error('Error loading print content:', error);
-                          alert('Error loading print content');
-                      });
-              }
-
-              // Function to print the content
-              function printContent() {
-                  const printContent = document.getElementById('printContent');
-                  const printWindow = window.open('', '_blank');
-                  
-                  printWindow.document.write(`
-                      <html>
-                          <head>
-                              <title>Print Order</title>
-                              <style>
-                                  body { font-family: Arial, sans-serif; margin: 20px; }
-                                  .print-header { text-align: center; margin-bottom: 20px; }
-                                  .print-content { margin: 20px 0; }
-                                  @media print {
-                                      body { margin: 0; }
-                                      .no-print { display: none; }
-                                  }
-                              </style>
-                          </head>
-                          <body>
-                              <div class="print-content">
-                                  ${printContent.innerHTML}
-                              </div>
-                          </body>
-                      </html>
-                  `);
-                  
-                  printWindow.document.close();
-                  printWindow.focus();
-                  printWindow.print();
-                  printWindow.close();
-              }
-
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
-                  loadPrintContent(url, 'Print Order');
+                  window.open(url);
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
                   const url = `/orders/${id}/kot-print`;
-                  loadPrintContent(url, 'Print KOT');
+                  window.open(url);
               });
 
               // Function to print specific KOT group
@@ -952,7 +880,8 @@
                   }
                   
                   const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
-                  loadPrintContent(url, 'Print KOT Group');
+                  console.log('Printing KOT Group URL:', url);
+                  window.open(url);
               }
 
           </script>
