@@ -469,6 +469,28 @@ class OrderFormComponent extends Component
         }
     }
 
+    public function hasUnprintedItems()
+    {
+        // Check if we have cart items that are not printed
+        if (!empty($this->cart)) {
+            foreach ($this->cart as $item) {
+                if (!($item['kot_printed'] ?? false)) {
+                    return true;
+                }
+            }
+        }
+
+        // Check if we have an order with unprinted items
+        if ($this->order_id) {
+            $unprintedCount = OrderItem::where('order_id', $this->order_id)
+                ->where('kot_printed', false)
+                ->count();
+            return $unprintedCount > 0;
+        }
+
+        return false;
+    }
+
     public function printUnprintedItems()
     {
         // Check if we have an order ID or if we're editing an existing order

@@ -860,7 +860,7 @@
                               class="btn  btn-success px-3" />
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
-                          @if(($isEditing && $order_id) || (!empty($cart) && !$isEditing))
+                          @if((($isEditing && $order_id) || (!empty($cart) && !$isEditing)) && $this->hasUnprintedItems())
                           <x-loader-button action="printUnprintedItems" label="Print Unprinted"
                               class="btn btn-outline-success px-3" />
                           @endif
