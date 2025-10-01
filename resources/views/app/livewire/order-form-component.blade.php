@@ -9,7 +9,7 @@
                   <div class="d-flex gap-2">
                       <x-loader-button action="Takeaway" label="Takeaway" class="btn btn-primary" />
                       <x-loader-button action="Delivery" label="Delivery" class="btn btn-danger" />
-                      <x-loader-button action="RunningOrder" :label="$isRunningOrder ? 'Back to Tables' : 'Running Orders'" class="btn btn-light" />
+                      <x-loader-button action="RunningOrder" :label="$isRunningOrder ? 'Back to Tables' : 'Orders'" class="btn btn-light" />
                   </div>
 
                   <!-- Right Side Legends -->
@@ -71,8 +71,11 @@
                                       </div>
 
                                       <div class="mb-2">
-                                          <strong class="text-muted">Customer:</strong>
-                                          <span class="text-primary">{{ $order->customer->name ?? 'N/A' }}</span>
+                                        @if ( $order->customer->name)
+                                        <strong class="text-muted">Customer:</strong>
+                                        <span class="text-primary">{{ $order->customer->name ?? 'N/A' }}</span>
+                                        @endif
+
                                       </div>
 
                                       <div class="mb-2">
