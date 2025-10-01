@@ -782,17 +782,6 @@
                               class="btn  btn-info px-3" />
                           <x-loader-button action="saveOrderAsKOTAndPrint" label="Save & KOT Print"
                               class="btn  btn-success px-3" />
-                          @if ($order_id)
-                              <button type="button" class="btn btn-warning px-3" wire:click="printKOTOnly" 
-                                      wire:loading.attr="disabled" wire:target="printKOTOnly">
-                                  <span wire:loading.remove wire:target="printKOTOnly">
-                                      <i class="fas fa-print me-1"></i>Print KOT Only
-                                  </span>
-                                  <span wire:loading wire:target="printKOTOnly">
-                                      <i class="fas fa-spinner fa-spin me-1"></i>Printing...
-                                  </span>
-                              </button>
-                          @endif
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
                       </div>
@@ -825,12 +814,6 @@
                   window.open(url);
               });
 
-              Livewire.on('printKOTOnly', id => {
-                  console.log('Print KOT Only triggered for order:', id);
-                  const url = `/orders/${id}/kot-print`;
-                  console.log('Opening URL:', url);
-                  window.open(url);
-              });
           </script>
       @endpush
 
