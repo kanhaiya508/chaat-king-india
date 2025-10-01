@@ -272,7 +272,7 @@
                                       </span>
                                   </button>
 
-                                  @if($isEditing && $order_id)
+                                  @if(($isEditing && $order_id) || (!empty($cart) && !$isEditing))
                                   <button class="btn btn-sm btn-outline-success" wire:click="printUnprintedItems" 
                                       wire:loading.attr="disabled" wire:target="printUnprintedItems">
                                       <span wire:loading.remove wire:target="printUnprintedItems">

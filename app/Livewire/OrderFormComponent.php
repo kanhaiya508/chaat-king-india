@@ -430,8 +430,24 @@ class OrderFormComponent extends Component
 
     public function printUnprintedItems()
     {
+        // Check if we have an order ID or if we're editing an existing order
+        if (!$this->order_id && !$this->isEditing) {
+            session()->flash('error', 'No order selected. Please select an order first.');
+            return;
+        }
+
+        // If no order_id but we have cart items, save the order first
+        if (!$this->order_id && !empty($this->cart)) {
+            $orderId = $this->saveOrderData('saved');
+            if (!$orderId) {
+                session()->flash('error', 'Failed to save order before printing.');
+                return;
+            }
+            $this->order_id = $orderId;
+        }
+
         if (!$this->order_id) {
-            session()->flash('error', 'No order selected.');
+            session()->flash('error', 'No order available to print.');
             return;
         }
 
