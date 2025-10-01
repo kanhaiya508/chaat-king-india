@@ -461,25 +461,38 @@ class OrderFormComponent extends Component
             return;
         }
 
-        // Generate a new KOT group ID
-        $kotGroupId = 'KOT-' . time() . '-' . rand(1000, 9999);
+        // Group unprinted items by their existing kot_group_id
+        $groupedItems = $unprintedItems->groupBy('kot_group_id');
+        $printedGroups = [];
 
-        // Update unprinted items with KOT group ID
-        $unprintedItems->each(function ($item) use ($kotGroupId) {
-            $item->update([
-                'kot_group_id' => $kotGroupId,
-                'kot_printed' => true,
-                'kot_printed_at' => now(),
-            ]);
-        });
+        // Process each group separately
+        foreach ($groupedItems as $kotGroupId => $items) {
+            // If no kot_group_id, create a new one
+            if (!$kotGroupId) {
+                $kotGroupId = 'KOT-' . time() . '-' . rand(1000, 9999);
+            }
+
+            // Mark items as printed but keep their group ID
+            $items->each(function ($item) use ($kotGroupId) {
+                $item->update([
+                    'kot_group_id' => $kotGroupId,
+                    'kot_printed' => true,
+                    'kot_printed_at' => now(),
+                ]);
+            });
+
+            $printedGroups[] = $kotGroupId;
+        }
 
         // Refresh the cart to show updated status
         $this->setOrderValues(Order::find($this->order_id));
 
-        // Dispatch event to print
-        $this->dispatch('printKOTGroup', $kotGroupId);
+        // Dispatch event to print each group separately
+        foreach ($printedGroups as $kotGroupId) {
+            $this->dispatch('printKOTGroup', $kotGroupId);
+        }
         
-        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' items.');
+        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' items in ' . count($printedGroups) . ' groups.');
     }
 
 
