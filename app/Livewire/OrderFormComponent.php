@@ -127,11 +127,6 @@ class OrderFormComponent extends Component
             'remark' => '',
         ]);
 
-        // If editing existing order, save to database immediately
-        if ($this->isEditing && $this->order_id) {
-            $this->saveCartItemToDatabase();
-        }
-
         $this->closeModal();
         $this->calculateTotals();
     }
@@ -143,15 +138,6 @@ class OrderFormComponent extends Component
 
     public function removeItem($index)
     {
-        // If editing existing order, remove from database too
-        if ($this->isEditing && $this->order_id && isset($this->cart[$index])) {
-            $cartItem = $this->cart[$index];
-            if (isset($cartItem['order_item_id'])) {
-                // Remove from database
-                OrderItem::where('id', $cartItem['order_item_id'])->delete();
-            }
-        }
-        
         unset($this->cart[$index]);
         $this->cart = array_values($this->cart); // reindex
         $this->calculateTotals();
@@ -173,11 +159,6 @@ class OrderFormComponent extends Component
     {
         if (isset($this->cart[$index]['quantity'])) {
             $this->cart[$index]['quantity'] += 1;
-            
-            // If editing existing order, update database
-            if ($this->isEditing && $this->order_id && isset($this->cart[$index]['order_item_id'])) {
-                $this->updateCartItemInDatabase($index);
-            }
         }
         $this->calculateTotals();
     }
@@ -186,11 +167,6 @@ class OrderFormComponent extends Component
     {
         if (isset($this->cart[$index]['quantity']) && $this->cart[$index]['quantity'] > 1) {
             $this->cart[$index]['quantity'] -= 1;
-            
-            // If editing existing order, update database
-            if ($this->isEditing && $this->order_id && isset($this->cart[$index]['order_item_id'])) {
-                $this->updateCartItemInDatabase($index);
-            }
         }
         $this->calculateTotals();
     }
@@ -432,88 +408,6 @@ class OrderFormComponent extends Component
         $this->dispatch('printKOTOnly', $this->order_id);
     }
 
-    public function saveCartItemToDatabase()
-    {
-        if (!$this->order_id || empty($this->cart)) {
-            return;
-        }
-
-        $order = Order::find($this->order_id);
-        if (!$order) {
-            return;
-        }
-
-        // Get the first item from cart (newly added)
-        $newItem = $this->cart[0];
-        
-        // Generate unique KOT group ID for this batch
-        $kotGroupId = 'KOT-' . $this->order_id . '-' . time();
-        
-        $variant = $newItem['item']->variants->firstWhere('id', $newItem['variant_id']);
-        $variantPrice = $variant ? $variant->price : 0;
-        $addonTotal = 0;
-        $addonIds = [];
-
-        if (!empty($newItem['addon_ids'])) {
-            foreach ($newItem['addon_ids'] as $addonId) {
-                $addon = $newItem['item']->addons->firstWhere('id', $addonId);
-                if ($addon) {
-                    $addonTotal += $addon->price;
-                    $addonIds[] = $addon->id;
-                }
-            }
-        }
-
-        $quantity = $newItem['quantity'] ?? 1;
-
-        $orderItem = OrderItem::create([
-            'order_id' => $this->order_id,
-            'item_id' => $newItem['item']->id ?? null,
-            'variant_id' => $newItem['variant_id'] ?? null,
-            'item_name' => $newItem['item']->name,
-            'quantity' => $quantity,
-            'price' => $variantPrice,
-            'total_price' => ($variantPrice + $addonTotal) * $quantity,
-            'addon_ids' => json_encode($addonIds),
-            'remark' => $newItem['remark'] ?? null,
-            'kot_group_id' => $kotGroupId,
-            'kot_printed' => false,
-            'kot_printed_at' => null,
-        ]);
-
-        // Update cart item with order_item_id for future reference
-        $this->cart[0]['order_item_id'] = $orderItem->id;
-        $this->cart[0]['kot_group_id'] = $kotGroupId;
-    }
-
-    public function updateCartItemInDatabase($index)
-    {
-        if (!isset($this->cart[$index]['order_item_id'])) {
-            return;
-        }
-
-        $cartItem = $this->cart[$index];
-        $variant = $cartItem['item']->variants->firstWhere('id', $cartItem['variant_id']);
-        $variantPrice = $variant ? $variant->price : 0;
-        $addonTotal = 0;
-
-        if (!empty($cartItem['addon_ids'])) {
-            foreach ($cartItem['addon_ids'] as $addonId) {
-                $addon = $cartItem['item']->addons->firstWhere('id', $addonId);
-                if ($addon) {
-                    $addonTotal += $addon->price;
-                }
-            }
-        }
-
-        $quantity = $cartItem['quantity'] ?? 1;
-        $totalPrice = ($variantPrice + $addonTotal) * $quantity;
-
-        OrderItem::where('id', $cartItem['order_item_id'])->update([
-            'quantity' => $quantity,
-            'total_price' => $totalPrice,
-        ]);
-    }
 
     // saveandsettlement
     public function saveandSettlement()
