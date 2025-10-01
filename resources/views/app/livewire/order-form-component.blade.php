@@ -251,13 +251,21 @@
                                               @if ($kotGroupId)
                                                   <tr class="table-info">
                                                       <td colspan="4" class="fw-bold">
-                                                          <i class="fas fa-print me-2"></i>
-                                                          KOT Group: {{ $kotGroupId }}
-                                                          @if ($groupItems->first()['kot_printed'] ?? false)
-                                                              <span class="badge bg-success ms-2">Printed</span>
-                                                          @else
-                                                              <span class="badge bg-warning ms-2">Pending</span>
-                                                          @endif
+                                                          <div class="d-flex justify-content-between align-items-center">
+                                                              <div>
+                                                                  <i class="fas fa-print me-2"></i>
+                                                                  KOT Group: {{ $kotGroupId }}
+                                                                  @if ($groupItems->first()['kot_printed'] ?? false)
+                                                                      <span class="badge bg-success ms-2">Printed</span>
+                                                                  @else
+                                                                      <span class="badge bg-warning ms-2">Pending</span>
+                                                                  @endif
+                                                              </div>
+                                                              <button type="button" class="btn btn-sm btn-outline-primary" 
+                                                                  onclick="printKOTGroup('{{ $kotGroupId }}')">
+                                                                  <i class="fas fa-print me-1"></i> Print Group
+                                                              </button>
+                                                          </div>
                                                       </td>
                                                   </tr>
                                               @else
@@ -813,6 +821,17 @@
                   const url = `/orders/${id}/kot-print`;
                   window.open(url);
               });
+
+              // Function to print specific KOT group
+              function printKOTGroup(kotGroupId) {
+                  if (!kotGroupId) {
+                      alert('Invalid KOT Group ID');
+                      return;
+                  }
+                  
+                  const url = `/orders/{{ $order_id }}/kot-group-print/${kotGroupId}`;
+                  window.open(url);
+              }
 
           </script>
       @endpush

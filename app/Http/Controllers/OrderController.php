@@ -49,6 +49,23 @@ class OrderController extends Controller
         return view('print.kot-receipt', compact('order'));
     }
 
+    public function kotGroupPrint($orderId, $kotGroupId)
+    {
+        $order = Order::with(['items' => function($query) use ($kotGroupId) {
+            $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
+        }, 'items.variant'])->findOrFail($orderId);
+        
+        // Check if there are any items in this group
+        if ($order->items->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No items found in this KOT group.'
+            ], 400);
+        }
+        
+        return view('print.kot-receipt', compact('order'));
+    }
+
     public function finalBill($orderId)
     {
         $order = Order::with(['customer', 'table', 'staff', 'payments'])->findOrFail($orderId);
