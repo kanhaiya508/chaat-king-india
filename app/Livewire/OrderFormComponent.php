@@ -418,6 +418,17 @@ class OrderFormComponent extends Component
             return;
         }
 
+        // Check if there are any unprinted items
+        $unprintedItems = OrderItem::where('order_id', $this->order_id)
+            ->where('kot_printed', false)
+            ->count();
+
+        if ($unprintedItems == 0) {
+            session()->flash('error', 'No new items to print. All items have already been printed.');
+            return;
+        }
+
+        \Log::info('Print KOT Only - Order ID: ' . $this->order_id . ', Unprinted items: ' . $unprintedItems);
         $this->dispatch('printKOTOnly', $this->order_id);
     }
 
