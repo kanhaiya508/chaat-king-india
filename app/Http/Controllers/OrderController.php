@@ -36,10 +36,14 @@ class OrderController extends Controller
             ], 400);
         }
         
-        // Mark only the unprinted items as printed
+        // Generate KOT group ID for this print batch
+        $kotGroupId = 'KOT-' . $orderId . '-' . time();
+        
+        // Mark only the unprinted items as printed and assign KOT group
         $order->items()->where('kot_printed', false)->update([
             'kot_printed' => true,
             'kot_printed_at' => now(),
+            'kot_group_id' => $kotGroupId, // Set KOT group when printed
         ]);
         
         return view('print.kot-receipt', compact('order'));
