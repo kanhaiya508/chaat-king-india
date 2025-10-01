@@ -721,7 +721,9 @@ class OrderFormComponent extends Component
     public function setOrderValues(Order $order)
     {
         $this->cart = $order->items()
-            ->orderBy('created_at', 'desc') // Latest items first
+            ->orderBy('kot_group_id', 'asc') // Group by KOT group first
+            ->orderBy('kot_printed', 'asc') // Unprinted items first within each group
+            ->orderBy('created_at', 'desc') // Latest items first within each group
             ->get()
             ->map(function ($item) {
                 return [

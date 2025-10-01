@@ -297,10 +297,12 @@
                                       <tbody>
                                           @php 
                                               $subtotal = 0;
-                                              // Sort cart by kot_group_id and then by order_item_id (latest first)
-                                              $sortedCart = collect($cart)->sortByDesc(function($item) {
-                                                  return $item['order_item_id'] ?? 999999; // New items (null) will be first
-                                              });
+                                              // Sort cart to maintain group order and item order within groups
+                                              $sortedCart = collect($cart)->sortBy([
+                                                  ['kot_group_id', 'asc'],
+                                                  ['kot_printed', 'asc'], // Unprinted first
+                                                  ['order_item_id', 'desc'] // Latest first within group
+                                              ]);
                                               // Group by kot_group_id, but keep printed and unprinted items separate
                                               $groupedCart = $sortedCart->groupBy(function($item) {
                                                   if ($item['kot_group_id']) {
