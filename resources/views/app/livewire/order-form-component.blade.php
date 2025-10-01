@@ -58,47 +58,48 @@
                   <!-- Orders Grid -->
                   <div class="row">
                       @forelse($allOrders as $order)
-                          <div class="col-md-2 col-sm-6 mb-3" wire:click="viewOrder({{ $order->id }})"
+                          <div class="col-lg-3 col-md-4 col-sm-6 mb-4" wire:click="viewOrder({{ $order->id }})"
                               style="cursor:pointer;">
                               <div class="card border shadow-sm rounded-3 h-100">
-                                  <div class="card-body">
-                                      <div class="d-flex justify-content-between align-items-center mb-2">
-                                          <h5 class="card-title mb-0">#{{ $order->id }}</h5>
-                                          <span class="badge bg-primary text-dark">{{ ucfirst($order->type) }}</span>
-                                          <span class="badge bg-warning text-dark">{{ ucfirst($order->status) }}</span>
+                                  <div class="card-body p-3">
+                                      <div class="d-flex justify-content-between align-items-center mb-3">
+                                          <h4 class="card-title mb-0 text-primary">#{{ $order->id }}</h4>
+                                          <div class="d-flex flex-column gap-1">
+                                              <span class="badge bg-primary text-white small">{{ ucfirst($order->type) }}</span>
+                                              <span class="badge bg-warning text-dark small">{{ ucfirst($order->status) }}</span>
+                                          </div>
                                       </div>
 
-                                      <p class="mb-1">
-                                          <strong>Customer:</strong>
+                                      <div class="mb-2">
+                                          <strong class="text-muted">Customer:</strong>
                                           <span class="text-primary">{{ $order->customer->name ?? 'N/A' }}</span>
-                                      </p>
+                                      </div>
 
-                                      <p class="mb-1">
-                                          <strong>Type:</strong>
+                                      <div class="mb-2">
+                                          <strong class="text-muted">Type:</strong>
                                           @if ($order->table_id)
                                               <span class="text-primary">Table #{{ $order->table_id }}</span>
                                           @else
                                               <span class="text-success">{{ ucfirst($order->type) }}</span>
                                           @endif
-                                      </p>
+                                      </div>
 
-                                      <p class="mb-0">
-                                          <strong>Total:</strong>
-                                          <span
-                                              class="text-danger fw-bold">₹{{ number_format($order->total, 2) }}</span>
-                                      </p>
+                                      <div class="mb-2">
+                                          <strong class="text-muted">Total:</strong>
+                                          <span class="text-danger fw-bold fs-5">₹{{ number_format($order->total, 2) }}</span>
+                                      </div>
 
-                                      <p class="mb-0">
-                                          <small class="text-muted">{{ $order->created_at->format('d M, h:i A') }}</small>
-                                      </p>
+                                      <div class="text-muted small">
+                                          <i class="fas fa-clock me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
+                                      </div>
                                   </div>
                               </div>
                           </div>
                       @empty
                           <div class="col-12">
-                              <div class="text-center py-4">
-                                  <i class="fas fa-box-open fa-3x text-muted mb-3"></i>
-                                  <h5 class="text-muted">No orders found</h5>
+                              <div class="text-center py-5">
+                                  <i class="fas fa-box-open fa-4x text-muted mb-4"></i>
+                                  <h4 class="text-muted">No orders found</h4>
                                   <p class="text-muted">Try adjusting your search or filter criteria</p>
                               </div>
                           </div>
