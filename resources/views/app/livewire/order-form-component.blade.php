@@ -271,6 +271,18 @@
                                           <i class="fas fa-spinner fa-spin"></i> Clearing...
                                       </span>
                                   </button>
+
+                                  @if($isEditing && $order_id)
+                                  <button class="btn btn-sm btn-outline-success" wire:click="printUnprintedItems" 
+                                      wire:loading.attr="disabled" wire:target="printUnprintedItems">
+                                      <span wire:loading.remove wire:target="printUnprintedItems">
+                                          <i class="fas fa-print me-1"></i> Print Unprinted
+                                      </span>
+                                      <span wire:loading wire:target="printUnprintedItems">
+                                          <i class="fas fa-spinner fa-spin"></i> Printing...
+                                      </span>
+                                  </button>
+                                  @endif
                               </div>
 
                               <div style="min-height: 400px; max-height:400px; overflow-y: auto;">
@@ -304,11 +316,20 @@
                                                                   @else
                                                                       <span class="badge bg-warning ms-2">Pending</span>
                                                                   @endif
+                                                                  <small class="text-muted ms-2">
+                                                                      ({{ $groupItems->count() }} items)
+                                                                  </small>
                                                               </div>
+                                                              @if (!($groupItems->first()['kot_printed'] ?? false))
                                                               <button type="button" class="btn btn-sm btn-outline-primary" 
                                                                   onclick="printKOTGroup('{{ $kotGroupId }}')">
                                                                   <i class="fas fa-print me-1"></i> Print Group
                                                               </button>
+                                                              @else
+                                                              <span class="text-success small">
+                                                                  <i class="fas fa-check me-1"></i>Already Printed
+                                                              </span>
+                                                              @endif
                                                           </div>
                                                       </td>
                                                   </tr>
@@ -883,6 +904,11 @@
                   console.log('Printing KOT Group URL:', url);
                   window.open(url);
               }
+
+              // Listen for printKOTGroup event from Livewire
+              Livewire.on('printKOTGroup', (kotGroupId) => {
+                  printKOTGroup(kotGroupId);
+              });
 
           </script>
       @endpush

@@ -428,6 +428,44 @@ class OrderFormComponent extends Component
         }
     }
 
+    public function printUnprintedItems()
+    {
+        if (!$this->order_id) {
+            session()->flash('error', 'No order selected.');
+            return;
+        }
+
+        // Get unprinted items for this order
+        $unprintedItems = OrderItem::where('order_id', $this->order_id)
+            ->where('kot_printed', false)
+            ->get();
+
+        if ($unprintedItems->isEmpty()) {
+            session()->flash('info', 'No unprinted items found.');
+            return;
+        }
+
+        // Generate a new KOT group ID
+        $kotGroupId = 'KOT-' . time() . '-' . rand(1000, 9999);
+
+        // Update unprinted items with KOT group ID
+        $unprintedItems->each(function ($item) use ($kotGroupId) {
+            $item->update([
+                'kot_group_id' => $kotGroupId,
+                'kot_printed' => true,
+                'kot_printed_at' => now(),
+            ]);
+        });
+
+        // Refresh the cart to show updated status
+        $this->setOrderValues(Order::find($this->order_id));
+
+        // Dispatch event to print
+        $this->dispatch('printKOTGroup', $kotGroupId);
+        
+        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' items.');
+    }
+
 
 
     public function saveCartItemToDatabase()
