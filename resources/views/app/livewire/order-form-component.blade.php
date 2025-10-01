@@ -301,17 +301,30 @@
                                               $sortedCart = collect($cart)->sortByDesc(function($item) {
                                                   return $item['order_item_id'] ?? 999999; // New items (null) will be first
                                               });
-                                              $groupedCart = $sortedCart->groupBy('kot_group_id');
+                                              // Group by kot_group_id, but keep printed and unprinted items separate
+                                              $groupedCart = $sortedCart->groupBy(function($item) {
+                                                  if ($item['kot_group_id']) {
+                                                      return $item['kot_group_id'] . '_' . ($item['kot_printed'] ? 'printed' : 'pending');
+                                                  }
+                                                  return 'new_items';
+                                              });
                                           @endphp
-                                          @foreach ($groupedCart as $kotGroupId => $groupItems)
-                                              @if ($kotGroupId)
-                                                  <tr class="table-info">
+                                          @foreach ($groupedCart as $kotGroupKey => $groupItems)
+                                              @if ($kotGroupKey !== 'new_items')
+                                                  @php
+                                                      // Extract kot_group_id and status from the key
+                                                      $parts = explode('_', $kotGroupKey);
+                                                      $kotGroupId = $parts[0];
+                                                      $status = end($parts);
+                                                      $isPrinted = $status === 'printed';
+                                                  @endphp
+                                                  <tr class="{{ $isPrinted ? 'table-success' : 'table-info' }}">
                                                       <td colspan="4" class="fw-bold">
                                                           <div class="d-flex justify-content-between align-items-center">
                                                               <div>
                                                                   <i class="fas fa-print me-2"></i>
                                                                   KOT Group: {{ $kotGroupId }}
-                                                                  @if ($groupItems->first()['kot_printed'] ?? false)
+                                                                  @if ($isPrinted)
                                                                       <span class="badge bg-success ms-2">Printed</span>
                                                                   @else
                                                                       <span class="badge bg-warning ms-2">Pending</span>
@@ -320,7 +333,7 @@
                                                                       ({{ $groupItems->count() }} items)
                                                                   </small>
                                                               </div>
-                                                              @if (!($groupItems->first()['kot_printed'] ?? false))
+                                                              @if (!$isPrinted)
                                                               <button type="button" class="btn btn-sm btn-outline-primary" 
                                                                   onclick="printKOTGroup('{{ $kotGroupId }}')">
                                                                   <i class="fas fa-print me-1"></i> Print Group
@@ -339,6 +352,9 @@
                                                           <i class="fas fa-shopping-cart me-2"></i>
                                                           New Items (Not Saved Yet)
                                                           <span class="badge bg-info ms-2">Cart</span>
+                                                          <small class="text-muted ms-2">
+                                                              ({{ $groupItems->count() }} items)
+                                                          </small>
                                                       </td>
                                                   </tr>
                                               @endif
