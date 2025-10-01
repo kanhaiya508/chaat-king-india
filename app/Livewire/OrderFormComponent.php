@@ -636,19 +636,22 @@ class OrderFormComponent extends Component
 
     public function setOrderValues(Order $order)
     {
-        $this->cart = $order->items->map(function ($item) {
-            return [
-                'item' => $item->item,
-                'variant_id' => $item->variant_id,
-                'addon_ids' => json_decode($item->addon_ids, true) ?? [],
-                'quantity' => $item->quantity,
-                'remark' => $item->remark,
-                'kot_group_id' => $item->kot_group_id,
-                'kot_printed' => $item->kot_printed,
-                'kot_printed_at' => $item->kot_printed_at,
-                'order_item_id' => $item->id, // Add order_item_id for database operations
-            ];
-        })->toArray();
+        $this->cart = $order->items()
+            ->orderBy('created_at', 'desc') // Latest items first
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'item' => $item->item,
+                    'variant_id' => $item->variant_id,
+                    'addon_ids' => json_decode($item->addon_ids, true) ?? [],
+                    'quantity' => $item->quantity,
+                    'remark' => $item->remark,
+                    'kot_group_id' => $item->kot_group_id,
+                    'kot_printed' => $item->kot_printed,
+                    'kot_printed_at' => $item->kot_printed_at,
+                    'order_item_id' => $item->id, // Add order_item_id for database operations
+                ];
+            })->toArray();
 
         $this->customerId = null;
         $this->customerName = $order->customer->name ?? '';

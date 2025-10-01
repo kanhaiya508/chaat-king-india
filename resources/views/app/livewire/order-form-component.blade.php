@@ -241,7 +241,11 @@
                                       <tbody>
                                           @php 
                                               $subtotal = 0;
-                                              $groupedCart = collect($cart)->groupBy('kot_group_id');
+                                              // Sort cart by kot_group_id and then by order_item_id (latest first)
+                                              $sortedCart = collect($cart)->sortByDesc(function($item) {
+                                                  return $item['order_item_id'] ?? 0;
+                                              });
+                                              $groupedCart = $sortedCart->groupBy('kot_group_id');
                                           @endphp
                                           @foreach ($groupedCart as $kotGroupId => $groupItems)
                                               @if ($kotGroupId)
