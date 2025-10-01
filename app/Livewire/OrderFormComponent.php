@@ -421,10 +421,51 @@ class OrderFormComponent extends Component
         $orderId = $this->saveOrderData('kot_print');
 
         if ($orderId) {
+            // After saving, mark all items as printed with a new KOT group
+            $this->markItemsAsPrinted($orderId);
+            
             $this->resetOrderForm();
             $this->dispatch('orderSavedForKOTPrint', $orderId);
         } else {
             session()->flash('error', 'Failed to save KOT & print.');
+        }
+    }
+
+    private function markItemsAsPrinted($orderId)
+    {
+        // Get all items for this order
+        $items = OrderItem::where('order_id', $orderId)->get();
+        
+        if ($items->isEmpty()) {
+            return;
+        }
+
+        // Group items by their existing kot_group_id
+        $groupedItems = $items->groupBy('kot_group_id');
+        $printedGroups = [];
+
+        // Process each group separately
+        foreach ($groupedItems as $kotGroupId => $groupItems) {
+            // If no kot_group_id, create a new one
+            if (!$kotGroupId) {
+                $kotGroupId = 'KOT-' . time() . '-' . rand(1000, 9999);
+            }
+
+            // Mark items as printed but keep their group ID
+            $groupItems->each(function ($item) use ($kotGroupId) {
+                $item->update([
+                    'kot_group_id' => $kotGroupId,
+                    'kot_printed' => true,
+                    'kot_printed_at' => now(),
+                ]);
+            });
+
+            $printedGroups[] = $kotGroupId;
+        }
+
+        // Dispatch print events for each group
+        foreach ($printedGroups as $kotGroupId) {
+            $this->dispatch('printKOTGroup', $kotGroupId);
         }
     }
 
@@ -754,9 +795,6 @@ class OrderFormComponent extends Component
 
     public function addItemsToOrder($order)
     {
-        // Don't set kot_group_id here - it will be set when KOT is printed
-        $kotGroupId = null;
-        
         foreach ($this->cart as $item) {
             $variant = $item['item']->variants->firstWhere('id', $item['variant_id']);
             $variantPrice = $variant ? $variant->price : 0;
@@ -785,9 +823,9 @@ class OrderFormComponent extends Component
                 'total_price' => ($variantPrice + $addonTotal) * $quantity,
                 'addon_ids' => json_encode($addonIds),
                 'remark' => $item['remark'] ?? null,
-                'kot_group_id' => $kotGroupId, // Will be set when KOT is printed
-                'kot_printed' => false,
-                'kot_printed_at' => null,
+                'kot_group_id' => $item['kot_group_id'] ?? null, // Preserve existing kot_group_id
+                'kot_printed' => $item['kot_printed'] ?? false, // Preserve existing kot_printed status
+                'kot_printed_at' => $item['kot_printed_at'] ?? null, // Preserve existing kot_printed_at
             ]);
         }
     }
