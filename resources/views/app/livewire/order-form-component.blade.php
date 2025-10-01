@@ -910,9 +910,10 @@
                       return;
                   }
                   
-                  const orderId = {{ $order_id ?? 'null' }};
+                  // Get order ID from Livewire component
+                  const orderId = @this.order_id;
                   if (!orderId) {
-                      alert('Order ID not found');
+                      alert('Order ID not found. Please save the order first.');
                       return;
                   }
                   
