@@ -829,7 +829,14 @@
                       return;
                   }
                   
-                  const url = `/orders/{{ $order_id }}/kot-group-print/${kotGroupId}`;
+                  const orderId = {{ $order_id ?? 'null' }};
+                  if (!orderId) {
+                      alert('Order ID not found');
+                      return;
+                  }
+                  
+                  const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
+                  console.log('Printing KOT Group URL:', url);
                   window.open(url);
               }
 

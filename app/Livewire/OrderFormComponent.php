@@ -653,8 +653,8 @@ class OrderFormComponent extends Component
 
     public function addItemsToOrder($order)
     {
-        // Generate unique KOT group ID for this batch
-        $kotGroupId = 'KOT-' . $order->id . '-' . time();
+        // Don't set kot_group_id here - it will be set when KOT is printed
+        $kotGroupId = null;
         
         foreach ($this->cart as $item) {
             $variant = $item['item']->variants->firstWhere('id', $item['variant_id']);
@@ -684,7 +684,7 @@ class OrderFormComponent extends Component
                 'total_price' => ($variantPrice + $addonTotal) * $quantity,
                 'addon_ids' => json_encode($addonIds),
                 'remark' => $item['remark'] ?? null,
-                'kot_group_id' => $kotGroupId,
+                'kot_group_id' => $kotGroupId, // Will be set when KOT is printed
                 'kot_printed' => false,
                 'kot_printed_at' => null,
             ]);
