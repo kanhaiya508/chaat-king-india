@@ -46,6 +46,11 @@ class OrderController extends Controller
             'kot_group_id' => $kotGroupId, // Set KOT group when printed
         ]);
         
+        // Reload order with updated items to get the new kot_group_id
+        $order->load(['items' => function($query) use ($kotGroupId) {
+            $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
+        }, 'items.variant']);
+        
         return view('print.kot-receipt', compact('order'));
     }
 

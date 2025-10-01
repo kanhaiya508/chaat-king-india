@@ -112,14 +112,22 @@
         <div class="muted small center" style="margin-bottom: 8px;">
             KOT Group: {{ $order->items->first()->kot_group_id ?? 'N/A' }}
         </div>
+        <div class="muted small center" style="margin-bottom: 8px;">
+            Items: {{ $order->items->count() }} | Total: ₹{{ number_format($order->items->sum('total_price'), 2) }}
+        </div>
     @endif
     
     <table>
+        @php $itemCount = 0; @endphp
         @foreach ($order->items as $item)
+            @php $itemCount++; @endphp
             <tr>
                 <td class="w-70">
                     <strong>{{ $item->item_name }}</strong><br>
                     <span style="font-size: 12px;">Qty: {{ $item->quantity }}</span>
+                    @if ($item->remark)
+                        <br><span style="font-size: 11px; color: #666;">Note: {{ $item->remark }}</span>
+                    @endif
                 </td>
                 <td class="right w-30">
                     <span style="font-size: 12px;">₹{{ number_format($item->total_price, 2) }}</span>
@@ -133,6 +141,10 @@
                     <td class="right w-30" style="font-size: 12px;">₹{{ number_format($addon->price, 2) }}</td>
                 </tr>
             @endforeach
+            
+            @if ($itemCount < $order->items->count())
+                <tr><td colspan="2" style="height: 4px;"></td></tr>
+            @endif
         @endforeach
     </table>
 
