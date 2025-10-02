@@ -9,10 +9,15 @@
         /* 80mm thermal approx */
         body {
             font-family: 'Courier New', monospace;
-            font-size: 14px;
+            font-size: 12px;
             width: 280px;
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #f5f5f5;
         }
         
         @media print {
@@ -20,10 +25,18 @@
                 margin: 0;
                 padding: 0;
                 width: 100%;
+                min-height: auto;
+                display: block;
             }
             
             .no-print {
                 display: none !important;
+            }
+            
+            .print-content {
+                width: 100%;
+                max-width: 280px;
+                margin: 0 auto;
             }
         }
 
@@ -46,7 +59,7 @@
 
         table {
             width: 100%;
-            font-size: 14px;
+            font-size: 12px;
             border-collapse: collapse;
         }
 
@@ -83,7 +96,20 @@
         
         .print-content {
             margin: 0;
-            padding: 0;
+            padding: 10px;
+            width: 100%;
+            max-width: 280px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        @media print {
+            .print-content {
+                box-shadow: none;
+                border-radius: 0;
+                background: white;
+            }
         }
     </style>
 </head>
