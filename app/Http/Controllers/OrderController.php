@@ -25,31 +25,19 @@ class OrderController extends Controller
     public function kotPrint($orderId)
     {
         $order = Order::with(['items' => function($query) {
-            $query->where('kot_printed', false)->orderBy('created_at', 'desc'); // सिर्फ unprinted items, newest first
-        }, 'items.variant'])->findOrFail($orderId);
+            $query->orderBy('kot_group_id', 'asc')
+                  ->orderBy('kot_printed', 'asc')
+                  ->orderBy('created_at', 'desc');
+        }, 'items.variant', 'customer', 'table', 'staff'])->findOrFail($orderId);
         
-        // Check if there are any unprinted items
+        // Check if there are any items
         if ($order->items->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'No new items to print. All items have already been printed.'
+                'message' => 'No items found in this order.'
             ], 400);
         }
         
-        // Generate KOT group ID for this print batch
-        $kotGroupId = 'KOT-' . $orderId . '-' . time();
-        
-        // Mark only the unprinted items as printed and assign KOT group
-        $order->items()->where('kot_printed', false)->update([
-            'kot_printed' => true,
-            'kot_printed_at' => now(),
-            'kot_group_id' => $kotGroupId, // Set KOT group when printed
-        ]);
-        
-        // Reload order with updated items to get the new kot_group_id
-        $order->load(['items' => function($query) use ($kotGroupId) {
-            $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
-        }, 'items.variant']);
         return view('print.kot-receipt', compact('order'));
     }
 
@@ -57,7 +45,8 @@ class OrderController extends Controller
     {
         $order = Order::with(['items' => function($query) use ($kotGroupId) {
             $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
-        }, 'items.variant'])->findOrFail($orderId);
+        }, 'items.variant', 'customer', 'table', 'staff'])->findOrFail($orderId);
+        
         // Check if there are any items in this group
         if ($order->items->isEmpty()) {
             return response()->json([
@@ -65,6 +54,7 @@ class OrderController extends Controller
                 'message' => 'No items found in this KOT group.'
             ], 400);
         }
+        
         return view('print.kot-receipt', compact('order'));
     }
 

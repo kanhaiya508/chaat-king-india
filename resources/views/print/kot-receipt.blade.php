@@ -76,11 +76,11 @@
         $branch = $order->branch; // Branch relation
     @endphp
 
-    <!-- KOT Header -->
+    {{-- <!-- KOT Header -->
     <div class="kot-header center bold">
         <div style="font-size: 16px;">KITCHEN ORDER TICKET</div>
         <div style="font-size: 12px;">{{ $branch->name ?? 'Your Store' }}</div>
-    </div>
+    </div> --}}
 
     <!-- Order Info -->
     <table>
@@ -106,11 +106,16 @@
     <div class="line"></div>
 
     <!-- Items Only -->
-    <div class="bold center" style="margin-bottom: 8px;">NEW ITEMS TO PREPARE</div>
+    <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
     
     @if ($order->items->count() > 0)
+        @php
+            $kotGroups = $order->items->groupBy('kot_group_id');
+            $firstGroup = $kotGroups->first();
+            $kotGroupId = $firstGroup->first()->kot_group_id ?? 'N/A';
+        @endphp
         <div class="muted small center" style="margin-bottom: 8px;">
-            KOT Group: {{ $order->items->first()->kot_group_id ?? 'N/A' }}
+            KOT Group: {{ $kotGroupId }}
         </div>
         <div class="muted small center" style="margin-bottom: 8px;">
             Items: {{ $order->items->count() }} | Total: ₹{{ number_format($order->items->sum('total_price'), 2) }}
@@ -150,8 +155,8 @@
 
     @if ($order->items->count() == 0)
         <div class="center muted" style="padding: 20px;">
-            <strong>No new items to prepare</strong><br>
-            <small>All items have already been printed</small>
+            <strong>No items to prepare</strong><br>
+            <small>No items found in this order</small>
         </div>
     @endif
 

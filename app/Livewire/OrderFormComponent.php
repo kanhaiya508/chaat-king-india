@@ -1006,6 +1006,160 @@ class OrderFormComponent extends Component
         }
     }
 
+    public function printKOTDirectly()
+    {
+        if (empty($this->cart)) {
+            session()->flash('error', 'No items in cart to print.');
+            return;
+        }
+
+        // Create a temporary order for printing
+        $order = new \App\Models\Order();
+        $order->id = 'TEMP-' . time();
+        $order->type = $this->type;
+        $order->table_id = $this->table_id;
+        $order->customer_id = $this->customer_id;
+        $order->created_at = now();
+        $order->remark = $this->remark;
+
+        // Create temporary order items
+        $orderItems = collect();
+        foreach ($this->cart as $cartItem) {
+            $orderItem = new \App\Models\OrderItem();
+            $orderItem->item_name = $cartItem['item']->name;
+            $orderItem->quantity = $cartItem['quantity'];
+            $orderItem->unit_price = $cartItem['item']->price;
+            $orderItem->total_price = $cartItem['item']->price * $cartItem['quantity'];
+            $orderItem->remark = $cartItem['remark'] ?? '';
+            $orderItem->kot_group_id = 'TEMP-KOT-' . time();
+            $orderItem->kot_printed = false;
+            $orderItems->push($orderItem);
+        }
+        $order->setRelation('items', $orderItems);
+
+        // Create customer object
+        if ($this->customer_id) {
+            $customer = \App\Models\Customer::find($this->customer_id);
+        } else {
+            $customer = new \App\Models\Customer();
+            $customer->name = 'Walk-in Customer';
+        }
+        $order->setRelation('customer', $customer);
+
+        // Create table object
+        if ($this->table_id) {
+            $table = \App\Models\Table::find($this->table_id);
+            $order->setRelation('table', $table);
+        }
+
+        // Generate KOT HTML
+        $kotHtml = $this->generateKOTHTML($order);
+        
+        // Dispatch print event
+        $this->dispatch('printKOTHTML', $kotHtml);
+    }
+
+    private function generateKOTHTML($order)
+    {
+        $html = '<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>KOT - Kitchen Order Ticket</title>
+    <style>
+        body {
+            font-family: "Courier New", monospace;
+            font-size: 14px;
+            width: 280px;
+            margin: 0 auto;
+        }
+        .center { text-align: center; }
+        .bold { font-weight: bold; }
+        .muted { color: #333; }
+        .line { border-top: 1px dashed #000; margin: 6px 0; }
+        table { width: 100%; font-size: 14px; border-collapse: collapse; }
+        td { vertical-align: top; padding: 3px 0; }
+        .right { text-align: right; }
+        .w-70 { width: 70%; }
+        .w-30 { width: 30%; }
+        .mt-4 { margin-top: 4px; }
+        .mb-4 { margin-bottom: 4px; }
+    </style>
+</head>
+<body onload="window.print()">
+    <!-- Order Info -->
+    <table>
+        <tr>
+            <td class="w-70"><strong>Order ID:</strong> #' . $order->id . '</td>
+            <td class="right w-30"><strong>' . strtoupper($order->type) . '</strong></td>
+        </tr>
+        <tr>
+            <td><strong>Date:</strong> ' . $order->created_at->format("d M Y, h:i A") . '</td>
+            <td class="right">';
+        
+        if ($order->table) {
+            $html .= '<strong>Table:</strong> ' . $order->table->name;
+        }
+        
+        $html .= '</td>
+        </tr>
+        <tr>
+            <td colspan="2">
+                <strong>Customer:</strong> ' . ($order->customer->name ?? "Walk-in") . '
+            </td>
+        </tr>
+    </table>
+
+    <div class="line"></div>
+
+    <!-- Items -->
+    <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
+    
+    <div class="muted small center" style="margin-bottom: 8px;">
+        Items: ' . $order->items->count() . ' | Total: ₹' . number_format($order->items->sum("total_price"), 2) . '
+    </div>
+    
+    <table>';
+    
+        foreach ($order->items as $item) {
+            $html .= '<tr>
+                <td class="w-70">
+                    <strong>' . $item->item_name . '</strong><br>
+                    <span style="font-size: 12px;">Qty: ' . $item->quantity . '</span>';
+            
+            if ($item->remark) {
+                $html .= '<br><span style="font-size: 11px; color: #666;">Note: ' . $item->remark . '</span>';
+            }
+            
+            $html .= '</td>
+                <td class="right w-30">
+                    <span style="font-size: 12px;">₹' . number_format($item->total_price, 2) . '</span>
+                </td>
+            </tr>';
+        }
+    
+    $html .= '</table>
+
+    <div class="line"></div>
+
+    <!-- Special Instructions -->
+    ' . ($order->remark ? '<div class="bold">Special Instructions:</div>
+    <div style="font-size: 12px; margin-bottom: 8px;">' . $order->remark . '</div>
+    <div class="line"></div>' : '') . '
+
+    <!-- Footer -->
+    <div class="center">
+        <div class="bold">PREPARE FRESH & SERVE HOT!</div>
+        <div class="mt-4 muted">
+            Order #' . $order->id . ' • ' . $order->created_at->format("h:i A") . '
+        </div>
+    </div>
+</body>
+</html>';
+
+        return $html;
+    }
+
     public function render()
     {
         return view('app.livewire.order-form-component')->layout('app.layouts.app');

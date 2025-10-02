@@ -867,6 +867,10 @@
                           <x-loader-button action="printUnprintedItems" label="Print Unprinted"
                               class="btn btn-outline-success px-3" />
                           @endif
+                          @if(!empty($cart) && !$isEditing)
+                          <x-loader-button action="printKOTDirectly" label="Print KOT"
+                              class="btn btn-outline-primary px-3" />
+                          @endif
                       </div>
 
                   </div>
@@ -938,6 +942,37 @@
               Livewire.on('printKOTGroup', (kotGroupId) => {
                   printKOTGroup(kotGroupId);
               });
+
+              // Listen for direct KOT HTML print
+              Livewire.on('printKOTHTML', (html) => {
+                  printKOTHTML(html);
+              });
+
+              // Function to print KOT HTML directly
+              function printKOTHTML(html) {
+                  const iframe = document.getElementById('hiddenPrintFrame');
+                  
+                  // Create a blob URL for the HTML content
+                  const blob = new Blob([html], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
+                  
+                  // Set iframe source to the blob URL
+                  iframe.src = url;
+                  
+                  // Wait for iframe to load, then print
+                  iframe.onload = function() {
+                      setTimeout(function() {
+                          if (iframe.contentWindow) {
+                              iframe.contentWindow.focus();
+                              iframe.contentWindow.print();
+                          }
+                          // Clean up the blob URL after printing
+                          setTimeout(() => {
+                              URL.revokeObjectURL(url);
+                          }, 1000);
+                      }, 500);
+                  };
+              }
 
           </script>
       @endpush
