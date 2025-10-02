@@ -6,6 +6,7 @@
     <title>{{ $title ?? 'Tabletray' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+    <link rel="manifest" href="/manifest.json">
 
 
     <!-- Favicon -->
@@ -258,6 +259,40 @@
         }
     </script>
 
+    <!-- body ke end me -->
+    <script>
+        // service worker register
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('SW registered', reg))
+                    .catch(err => console.log('SW register failed', err));
+            });
+        }
+    </script>
+
+    <!-- optional: install prompt handling -->
+    <script>
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // show your custom install button (hide/show logic)
+            const btn = document.getElementById('btn-install-pwa');
+            if (btn) btn.style.display = 'inline-block';
+        });
+
+        function promptInstall() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(choice => {
+                    console.log('User choice', choice);
+                    deferredPrompt = null;
+                    document.getElementById('btn-install-pwa').style.display = 'none';
+                });
+            }
+        }
+    </script>
 
 </body>
 
