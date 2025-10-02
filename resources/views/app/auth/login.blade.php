@@ -10,7 +10,7 @@
     
     <div class="auth-card">
         <div class="auth-title">Welcome Back! 👋</div>
-        <p class="text-center text-muted mb-4" style="color: rgba(255, 75, 43, 0.7); font-weight: 500;">
+        <p class="text-center text-muted mb-4" style="color: #800020; font-weight: 500;">
             Sign in to continue to Chaat King India
         </p>
 
@@ -43,7 +43,7 @@
             </button>
 
             <div class="text-center">
-                <p class="mb-0" style="color: rgba(255, 75, 43, 0.6); font-size: 12px;">
+                <p class="mb-0" style="color: #800020; font-size: 12px;">
                     Powered by Ansdesk
                 </p>
             </div>
