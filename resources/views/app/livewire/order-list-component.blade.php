@@ -179,20 +179,17 @@
                           <strong>Warning:</strong> This action cannot be undone. The order and all its items will be permanently deleted.
                       </div>
                       
-                      <p class="mb-3" style="color: #333; font-weight: 500;">To confirm deletion, please enter the admin password:</p>
+                      <p class="mb-3" style="color: #333; font-weight: 500;">To confirm deletion, please enter your login password:</p>
                       
-                      <div class="form-group" style="position: relative;">
-                          <label for="deletePassword" class="form-label" style="color: #800020; font-weight: 600;">Admin Password</label>
+                      <div class="form-group">
+                          <label for="deletePassword" class="form-label" style="color: #800020; font-weight: 600;">Your Password</label>
                           <input type="password" 
                                  class="form-control @error('deletePassword') is-invalid @enderror" 
                                  id="deletePassword"
                                  wire:model="deletePassword" 
-                                 placeholder="Enter admin password"
+                                 placeholder="Enter your login password"
                                  autofocus
-                                 style="border: 2px solid rgba(128, 0, 32, 0.2); border-radius: 8px; padding: 12px 45px 12px 12px;">
-                          <i class="fas fa-eye password-toggle" 
-                             onclick="togglePasswordVisibility('deletePassword')" 
-                             style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: rgba(128, 0, 32, 0.7); cursor: pointer; font-size: 16px; z-index: 2;"></i>
+                                 style="border: 2px solid rgba(128, 0, 32, 0.2); border-radius: 8px; padding: 12px;">
                           @if($deletePasswordError)
                               <div class="invalid-feedback d-block" style="color: #800020; font-weight: 500;">
                                   {{ $deletePasswordError }}
@@ -215,19 +212,3 @@
 
   </div>
 
-  <script>
-      function togglePasswordVisibility(inputId) {
-          const input = document.getElementById(inputId);
-          const icon = input.nextElementSibling;
-          
-          if (input.type === 'password') {
-              input.type = 'text';
-              icon.classList.remove('fa-eye');
-              icon.classList.add('fa-eye-slash');
-          } else {
-              input.type = 'password';
-              icon.classList.remove('fa-eye-slash');
-              icon.classList.add('fa-eye');
-          }
-      }
-  </script>

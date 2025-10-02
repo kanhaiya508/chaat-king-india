@@ -78,10 +78,16 @@ class OrderListComponent extends Component
 
     public function deleteOrder()
     {
-        // Hardcoded password for deletion
-        $correctPassword = 'admin123';
+        // Get current user's password for validation
+        $currentUser = auth()->user();
         
-        if ($this->deletePassword !== $correctPassword) {
+        if (!$currentUser) {
+            $this->deletePasswordError = 'User not authenticated.';
+            return;
+        }
+        
+        // Check if entered password matches current user's password
+        if (!password_verify($this->deletePassword, $currentUser->password)) {
             $this->deletePasswordError = 'Incorrect password. Please try again.';
             return;
         }
