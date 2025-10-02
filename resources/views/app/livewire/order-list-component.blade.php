@@ -164,43 +164,44 @@
 
       <!-- Delete Confirmation Modal -->
       @if($showDeleteModal)
-      <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+      <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);">
           <div class="modal-dialog modal-dialog-centered">
-              <div class="modal-content">
-                  <div class="modal-header bg-danger text-white">
+              <div class="modal-content" style="border: 2px solid #800020; border-radius: 15px; box-shadow: 0 20px 40px rgba(128, 0, 32, 0.3);">
+                  <div class="modal-header" style="background: #800020; color: white; border-radius: 13px 13px 0 0;">
                       <h5 class="modal-title">
                           <i class="fas fa-exclamation-triangle me-2"></i>
                           Confirm Order Deletion
                       </h5>
                   </div>
-                  <div class="modal-body">
-                      <div class="alert alert-warning">
-                          <i class="fas fa-warning me-2"></i>
+                  <div class="modal-body" style="padding: 25px;">
+                      <div class="alert" style="background: rgba(128, 0, 32, 0.1); border: 1px solid rgba(128, 0, 32, 0.3); color: #800020; border-radius: 10px;">
+                          <i class="fas fa-warning me-2" style="color: #800020;"></i>
                           <strong>Warning:</strong> This action cannot be undone. The order and all its items will be permanently deleted.
                       </div>
                       
-                      <p class="mb-3">To confirm deletion, please enter the admin password:</p>
+                      <p class="mb-3" style="color: #333; font-weight: 500;">To confirm deletion, please enter the admin password:</p>
                       
                       <div class="form-group">
-                          <label for="deletePassword" class="form-label">Admin Password</label>
+                          <label for="deletePassword" class="form-label" style="color: #800020; font-weight: 600;">Admin Password</label>
                           <input type="password" 
                                  class="form-control @error('deletePassword') is-invalid @enderror" 
                                  id="deletePassword"
                                  wire:model="deletePassword" 
                                  placeholder="Enter admin password"
-                                 autofocus>
+                                 autofocus
+                                 style="border: 2px solid rgba(128, 0, 32, 0.2); border-radius: 8px; padding: 12px;">
                           @if($deletePasswordError)
-                              <div class="invalid-feedback d-block">
+                              <div class="invalid-feedback d-block" style="color: #800020; font-weight: 500;">
                                   {{ $deletePasswordError }}
                               </div>
                           @endif
                       </div>
                   </div>
-                  <div class="modal-footer">
-                      <button type="button" class="btn btn-secondary" wire:click="cancelDelete">
+                  <div class="modal-footer" style="border-top: 1px solid rgba(128, 0, 32, 0.2); padding: 20px 25px;">
+                      <button type="button" class="btn btn-secondary" wire:click="cancelDelete" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
                           <i class="fas fa-times me-1"></i> Cancel
                       </button>
-                      <button type="button" class="btn btn-danger" wire:click="deleteOrder">
+                      <button type="button" class="btn" wire:click="deleteOrder" style="background: #800020; border: 2px solid #800020; color: white; border-radius: 8px; padding: 10px 20px; font-weight: 600;">
                           <i class="fas fa-trash me-1"></i> Delete Order
                       </button>
                   </div>
