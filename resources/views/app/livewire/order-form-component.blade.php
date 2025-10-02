@@ -860,10 +860,10 @@
                               class="btn  btn-success px-3" />
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
-                          @if((($isEditing && $order_id) || (!empty($cart) && !$isEditing)) && $this->hasUnprintedItems())
+                          {{-- @if((($isEditing && $order_id) || (!empty($cart) && !$isEditing)) && $this->hasUnprintedItems())
                           <x-loader-button action="printUnprintedItems" label="Print Unprinted"
                               class="btn btn-outline-success px-3" />
-                          @endif
+                          @endif --}}
                       </div>
 
                   </div>
@@ -886,12 +886,12 @@
               
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
-                  window.open(url);
+                  window.location.href = url;
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
                   const url = `/orders/${id}/kot-print`;
-                  window.open(url);
+                  window.location.href = url;
               });
 
               // Function to print specific KOT group
@@ -910,7 +910,7 @@
                   
                   const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
                   console.log('Printing KOT Group URL:', url);
-                  window.open(url);
+                  window.location.href = url;
               }
 
               // Listen for printKOTGroup event from Livewire
