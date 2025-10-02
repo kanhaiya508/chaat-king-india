@@ -1013,10 +1013,13 @@ class OrderFormComponent extends Component
             return;
         }
 
+        // Debug: Log cart items
+        \Log::info('Cart items for KOT print:', $this->cart);
+
         // Create a temporary order for printing
         $order = new \App\Models\Order();
         $order->id = 'TEMP-' . time();
-        $order->type = $this->type;
+        $order->type = $this->type ?? 'dine-in';
         $order->table_id = $this->table_id;
         $order->customer_id = $this->customer_id;
         $order->created_at = now();
@@ -1026,10 +1029,10 @@ class OrderFormComponent extends Component
         $orderItems = collect();
         foreach ($this->cart as $cartItem) {
             $orderItem = new \App\Models\OrderItem();
-            $orderItem->item_name = $cartItem['item']->name;
-            $orderItem->quantity = $cartItem['quantity'];
-            $orderItem->unit_price = $cartItem['item']->price;
-            $orderItem->total_price = $cartItem['item']->price * $cartItem['quantity'];
+            $orderItem->item_name = $cartItem['item']->name ?? 'Unknown Item';
+            $orderItem->quantity = $cartItem['quantity'] ?? 1;
+            $orderItem->unit_price = $cartItem['item']->price ?? 0;
+            $orderItem->total_price = ($cartItem['item']->price ?? 0) * ($cartItem['quantity'] ?? 1);
             $orderItem->remark = $cartItem['remark'] ?? '';
             $orderItem->kot_group_id = 'TEMP-KOT-' . time();
             $orderItem->kot_printed = false;
@@ -1052,11 +1055,24 @@ class OrderFormComponent extends Component
             $order->setRelation('table', $table);
         }
 
+        // Debug: Log order data
+        \Log::info('Order data for KOT print:', [
+            'order_id' => $order->id,
+            'items_count' => $order->items->count(),
+            'customer_name' => $order->customer->name,
+            'type' => $order->type
+        ]);
+
         // Generate KOT HTML
         $kotHtml = $this->generateKOTHTML($order);
         
+        // Debug: Log HTML length
+        \Log::info('Generated KOT HTML length: ' . strlen($kotHtml));
+        
         // Dispatch print event
         $this->dispatch('printKOTHTML', $kotHtml);
+        
+        session()->flash('success', 'KOT print initiated for ' . $order->items->count() . ' items.');
     }
 
     private function generateKOTHTML($order)

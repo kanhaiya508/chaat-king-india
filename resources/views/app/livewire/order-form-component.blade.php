@@ -950,25 +950,29 @@
 
               // Function to print KOT HTML directly
               function printKOTHTML(html) {
-                  const iframe = document.getElementById('hiddenPrintFrame');
+                  console.log('Received HTML for printing:', html);
                   
-                  // Create a blob URL for the HTML content
-                  const blob = new Blob([html], { type: 'text/html' });
-                  const url = URL.createObjectURL(blob);
+                  // Create a new window for printing
+                  const printWindow = window.open('', '_blank', 'width=300,height=600');
                   
-                  // Set iframe source to the blob URL
-                  iframe.src = url;
+                  if (!printWindow) {
+                      alert('Please allow popups for this site to print KOT');
+                      return;
+                  }
                   
-                  // Wait for iframe to load, then print
-                  iframe.onload = function() {
+                  // Write HTML content to the new window
+                  printWindow.document.write(html);
+                  printWindow.document.close();
+                  
+                  // Wait for content to load, then print
+                  printWindow.onload = function() {
+                      console.log('Print window loaded, starting print...');
                       setTimeout(function() {
-                          if (iframe.contentWindow) {
-                              iframe.contentWindow.focus();
-                              iframe.contentWindow.print();
-                          }
-                          // Clean up the blob URL after printing
+                          printWindow.focus();
+                          printWindow.print();
+                          // Close the window after printing
                           setTimeout(() => {
-                              URL.revokeObjectURL(url);
+                              printWindow.close();
                           }, 1000);
                       }, 500);
                   };
