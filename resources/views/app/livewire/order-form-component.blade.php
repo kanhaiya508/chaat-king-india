@@ -810,6 +810,27 @@
               </div>
           @endforeach
 
+          <!-- Print Preview Modal -->
+          <div wire:ignore.self class="modal fade" id="printPreviewModal" tabindex="-1" aria-labelledby="printPreviewModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="printPreviewModalLabel">Print Preview</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body p-0">
+                          <iframe id="printPreviewFrame" src="" style="width: 100%; height: 80vh; border: none;"></iframe>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary" onclick="printFromIframe()">
+                              <i class="fas fa-print me-1"></i> Print
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+
           <!-- Sticky Order Summary Footer -->
           <div class="bg-white border-top shadow-lg fixed-bottom py-3">
               <div class="container-xxl px-4">
@@ -884,14 +905,45 @@
                   console.log('OrderFormComponent loaded');
               });
               
+              // Function to show print preview in iframe
+              function showPrintPreview(url, title = 'Print Preview') {
+                  const iframe = document.getElementById('printPreviewFrame');
+                  const modal = new bootstrap.Modal(document.getElementById('printPreviewModal'));
+                  
+                  // Set iframe source
+                  iframe.src = url;
+                  
+                  // Update modal title
+                  document.getElementById('printPreviewModalLabel').textContent = title;
+                  
+                  // Show modal
+                  modal.show();
+              }
+
+              // Function to print from iframe
+              function printFromIframe() {
+                  const iframe = document.getElementById('printPreviewFrame');
+                  
+                  if (iframe.contentWindow) {
+                      iframe.contentWindow.focus();
+                      iframe.contentWindow.print();
+                  } else {
+                      // Fallback: open in new window and print
+                      const url = iframe.src;
+                      const printWindow = window.open(url, '_blank');
+                      printWindow.focus();
+                      printWindow.print();
+                  }
+              }
+
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
-                  window.location.href = url;
+                  showPrintPreview(url, 'Order Print Preview');
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
                   const url = `/orders/${id}/kot-print`;
-                  window.location.href = url;
+                  showPrintPreview(url, 'KOT Print Preview');
               });
 
               // Function to print specific KOT group
@@ -910,7 +962,7 @@
                   
                   const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
                   console.log('Printing KOT Group URL:', url);
-                  window.location.href = url;
+                  showPrintPreview(url, 'KOT Group Print Preview');
               }
 
               // Listen for printKOTGroup event from Livewire
