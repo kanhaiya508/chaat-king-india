@@ -129,11 +129,11 @@
         <div class="line"></div>
         <!-- Items Only -->
         <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
-        @if ($order->items->count() > 0)
+        {{-- @if ($order->items->count() > 0)
             <div class="muted small center" style="margin-bottom: 8px;">
                 Items: {{ $order->items->count() }} | Total: ₹{{ number_format($order->items->sum('total_price'), 2) }}
             </div>
-        @endif
+        @endif --}}
         <table>
             @php $itemCount = 0; @endphp
             @foreach ($order->items as $item)
