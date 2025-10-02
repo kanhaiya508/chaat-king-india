@@ -37,6 +37,12 @@ class Order extends Model
 
     protected $dates = ['cancelled_at'];
 
+    protected $casts = [
+        'created_at' => 'datetime',
+        'updated_at' => 'datetime',
+        'cancelled_at' => 'datetime',
+    ];
+
 
 
     public function branch()

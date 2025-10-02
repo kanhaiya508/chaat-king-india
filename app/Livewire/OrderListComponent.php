@@ -35,7 +35,7 @@ class OrderListComponent extends Component
 
     public function viewOrder($orderId)
     {
-        $this->selectedOrder = Order::with('items')->find($orderId);
+        $this->selectedOrder = Order::with(['items', 'cancelledBy'])->find($orderId);
     }
 
     public function render()
@@ -52,6 +52,10 @@ class OrderListComponent extends Component
             })
             ->when($this->type !== '', function ($q) {   // ⬅️ filter by type
                 $q->where('type', $this->type);
+            })
+            ->where(function ($q) {
+                // Include all orders except deleted ones (show cancelled orders)
+                $q->where('status', '!=', 'deleted');
             })
             ->latest()
             ->paginate(10)

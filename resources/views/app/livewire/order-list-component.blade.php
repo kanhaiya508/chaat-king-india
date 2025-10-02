@@ -132,8 +132,20 @@
                                   <p><strong>Discount:</strong> ₹{{ number_format($selectedOrder->discount, 2) }}</p>
                                   <p><strong>Total:</strong> ₹{{ number_format($selectedOrder->total, 2) }}</p>
                                   <p><strong>Remark:</strong> {{ $selectedOrder->remark ?? '-' }}</p>
-                                  <p><strong>Date:</strong> {{ $selectedOrder->created_at->format('d M Y, h:i A') }}
-                                  </p>
+                                  <p><strong>Date:</strong> {{ $selectedOrder->created_at->format('d M Y, h:i A') }}</p>
+                                  
+                                  @if($selectedOrder->status === 'cancelled' && $selectedOrder->cancelled_at)
+                                      <div class="alert alert-danger mt-3">
+                                          <h6><i class="fas fa-ban me-2"></i>Order Cancelled</h6>
+                                          <p class="mb-1"><strong>Cancelled At:</strong> {{ $selectedOrder->cancelled_at ? $selectedOrder->cancelled_at->format('d M Y, h:i A') : 'N/A' }}</p>
+                                          @if($selectedOrder->cancelledBy)
+                                              <p class="mb-1"><strong>Cancelled By:</strong> {{ $selectedOrder->cancelledBy->name }}</p>
+                                          @endif
+                                          @if($selectedOrder->cancel_reason)
+                                              <p class="mb-1"><strong>Reason:</strong> {{ $selectedOrder->cancel_reason }}</p>
+                                          @endif
+                                      </div>
+                                  @endif
                               </div>
                           </div>
 
