@@ -167,7 +167,7 @@
       <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.6);">
           <div class="modal-dialog modal-dialog-centered">
               <div class="modal-content" style="border: 2px solid #800020; border-radius: 15px; box-shadow: 0 20px 40px rgba(128, 0, 32, 0.3);">
-                  <div class="modal-header" style="background: #800020; color: white; border-radius: 13px 13px 0 0; text-align: center;">
+                  <div class="modal-header  py-3" style="background: #800020; color: white; border-radius: 13px 13px 0 0; text-align: center;">
                       <h5 class="modal-title" style="color: white; text-align: center; width: 100%;">
                           <i class="fas fa-exclamation-triangle me-2" style="color: white;"></i>
                           Confirm Order Deletion
