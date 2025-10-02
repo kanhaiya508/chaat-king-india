@@ -914,10 +914,26 @@
                       window.activePrints.add(key);
                       const printUrl = `/orders/${orderId}/print`;
                       
-                      setTimeout(() => {
-                          const printWindow = window.open(printUrl, '_blank', 'width=800,height=600');
-                          
-                          if (printWindow) {
+                setTimeout(() => {
+                    // Center the popup window
+                    const width = 800;
+                    const height = 600;
+                    const left = (screen.width / 2) - (width / 2);
+                    const top = (screen.height / 2) - (height / 2);
+                    
+                    const printWindow = window.open(printUrl, '_blank', 
+                        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
+                    
+                    if (printWindow) {
+                        // Override print settings
+                        printWindow.addEventListener('load', () => {
+                            try {
+                                printWindow.document.body.style.setProperty('margin', '0', 'important');
+                                printWindow.document.body.style.setProperty('padding', '0', 'important');
+                            } catch (e) {
+                                // Silent fail for older browsers
+                            }
+                        });
                               printWindow.addEventListener('afterprint', () => {
                                   printWindow.close();
                               });
@@ -952,10 +968,19 @@
                       window.activePrints.add(key);
                       const printUrl = `/orders/${orderId}/kot-print`;
                       
-                      setTimeout(() => {
-                          const printWindow = window.open(printUrl, '_blank', 'width=600,height=800');
-                          
-                          if (printWindow) {
+                    setTimeout(() => {
+                        // Center the popup window
+                        const screenLeft = window.screenLeft || screen.left;
+                        const screenTop = window.screenTop || screen.top;
+                        const width = 600;
+                        const height = 500;
+                        const left = (screen.width / 2) - (width / 2);
+                        const top = (screen.height / 2) - (height / 2);
+                        
+                        const printWindow = window.open(printUrl, '_blank', 
+                            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
+                        
+                        if (printWindow) {
                               printWindow.addEventListener('afterprint', () => {
                                   printWindow.close();
                               });
@@ -982,7 +1007,14 @@
                   
                   // KOT HTML Print handler
                   Livewire.on('printKOTHTML', (html) => {
-                      const printWindow = window.open('', '_blank', 'width=600,height=500');
+                      // Center the popup window
+                      const width = 600;
+                      const height = 500;
+                      const left = (screen.width / 2) - (width / 2);
+                      const top = (screen.height / 2) - (height / 2);
+                      
+                      const printWindow = window.open('', '_blank', 
+                          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
                       
                       if (!printWindow) {
                           alert('Please allow popups to print KOT');

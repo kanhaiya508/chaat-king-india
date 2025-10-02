@@ -249,42 +249,7 @@
     </script>
 
     <!-- body ke end me -->
-    <script>
-        // service worker register
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(reg => console.log('SW registered', reg))
-                    .catch(err => console.log('SW register failed', err));
-            });
-        }
-    </script>
 
-    <!-- optional: install prompt handling -->
-    <!-- PWA Service Worker Registration -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registered:', registration.scope);
-                        
-                        // Check for updates
-                        registration.addEventListener('updatefound', () => {
-                            const newWorker = registration.installing;
-                            newWorker.addEventListener('statechange', () => {
-                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                    if (confirm('New version available! Reload to update?')) {
-                                        window.location.reload();
-                                    }
-                                }
-                            });
-                        });
-                    })
-                    .catch(error => console.error('❌ SW registration failed:', error));
-            });
-        }
-    </script>
 
     <!-- PWA Install Prompt -->
     <script>

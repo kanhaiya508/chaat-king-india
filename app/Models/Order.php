@@ -30,7 +30,12 @@ class Order extends Model
         'write_off_reason',
         'round_off',
         'is_paid',
+        'cancelled_at',
+        'cancelled_by',
+        'cancel_reason',
     ];
+
+    protected $dates = ['cancelled_at'];
 
 
 
@@ -64,5 +69,10 @@ class Order extends Model
     public function table()
     {
         return $this->belongsTo(Table::class);
+    }
+
+    public function cancelledBy()
+    {
+        return $this->belongsTo(User::class, 'cancelled_by');
     }
 }

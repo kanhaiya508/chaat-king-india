@@ -33,8 +33,16 @@
                       </thead>
                       <tbody>
                           @forelse ($orders as $order)
-                              <tr>
-                                  <td><strong>#{{ $order->id }}</strong></td>
+                              <tr class="{{ $order->status === 'cancelled' ? 'table-danger' : '' }}">
+                                  <td>
+                                      <strong>#{{ $order->id }}</strong>
+                                      @if($order->status === 'cancelled')
+                                          <span class="badge bg-danger ms-2">CANCELLED</span><br>
+                                          @if($order->cancel_reason)
+                                              <small class="text-muted">{{ Str::limit($order->cancel_reason, 30) }}</small>
+                                          @endif
+                                      @endif
+                                  </td>
                                   <td>{{ $order->customer->name ?? 'N/A' }}</td>
                                   <td>{{ $order->customer->phone ?? 'N/A' }}</td>
                                   <td>₹{{ number_format($order->total, 2) }}</td>
@@ -67,11 +75,13 @@
                                           <i class="fas fa-print"></i>
                                       </a>
 
-                                      <!-- Delete -->
-                                      <button class="btn btn-sm btn-outline-danger"
-                                          wire:click.prevent="confirmDeleteOrder({{ $order->id }})">
-                                          <i class="fas fa-trash"></i>
+                                      <!-- Cancel Order -->
+                                      @if($order->status !== 'cancelled' && $order->status !== 'paid')
+                                      <button class="btn btn-sm btn-outline-warning"
+                                          wire:click.prevent="confirmDeleteOrder({{ $order->id }})" title="Cancel Order">
+                                          <i class="fas fa-ban"></i>
                                       </button>
+                                      @endif
                                   </td>
 
                               </tr>
@@ -169,17 +179,33 @@
               <div class="modal-content" style="border: 2px solid #800020; border-radius: 15px; box-shadow: 0 20px 40px rgba(128, 0, 32, 0.3);">
                   <div class="modal-header  py-3" style="background: #800020; color: white; border-radius: 13px 13px 0 0; text-align: center;">
                       <h5 class="modal-title" style="color: white; text-align: center; width: 100%;">
-                          <i class="fas fa-exclamation-triangle me-2" style="color: white;"></i>
-                          Confirm Order Deletion
+                          <i class="fas fa-ban me-2" style="color: white;"></i>
+                          Confirm Order Cancellation
                       </h5>
                   </div>
                   <div class="modal-body" style="padding: 25px;">
                       <div class="alert" style="background: rgba(128, 0, 32, 0.1); border: 1px solid rgba(128, 0, 32, 0.3); color: #800020; border-radius: 10px;">
-                          <i class="fas fa-warning me-2" style="color: #800020;"></i>
-                          <strong>Warning:</strong> This action cannot be undone. The order and all its items will be permanently deleted.
+                          <i class="fas fa-ban me-2" style="color: #800020;"></i>
+                          <strong>Warning:</strong> This action will cancel the order and mark it as cancelled. This cannot be undone.
                       </div>
                       
-                      <p class="mb-3" style="color: #333; font-weight: 500;">To confirm deletion, please enter your login password:</p>
+                      <div class="form-group mb-3">
+                          <label for="cancelReason" class="form-label" style="color: #800020; font-weight: 600;">Cancellation Reason</label>
+                          <textarea class="form-control @error('cancelReason') is-invalid @enderror" 
+                                    id="cancelReason"
+                                    wire:model="cancelReason" 
+                                    placeholder="Enter the reason for cancelling this order..."
+                                    rows="3"
+                                    required
+                                    style="border: 2px solid rgba(128, 0, 32, 0.2); border-radius: 8px; padding: 12px;"></textarea>
+                          @if($deletePasswordError && str_contains($deletePasswordError, 'reason'))
+                              <div class="invalid-feedback d-block" style="color: #800020; font-weight: 500;">
+                                  {{ $deletePasswordError }}
+                              </div>
+                          @endif
+                      </div>
+                      
+                      <p class="mb-3" style="color: #333; font-weight: 500;">To confirm cancellation, please enter your login password:</p>
                       
                       <div class="form-group">
                           <label for="deletePassword" class="form-label" style="color: #800020; font-weight: 600;">Your Password</label>
@@ -190,7 +216,7 @@
                                  placeholder="Enter your login password"
                                  autofocus
                                  style="border: 2px solid rgba(128, 0, 32, 0.2); border-radius: 8px; padding: 12px;">
-                          @if($deletePasswordError)
+                          @if($deletePasswordError && str_contains($deletePasswordError, 'password'))
                               <div class="invalid-feedback d-block" style="color: #800020; font-weight: 500;">
                                   {{ $deletePasswordError }}
                               </div>
@@ -202,7 +228,7 @@
                           <i class="fas fa-times me-1"></i> Cancel
                       </button>
                       <button type="button" class="btn" wire:click="deleteOrder" style="background: #800020; border: 2px solid #800020; color: white; border-radius: 8px; padding: 10px 20px; font-weight: 600;">
-                          <i class="fas fa-trash me-1"></i> Delete Order
+                          <i class="fas fa-ban me-1"></i> Cancel Order
                       </button>
                   </div>
               </div>

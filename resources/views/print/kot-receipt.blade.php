@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>KOT - Kitchen Order Ticket</title>
+    <title></title>
     <style>
         /* 80mm thermal approx */
         body {
@@ -25,9 +25,20 @@
                 font-size: 10px;
                 font-weight: bold;
             }
+            
+            @page {
+                margin: 0 !important;
+                size: auto;
+            }
 
             .no-print {
                 display: none !important;
+            }
+            
+            /* Disable print backgrounds */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
             }
 
             .print-content {

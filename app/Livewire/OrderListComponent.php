@@ -17,6 +17,7 @@ class OrderListComponent extends Component
     public $orderToDelete = null;
     public $deletePassword = '';
     public $deletePasswordError = '';
+    public $cancelReason = '';
 
     public function updatedSearch()
     {
@@ -66,6 +67,7 @@ class OrderListComponent extends Component
         $this->showDeleteModal = true;
         $this->deletePassword = '';
         $this->deletePasswordError = '';
+        $this->cancelReason = '';
     }
 
     public function cancelDelete()
@@ -74,6 +76,7 @@ class OrderListComponent extends Component
         $this->orderToDelete = null;
         $this->deletePassword = '';
         $this->deletePasswordError = '';
+        $this->cancelReason = '';
     }
 
     public function deleteOrder()
@@ -94,15 +97,28 @@ class OrderListComponent extends Component
 
         if ($order = Order::find($this->orderToDelete)) {
             $orderId = $order->id;
-            $order->items()->delete();
-            $order->delete();
+            
+            // Validate cancel reason
+            if (empty(trim($this->cancelReason))) {
+                $this->deletePasswordError = 'Please provide a reason for cancellation.';
+                return;
+            }
+            
+            // Cancel the order instead of deleting
+            $order->update([
+                'status' => 'cancelled',
+                'cancelled_at' => now(),
+                'cancelled_by' => $currentUser->id,
+                'cancel_reason' => trim($this->cancelReason)
+            ]);
             
             $this->showDeleteModal = false;
             $this->orderToDelete = null;
             $this->deletePassword = '';
             $this->deletePasswordError = '';
+            $this->cancelReason = '';
             
-            session()->flash('success', "Order #$orderId deleted successfully.");
+            session()->flash('success', "Order #$orderId cancelled successfully.");
         } else {
             $this->deletePasswordError = "Order not found.";
         }

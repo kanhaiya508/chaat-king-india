@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Order Receipt</title>
+    <title></title>
     <style>
         /* 80mm thermal approx */
         body {
@@ -60,6 +60,23 @@
 
         .mb-4 {
             margin-bottom: 4px;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+            }
+            
+            @page {
+                margin: 0 !important;
+                size: auto;
+            }
+            
+            /* Disable print backgrounds */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
         }
     </style>
 </head>
