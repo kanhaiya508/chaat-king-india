@@ -50,7 +50,6 @@ class OrderController extends Controller
         $order->load(['items' => function($query) use ($kotGroupId) {
             $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
         }, 'items.variant']);
-        
         return view('print.kot-receipt', compact('order'));
     }
 
@@ -59,7 +58,6 @@ class OrderController extends Controller
         $order = Order::with(['items' => function($query) use ($kotGroupId) {
             $query->where('kot_group_id', $kotGroupId)->orderBy('created_at', 'desc');
         }, 'items.variant'])->findOrFail($orderId);
-        
         // Check if there are any items in this group
         if ($order->items->isEmpty()) {
             return response()->json([
@@ -67,7 +65,6 @@ class OrderController extends Controller
                 'message' => 'No items found in this KOT group.'
             ], 400);
         }
-        
         return view('print.kot-receipt', compact('order'));
     }
 

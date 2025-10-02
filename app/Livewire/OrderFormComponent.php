@@ -309,9 +309,13 @@ class OrderFormComponent extends Component
             // If editing existing order
             if ($this->isEditing) {
                 $order = Order::findOrFail($this->order_id);
+                
+                // Check if order was already paid
+                $wasPaid = $order->is_paid;
+                $existingPayments = $order->payments()->sum('amount');
+                
                 $order->update([
                     'customer_id' => $this->customerId,
-
                     'staff_id' => $this->staff_id,
                     'subtotal' => $this->subtotal,
                     'discount' => $this->discountTotal,
@@ -325,6 +329,14 @@ class OrderFormComponent extends Component
                     'delivery_location'      => $this->deliveryLocation,
                     'delivery_distance'      => $this->deliveryDistance,
                 ]);
+
+                // If order was paid and new total is higher, mark as unpaid
+                if ($wasPaid && $this->finalTotal > $existingPayments) {
+                    $order->update([
+                        'is_paid' => false,
+                        'status' => 'saved' // Reset status to saved
+                    ]);
+                }
 
                 // Remove old items
                 $order->items()->delete();
@@ -795,6 +807,20 @@ class OrderFormComponent extends Component
         $this->subtotal = $order->subtotal ?? 0;
         $this->finalTotal = $order->discount ? $order->total : $this->subtotal;
 
+        // Load existing payments if any
+        $this->payments = $order->payments()->get()->map(function ($payment) {
+            return [
+                'mode' => $payment->mode,
+                'amount' => $payment->amount,
+                'note' => $payment->note ?? '',
+            ];
+        })->toArray();
+
+        // If no payments, initialize with empty array
+        if (empty($this->payments)) {
+            $this->payments = [['mode' => '', 'amount' => '', 'note' => '']];
+        }
+
         $this->calculateTotals();
     }
 
@@ -926,6 +952,10 @@ class OrderFormComponent extends Component
         $orderId = $this->saveOrderData('paid');
 
         if ($orderId) {
+            // Delete existing payments to avoid duplicates
+            OrderPayment::where('order_id', $this->order_id)->delete();
+            
+            // Create new payments
             foreach ($this->payments as $payment) {
                 if (empty($payment['mode']) || empty($payment['amount'])) continue;
 
