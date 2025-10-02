@@ -299,6 +299,16 @@
             </ul>
         </div>
 
+        <div class="info-box">
+            <h3><i class="fas fa-tools"></i> Generate PWA Icons</h3>
+            <p>To fix icon errors, generate PWA icons using your existing favicon:</p>
+            <ul>
+                <li><strong>Icon Generator:</strong> <a href="/icons/create-icons.html" target="_blank" style="color: #800020;">Create Icons from Favicon</a></li>
+                <li><strong>Manual:</strong> Download icons and save to <code>public/icons/</code> folder</li>
+                <li><strong>Required:</strong> icon-192x192.png and icon-512x512.png</li>
+            </ul>
+        </div>
+
         <div id="cacheInfo" class="cache-info" style="display:none;">
             <strong>Cache Status:</strong><br>
             <div id="cacheDetails"></div>
@@ -368,19 +378,23 @@
         // Check Icons
         async function checkIcons() {
             const element = document.getElementById('iconStatus');
-            const iconSizes = [72, 96, 128, 144, 152, 192, 384, 512];
+            const requiredIcons = [
+                '/panel/assets/img/favicon/favicon.ico',
+                '/icons/icon-192x192.png',
+                '/icons/icon-512x512.png'
+            ];
             
             try {
                 const checks = await Promise.all(
-                    iconSizes.map(size => 
-                        fetch(`/icons/icon-${size}x${size}.png`).then(r => r.ok)
+                    requiredIcons.map(iconUrl => 
+                        fetch(iconUrl).then(r => r.ok).catch(() => false)
                     )
                 );
                 
                 const availableCount = checks.filter(Boolean).length;
-                const percentage = Math.round((availableCount / iconSizes.length) * 100);
+                const percentage = Math.round((availableCount / requiredIcons.length) * 100);
                 
-                element.textContent = `${availableCount}/${iconSizes.length} (${percentage}%)`;
+                element.textContent = `${availableCount}/${requiredIcons.length} (${percentage}%)`;
                 element.className = 'status-value ' + 
                     (percentage === 100 ? 'status-success' : 
                      percentage > 50 ? 'status-warning' : 'status-error');

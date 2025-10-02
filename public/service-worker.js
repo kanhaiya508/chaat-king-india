@@ -7,6 +7,14 @@ const STATIC_ASSETS = [
   '/',
   '/favicon.ico',
   '/manifest.json',
+  '/panel/assets/vendor/css/core.css',
+  '/panel/assets/css/demo.css',
+  '/css/auth.css',
+  '/css/style.css'
+];
+
+// PWA Icons (will be added dynamically when available)
+const PWA_ICONS = [
   '/icons/icon-72x72.png',
   '/icons/icon-96x96.png',
   '/icons/icon-128x128.png',
@@ -14,11 +22,7 @@ const STATIC_ASSETS = [
   '/icons/icon-152x152.png',
   '/icons/icon-192x192.png',
   '/icons/icon-384x384.png',
-  '/icons/icon-512x512.png',
-  '/panel/assets/vendor/css/core.css',
-  '/panel/assets/css/demo.css',
-  '/css/auth.css',
-  '/css/style.css'
+  '/icons/icon-512x512.png'
 ];
 
 // Install event - cache static assets
@@ -28,7 +32,23 @@ self.addEventListener('install', event => {
     caches.open(STATIC_CACHE)
       .then(cache => {
         console.log('[Service Worker] Caching static assets');
-        return cache.addAll(STATIC_ASSETS);
+        // Cache static assets first
+        return cache.addAll(STATIC_ASSETS).then(() => {
+          // Try to cache PWA icons, but don't fail if they don't exist
+          return Promise.allSettled(
+            PWA_ICONS.map(iconUrl => 
+              fetch(iconUrl).then(response => {
+                if (response.ok) {
+                  return cache.put(iconUrl, response);
+                }
+                throw new Error(`Icon not found: ${iconUrl}`);
+              }).catch(err => {
+                console.warn(`[Service Worker] Could not cache icon: ${iconUrl}`, err.message);
+                return null; // Don't fail the entire cache operation
+              })
+            )
+          );
+        });
       })
       .catch(err => {
         console.error('[Service Worker] Cache installation failed:', err);
