@@ -810,8 +810,26 @@
               </div>
           @endforeach
 
-          <!-- Hidden Print Iframe -->
-          <iframe id="hiddenPrintFrame" style="display: none; width: 0; height: 0; border: none;"></iframe>
+          <!-- Print Preview Modal -->
+          <div wire:ignore.self class="modal fade" id="printPreviewModal" tabindex="-1" aria-labelledby="printPreviewModalLabel" aria-hidden="true">
+              <div class="modal-dialog modal-xl modal-dialog-centered">
+                  <div class="modal-content">
+                      <div class="modal-header">
+                          <h5 class="modal-title" id="printPreviewModalLabel">Print Preview</h5>
+                          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <div class="modal-body p-0">
+                          <iframe id="printPreviewFrame" src="" style="width: 100%; height: 80vh; border: none;"></iframe>
+                      </div>
+                      <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                          <button type="button" class="btn btn-primary" onclick="printFromIframe()">
+                              <i class="fas fa-print me-1"></i> Print
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
 
           <!-- Sticky Order Summary Footer -->
           <div class="bg-white border-top shadow-lg fixed-bottom py-3">
@@ -891,32 +909,45 @@
                   console.log('OrderFormComponent loaded');
               });
               
-              // Function to print directly from hidden iframe
-              function printDirectly(url) {
-                  const iframe = document.getElementById('hiddenPrintFrame');
+              // Function to show print preview in iframe
+              function showPrintPreview(url, title = 'Print Preview') {
+                  const iframe = document.getElementById('printPreviewFrame');
+                  const modal = new bootstrap.Modal(document.getElementById('printPreviewModal'));
                   
                   // Set iframe source
                   iframe.src = url;
                   
-                  // Wait for iframe to load, then print
-                  iframe.onload = function() {
-                      setTimeout(function() {
-                          if (iframe.contentWindow) {
-                              iframe.contentWindow.focus();
-                              iframe.contentWindow.print();
-                          }
-                      }, 500); // Small delay to ensure content is loaded
-                  };
+                  // Update modal title
+                  document.getElementById('printPreviewModalLabel').textContent = title;
+                  
+                  // Show modal
+                  modal.show();
+              }
+
+              // Function to print from iframe
+              function printFromIframe() {
+                  const iframe = document.getElementById('printPreviewFrame');
+                  
+                  if (iframe.contentWindow) {
+                      iframe.contentWindow.focus();
+                      iframe.contentWindow.print();
+                  } else {
+                      // Fallback: open in new window and print
+                      const url = iframe.src;
+                      const printWindow = window.open(url, '_blank');
+                      printWindow.focus();
+                      printWindow.print();
+                  }
               }
 
               Livewire.on('orderSavedForPrint', id => {
                   const url = `/orders/${id}/print`;
-                  printDirectly(url);
+                  showPrintPreview(url, 'Order Print Preview');
               });
 
               Livewire.on('orderSavedForKOTPrint', id => {
                   const url = `/orders/${id}/kot-print`;
-                  printDirectly(url);
+                  showPrintPreview(url, 'KOT Print Preview');
               });
 
               // Function to print specific KOT group
@@ -935,7 +966,7 @@
                   
                   const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
                   console.log('Printing KOT Group URL:', url);
-                  printDirectly(url);
+                  showPrintPreview(url, 'KOT Group Print Preview');
               }
 
               // Listen for printKOTGroup event from Livewire
@@ -945,37 +976,33 @@
 
               // Listen for direct KOT HTML print
               Livewire.on('printKOTHTML', (html) => {
-                  printKOTHTML(html);
+                  showKOTPreview(html);
               });
 
-              // Function to print KOT HTML directly
-              function printKOTHTML(html) {
+              // Function to show KOT preview in modal
+              function showKOTPreview(html) {
                   console.log('Received HTML for printing:', html);
                   
-                  // Create a new window for printing
-                  const printWindow = window.open('', '_blank', 'width=300,height=600');
+                  const iframe = document.getElementById('printPreviewFrame');
+                  const modal = new bootstrap.Modal(document.getElementById('printPreviewModal'));
                   
-                  if (!printWindow) {
-                      alert('Please allow popups for this site to print KOT');
-                      return;
-                  }
+                  // Create a blob URL for the HTML content
+                  const blob = new Blob([html], { type: 'text/html' });
+                  const url = URL.createObjectURL(blob);
                   
-                  // Write HTML content to the new window
-                  printWindow.document.write(html);
-                  printWindow.document.close();
+                  // Set iframe source to the blob URL
+                  iframe.src = url;
                   
-                  // Wait for content to load, then print
-                  printWindow.onload = function() {
-                      console.log('Print window loaded, starting print...');
-                      setTimeout(function() {
-                          printWindow.focus();
-                          printWindow.print();
-                          // Close the window after printing
-                          setTimeout(() => {
-                              printWindow.close();
-                          }, 1000);
-                      }, 500);
-                  };
+                  // Update modal title
+                  document.getElementById('printPreviewModalLabel').textContent = 'KOT Print Preview';
+                  
+                  // Show modal
+                  modal.show();
+                  
+                  // Clean up the blob URL when modal is hidden
+                  document.getElementById('printPreviewModal').addEventListener('hidden.bs.modal', function() {
+                      URL.revokeObjectURL(url);
+                  });
               }
 
           </script>
