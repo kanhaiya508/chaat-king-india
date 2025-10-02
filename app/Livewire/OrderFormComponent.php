@@ -1036,6 +1036,22 @@ class OrderFormComponent extends Component
             $orderItem->remark = $cartItem['remark'] ?? '';
             $orderItem->kot_group_id = 'TEMP-KOT-' . time();
             $orderItem->kot_printed = false;
+            $orderItem->addon_ids = json_encode($cartItem['addon_ids'] ?? []);
+            
+            // Add getAddonDetails method for template compatibility
+            $orderItem->getAddonDetails = function() use ($cartItem) {
+                $addons = collect();
+                if (isset($cartItem['addon_ids']) && is_array($cartItem['addon_ids'])) {
+                    foreach ($cartItem['addon_ids'] as $addonId) {
+                        $addon = \App\Models\ItemAddon::find($addonId);
+                        if ($addon) {
+                            $addons->push($addon);
+                        }
+                    }
+                }
+                return $addons;
+            };
+            
             $orderItems->push($orderItem);
         }
         $order->setRelation('items', $orderItems);
@@ -1055,6 +1071,11 @@ class OrderFormComponent extends Component
             $order->setRelation('table', $table);
         }
 
+        // Create branch object (required by template)
+        $branch = new \App\Models\Branch();
+        $branch->name = 'Your Store'; // Default branch name
+        $order->setRelation('branch', $branch);
+
         // Debug: Log order data
         \Log::info('Order data for KOT print:', [
             'order_id' => $order->id,
@@ -1063,13 +1084,14 @@ class OrderFormComponent extends Component
             'type' => $order->type
         ]);
 
-        // Generate KOT HTML
-        $kotHtml = $this->generateKOTHTML($order);
+        // Generate KOT HTML using existing template
+        $kotHtml = view('print.kot-receipt', compact('order'))->render();
         
         // Debug: Log HTML length
         \Log::info('Generated KOT HTML length: ' . strlen($kotHtml));
+        \Log::info('Generated KOT HTML content: ' . $kotHtml);
         
-        // Dispatch print event
+        // Dispatch print event with template HTML
         $this->dispatch('printKOTHTML', $kotHtml);
         
         session()->flash('success', 'KOT print initiated for ' . $order->items->count() . ' items.');
