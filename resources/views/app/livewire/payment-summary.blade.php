@@ -98,7 +98,7 @@
         </div>
 
         {{-- 4) Discount (Row-2, पहले) --}}
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="card shadow-sm h-100">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start">
@@ -115,10 +115,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- 5) Waived Off (Row-2, दूसरा) --}}
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="card shadow-sm h-100">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start">
@@ -135,10 +135,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- 6) Marked Paid (No Amount) (Row-2, तीसरा) --}}
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="card shadow-sm h-100">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start">
@@ -155,10 +155,10 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- 7) Expenses (Row-3, full/half जैसा पहले है) --}}
-        <div class="col-md-3">
+        {{-- <div class="col-md-3">
             <div class="card shadow-sm h-100">
                 <div class="card-body p-3">
                     <div class="d-flex justify-content-between align-items-start">
@@ -175,7 +175,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         {{-- 8) Modes (जैसे हैं वैसे रखें) --}}
         @foreach ($cards as $mode => $data)
