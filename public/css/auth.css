@@ -1,6 +1,6 @@
 /* Global Auth Layout Styling */
 body {
-    background: linear-gradient(135deg, #800020 0%, #b30e35 50%, #800020 100%);
+    background: #800020;
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     display: flex;
@@ -144,7 +144,7 @@ body::before {
     transform: translateY(-4px) scale(1.06);
     box-shadow: 0 20px 45px rgba(128, 0, 32, 0.35),
                 0 10px 25px rgba(128, 0, 32, 0.2);
-    background: #b30e35;
+    background: #800020;
     color: #fff;
 }
 .btn-purple:active {
@@ -168,7 +168,7 @@ body::before {
 .btn-branch:hover {
     transform: translateY(-1px);
     box-shadow: 0 10px 22px rgba(128, 0, 32, .22);
-    background: #b30e35;
+    background: #800020;
     color: #fff;
 }
 .btn-branch:disabled {
