@@ -9,15 +9,12 @@
         /* 80mm thermal approx */
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            width: 280px;
-            margin: 0 auto;
+            font-size: 10px;
+            font-weight: bold;
+            width: 200px;
+            margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            background: #f5f5f5;
+            background: white;
         }
 
         @media print {
@@ -25,8 +22,8 @@
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                min-height: auto;
-                display: block;
+                font-size: 10px;
+                font-weight: bold;
             }
 
             .no-print {
@@ -35,8 +32,9 @@
 
             .print-content {
                 width: 100%;
-                max-width: 280px;
-                margin: 0 auto;
+                max-width: 200px;
+                margin: 0;
+                padding: 0;
             }
         }
 
@@ -54,18 +52,19 @@
 
         .line {
             border-top: 1px dashed #000;
-            margin: 6px 0;
+            margin: 3px 0;
         }
 
         table {
             width: 100%;
-            font-size: 12px;
+            font-size: 10px;
+            font-weight: bold;
             border-collapse: collapse;
         }
 
         td {
             vertical-align: top;
-            padding: 3px 0;
+            padding: 1px 0;
         }
 
         .right {
@@ -81,11 +80,11 @@
         }
 
         .mt-4 {
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .mb-4 {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
 
         .kot-header {
@@ -96,20 +95,10 @@
 
         .print-content {
             margin: 0;
-            padding: 10px;
+            padding: 0;
             width: 100%;
-            max-width: 280px;
+            max-width: 200px;
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        @media print {
-            .print-content {
-                box-shadow: none;
-                border-radius: 0;
-                background: white;
-            }
         }
     </style>
 </head>
