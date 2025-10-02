@@ -1,6 +1,6 @@
 /* Global Auth Layout Styling */
 body {
-    background: linear-gradient(135deg, #800020, #b30e35, #d63384);
+    background: #800020;
     font-family: 'Poppins', sans-serif;
     min-height: 100vh;
     display: flex;
@@ -60,10 +60,7 @@ body::before {
     font-size: 32px;
     font-weight: 800;
     text-align: center;
-    background: linear-gradient(135deg, #800020, #b30e35);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #800020;
     margin-bottom: 40px;
     letter-spacing: -0.5px;
     position: relative;
@@ -119,7 +116,7 @@ body::before {
     padding: 18px 28px;
     font-weight: 700;
     font-size: 17px;
-    background: linear-gradient(135deg, #800020, #b30e35, #d63384);
+    background: #800020;
     border: none;
     color: #fff;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -155,7 +152,7 @@ body::before {
 
 /* Branch Switch Button */
 .btn-branch {
-    background: linear-gradient(135deg, #800020, #b30e35);
+    background: #800020;
     border: none;
     border-radius: 999px;
     padding: 8px 16px;
