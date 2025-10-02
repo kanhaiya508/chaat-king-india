@@ -90,6 +90,9 @@ class OrderFormComponent extends Component
         } else {
             \Log::info('Categories loaded: ' . $this->categories->count());
         }
+        
+        // Dispatch component loaded event for debugging
+        $this->dispatch('component-loaded');
     }
 
     public function openModal($itemId)
@@ -1097,102 +1100,6 @@ class OrderFormComponent extends Component
         session()->flash('success', 'KOT print initiated for ' . $order->items->count() . ' items.');
     }
 
-    private function generateKOTHTML($order)
-    {
-        $html = '<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <title>KOT - Kitchen Order Ticket</title>
-    <style>
-        body {
-            font-family: "Courier New", monospace;
-            font-size: 10px;
-            font-weight: bold;
-            width: 200px;
-            margin: 0;
-            padding: 0;
-            background: white;
-        }
-        .center { text-align: center; }
-        .bold { font-weight: bold; }
-        .muted { color: #333; }
-        .line { border-top: 1px dashed #000; margin: 3px 0; }
-        table { width: 100%; font-size: 10px; font-weight: bold; border-collapse: collapse; }
-        td { vertical-align: top; padding: 1px 0; }
-        .right { text-align: right; }
-        .w-70 { width: 70%; }
-        .w-30 { width: 30%; }
-        .mt-4 { margin-top: 2px; }
-        .mb-4 { margin-bottom: 2px; }
-        .print-content { margin: 0; padding: 0; width: 100%; max-width: 200px; background: white; }
-        @media print {
-            body { margin: 0; padding: 0; width: 100%; font-size: 10px; font-weight: bold; }
-            .print-content { width: 100%; max-width: 200px; margin: 0; padding: 0; }
-        }
-    </style>
-</head>
-<body onload="window.print()">
-<div class="print-content">
-    <!-- Order Info -->
-    <table>
-        <tr>
-            <td class="w-70"><strong>Order ID:</strong> #' . $order->id . '</td>
-        </tr>
-        <tr>
-            <td><strong>Date:</strong> ' . $order->created_at->format("d M Y, h:i A") . '</td>
-        </tr>
-    </table>
-    <div class="line"></div>
-    
-    <!-- Items -->
-    <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
-    
-    <div class="muted small center" style="margin-bottom: 8px;">
-        Items: ' . $order->items->count() . ' | Total: ₹' . number_format($order->items->sum("total_price"), 2) . '
-    </div>
-    
-    <table>';
-    
-        foreach ($order->items as $item) {
-            $html .= '<tr>
-                <td class="w-70">
-                    <strong>' . $item->item_name . '</strong><br>
-                    <span style="font-size: 10px;">Qty: ' . $item->quantity . '</span>';
-            
-            if ($item->remark) {
-                $html .= '<br><span style="font-size: 9px; color: #666;">Note: ' . $item->remark . '</span>';
-            }
-            
-            $html .= '</td>
-                <td class="right w-30">
-                    <span style="font-size: 10px;">₹' . number_format($item->total_price, 2) . '</span>
-                </td>
-            </tr>';
-        }
-    
-    $html .= '</table>
-
-    <div class="line"></div>
-
-    <!-- Special Instructions -->
-    ' . ($order->remark ? '<div class="bold">Special Instructions:</div>
-    <div style="font-size: 10px; margin-bottom: 8px;">' . $order->remark . '</div>
-    <div class="line"></div>' : '') . '
-
-    <!-- Footer -->
-    <div class="center">
-        <div class="bold">PREPARE FRESH & SERVE HOT!</div>
-        <div class="mt-4 muted">
-            Order #' . $order->id . ' • ' . $order->created_at->format("h:i A") . '
-        </div>
-    </div>
-</div>
-</body>
-</html>';
-
-        return $html;
-    }
 
     public function render()
     {

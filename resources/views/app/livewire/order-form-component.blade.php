@@ -65,16 +65,18 @@
                                       <div class="d-flex justify-content-between align-items-center mb-3">
                                           <h4 class="card-title mb-0 text-primary">#{{ $order->id }}</h4>
                                           <div class="d-flex flex-column gap-1">
-                                              <span class="badge bg-primary text-white small">{{ ucfirst($order->type) }}</span>
-                                              <span class="badge bg-warning text-dark small">{{ ucfirst($order->status) }}</span>
+                                              <span
+                                                  class="badge bg-primary text-white small">{{ ucfirst($order->type) }}</span>
+                                              <span
+                                                  class="badge bg-warning text-dark small">{{ ucfirst($order->status) }}</span>
                                           </div>
                                       </div>
 
                                       <div class="mb-2">
-                                        @if ($order->customer && $order->customer->name)
-                                        <strong class="text-muted">Customer:</strong>
-                                        <span class="text-primary">{{ $order->customer->name }}</span>
-                                        @endif
+                                          @if ($order->customer && $order->customer->name)
+                                              <strong class="text-muted">Customer:</strong>
+                                              <span class="text-primary">{{ $order->customer->name }}</span>
+                                          @endif
                                       </div>
 
                                       <div class="mb-2">
@@ -88,11 +90,13 @@
 
                                       <div class="mb-2">
                                           <strong class="text-muted">Total:</strong>
-                                          <span class="text-danger fw-bold fs-5">₹{{ number_format($order->total, 2) }}</span>
+                                          <span
+                                              class="text-danger fw-bold fs-5">₹{{ number_format($order->total, 2) }}</span>
                                       </div>
 
                                       <div class="text-muted small">
-                                          <i class="fas fa-clock me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
+                                          <i
+                                              class="fas fa-clock me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
                                       </div>
                                   </div>
                               </div>
@@ -117,11 +121,11 @@
                               @forelse ($category->tables as $table)
                                   <div class="table-box-wrapper position-relative">
                                       <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative"
-                                          wire:click="openOrderForm({{ $table->id }})" 
-                                          wire:loading.attr="disabled" 
+                                          wire:click="openOrderForm({{ $table->id }})" wire:loading.attr="disabled"
                                           wire:target="openOrderForm({{ $table->id }})">
                                           <h5> {{ $table->name }}</h5>
-                                          <div wire:loading wire:target="openOrderForm({{ $table->id }})" class="position-absolute top-50 start-50 translate-middle">
+                                          <div wire:loading wire:target="openOrderForm({{ $table->id }})"
+                                              class="position-absolute top-50 start-50 translate-middle">
                                               <i class="fas fa-spinner fa-spin text-white"></i>
                                           </div>
                                       </div>
@@ -150,11 +154,11 @@
                                   id="categoryTabs" role="tablist" aria-orientation="vertical">
 
                                   @foreach ($categories as $index => $category)
-                                      <button class="nav-link text-start mb-1 {{ $activeCategoryTab == $index ? 'active' : '' }}"
-                                          id="tab-{{ $index }}-tab" 
-                                          wire:click="selectCategoryTab({{ $index }})"
-                                          type="button" role="tab"
-                                          aria-controls="tab-{{ $index }}"
+                                      <button
+                                          class="nav-link text-start mb-1 {{ $activeCategoryTab == $index ? 'active' : '' }}"
+                                          id="tab-{{ $index }}-tab"
+                                          wire:click="selectCategoryTab({{ $index }})" type="button"
+                                          role="tab" aria-controls="tab-{{ $index }}"
                                           aria-selected="{{ $activeCategoryTab == $index ? 'true' : 'false' }}">
                                           {{ $category->name }}
                                       </button>
@@ -264,7 +268,7 @@
                                       </select>
                                   </div>
 
-                                  <button class="btn btn-sm btn-outline-danger" wire:click="$set('cart', [])" 
+                                  <button class="btn btn-sm btn-outline-danger" wire:click="$set('cart', [])"
                                       wire:loading.attr="disabled" wire:target="$set('cart', [])">
                                       <span wire:loading.remove wire:target="$set('cart', [])">Clear All</span>
                                       <span wire:loading wire:target="$set('cart', [])">
@@ -272,7 +276,7 @@
                                       </span>
                                   </button>
 
-                                 
+
                               </div>
 
                               <div style="min-height: 400px; max-height:400px; overflow-y: auto;">
@@ -285,18 +289,20 @@
                                           </tr>
                                       </thead>
                                       <tbody>
-                                          @php 
+                                          @php
                                               $subtotal = 0;
                                               // Sort cart to maintain group order and item order within groups
                                               $sortedCart = collect($cart)->sortBy([
                                                   ['kot_group_id', 'asc'],
                                                   ['kot_printed', 'asc'], // Unprinted first
-                                                  ['order_item_id', 'desc'] // Latest first within group
+                                                  ['order_item_id', 'desc'], // Latest first within group
                                               ]);
                                               // Group by kot_group_id, but keep printed and unprinted items separate
-                                              $groupedCart = $sortedCart->groupBy(function($item) {
+                                              $groupedCart = $sortedCart->groupBy(function ($item) {
                                                   if ($item['kot_group_id']) {
-                                                      return $item['kot_group_id'] . '_' . ($item['kot_printed'] ? 'printed' : 'pending');
+                                                      return $item['kot_group_id'] .
+                                                          '_' .
+                                                          ($item['kot_printed'] ? 'printed' : 'pending');
                                                   }
                                                   return 'new_items';
                                               });
@@ -312,7 +318,8 @@
                                                   @endphp
                                                   <tr class="{{ $isPrinted ? 'table-success' : 'table-info' }}">
                                                       <td colspan="4" class="fw-bold">
-                                                          <div class="d-flex justify-content-between align-items-center">
+                                                          <div
+                                                              class="d-flex justify-content-between align-items-center">
                                                               <div>
                                                                   <i class="fas fa-print me-2"></i>
                                                                   KOT Group: {{ $kotGroupId }}
@@ -346,77 +353,87 @@
                                                   </tr>
                                               @endif
                                               @foreach ($groupItems as $index => $item)
-                                              @php
-                                                  $variant = $item['item']->variants->firstWhere(
-                                                      'id',
-                                                      $item['variant_id'],
-                                                  );
-                                                  $variantPrice = $variant?->price ?? 0;
-                                                  $addonTotal = collect($item['addon_ids'])->sum(
-                                                      fn($id) => $item['item']->addons->firstWhere('id', $id)?->price ??
-                                                          0,
-                                                  );
-                                                  $totalItemPrice = ($variantPrice + $addonTotal) * $item['quantity'];
-                                                  $subtotal += $totalItemPrice;
-                                              @endphp
-                                              <tr>
-                                                  <td>
-                                                      <span>
-                                                          {{ $item['item']->name }}
-                                                          @if ($variant)
-                                                              <br><small class="text-muted">({{ $variant->label }})</small>
-                                                          @endif
-                                                          @if (!empty($item['addon_ids']))
-                                                              <br><small class="text-muted">
-                                                                  Addons: @foreach ($item['addon_ids'] as $addonId)
-                                                                      {{ $item['item']->addons->firstWhere('id', $addonId)?->name }},
-                                                                  @endforeach
-                                                              </small>
-                                                          @endif
-                                                          @if (!empty($item['remark']))
-                                                              <div class="text-muted small">
-                                                                  <i class="fas fa-quote-left " title="Remark"></i>
-                                                                  {{ $item['remark'] }} <i class="fas fa-quote-right "
-                                                                      title="Remark"></i>
-                                                              </div>
-                                                          @endif
-                                                      </span>
-                                                      <button type="button" class="btn btn-sm btn-outline-primary ms-2" 
-                                                          data-bs-toggle="modal" data-bs-target="#remarkModal{{ $index }}">
-                                                          <i class="fas fa-comment"></i>
-                                                      </button>
-                                                  </td>
-                                                  <td>
-                                                      <div class="input-group input-group-sm">
-                                                          <button class="btn btn-outline-secondary"
-                                                              wire:click="decreaseQty({{ $index }})"
-                                                              wire:loading.attr="disabled" 
-                                                              wire:target="decreaseQty({{ $index }})">−</button>
-                                                          <input type="text" class="form-control text-center"
-                                                              wire:model.lazy="cart.{{ $index }}.quantity" />
-                                                          <button class="btn btn-outline-secondary"
-                                                              wire:click="increaseQty({{ $index }})"
-                                                              wire:loading.attr="disabled" 
-                                                              wire:target="increaseQty({{ $index }})">+</button>
-                                                      </div>
-                                                  </td>
-                                                  <td>
-                                                      <div class="d-flex align-items-center justify-content-between">
-                                                          <span>₹{{ number_format($totalItemPrice, 2) }}</span>
-                                                          <button type="button" class="btn btn-sm btn-outline-danger ms-2"
-                                                              wire:click="removeItem({{ $index }})"
-                                                              wire:loading.attr="disabled" 
-                                                              wire:target="removeItem({{ $index }})">
-                                                              <span wire:loading.remove wire:target="removeItem({{ $index }})">
-                                                                  <i class="fas fa-trash"></i>
-                                                              </span>
-                                                              <span wire:loading wire:target="removeItem({{ $index }})">
-                                                                  <i class="fas fa-spinner fa-spin"></i>
-                                                              </span>
+                                                  @php
+                                                      $variant = $item['item']->variants->firstWhere(
+                                                          'id',
+                                                          $item['variant_id'],
+                                                      );
+                                                      $variantPrice = $variant?->price ?? 0;
+                                                      $addonTotal = collect($item['addon_ids'])->sum(
+                                                          fn($id) => $item['item']->addons->firstWhere('id', $id)
+                                                              ?->price ?? 0,
+                                                      );
+                                                      $totalItemPrice =
+                                                          ($variantPrice + $addonTotal) * $item['quantity'];
+                                                      $subtotal += $totalItemPrice;
+                                                  @endphp
+                                                  <tr>
+                                                      <td>
+                                                          <span>
+                                                              {{ $item['item']->name }}
+                                                              @if ($variant)
+                                                                  <br><small
+                                                                      class="text-muted">({{ $variant->label }})</small>
+                                                              @endif
+                                                              @if (!empty($item['addon_ids']))
+                                                                  <br><small class="text-muted">
+                                                                      Addons: @foreach ($item['addon_ids'] as $addonId)
+                                                                          {{ $item['item']->addons->firstWhere('id', $addonId)?->name }},
+                                                                      @endforeach
+                                                                  </small>
+                                                              @endif
+                                                              @if (!empty($item['remark']))
+                                                                  <div class="text-muted small">
+                                                                      <i class="fas fa-quote-left "
+                                                                          title="Remark"></i>
+                                                                      {{ $item['remark'] }} <i
+                                                                          class="fas fa-quote-right "
+                                                                          title="Remark"></i>
+                                                                  </div>
+                                                              @endif
+                                                          </span>
+                                                          <button type="button"
+                                                              class="btn btn-sm btn-outline-primary ms-2"
+                                                              data-bs-toggle="modal"
+                                                              data-bs-target="#remarkModal{{ $index }}">
+                                                              <i class="fas fa-comment"></i>
                                                           </button>
-                                                      </div>
-                                                  </td>
-                                              </tr>
+                                                      </td>
+                                                      <td>
+                                                          <div class="input-group input-group-sm">
+                                                              <button class="btn btn-outline-secondary"
+                                                                  wire:click="decreaseQty({{ $index }})"
+                                                                  wire:loading.attr="disabled"
+                                                                  wire:target="decreaseQty({{ $index }})">−</button>
+                                                              <input type="text" class="form-control text-center"
+                                                                  wire:model.lazy="cart.{{ $index }}.quantity" />
+                                                              <button class="btn btn-outline-secondary"
+                                                                  wire:click="increaseQty({{ $index }})"
+                                                                  wire:loading.attr="disabled"
+                                                                  wire:target="increaseQty({{ $index }})">+</button>
+                                                          </div>
+                                                      </td>
+                                                      <td>
+                                                          <div
+                                                              class="d-flex align-items-center justify-content-between">
+                                                              <span>₹{{ number_format($totalItemPrice, 2) }}</span>
+                                                              <button type="button"
+                                                                  class="btn btn-sm btn-outline-danger ms-2"
+                                                                  wire:click="removeItem({{ $index }})"
+                                                                  wire:loading.attr="disabled"
+                                                                  wire:target="removeItem({{ $index }})">
+                                                                  <span wire:loading.remove
+                                                                      wire:target="removeItem({{ $index }})">
+                                                                      <i class="fas fa-trash"></i>
+                                                                  </span>
+                                                                  <span wire:loading
+                                                                      wire:target="removeItem({{ $index }})">
+                                                                      <i class="fas fa-spinner fa-spin"></i>
+                                                                  </span>
+                                                              </button>
+                                                          </div>
+                                                      </td>
+                                                  </tr>
                                               @endforeach
                                           @endforeach
                                           @if (empty($cart))
@@ -656,8 +673,9 @@
                                       <div class="col-md-4">
                                           <div class="d-flex gap-3">
                                               <div class="form-check">
-                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
-                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                  <input
+                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
+                                                      type="radio" name="payment_mode_{{ $index }}"
                                                       id="cash_{{ $index }}" value="Cash"
                                                       wire:model="payments.{{ $index }}.mode"
                                                       @disabled($markPaidNoAmount)>
@@ -666,8 +684,9 @@
                                                   </label>
                                               </div>
                                               <div class="form-check">
-                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
-                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                  <input
+                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
+                                                      type="radio" name="payment_mode_{{ $index }}"
                                                       id="upi_{{ $index }}" value="UPI"
                                                       wire:model="payments.{{ $index }}.mode"
                                                       @disabled($markPaidNoAmount)>
@@ -676,8 +695,9 @@
                                                   </label>
                                               </div>
                                               <div class="form-check">
-                                                  <input class="form-check-input @error('payments.'.$index.'.mode') is-invalid @enderror" 
-                                                      type="radio" name="payment_mode_{{ $index }}" 
+                                                  <input
+                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
+                                                      type="radio" name="payment_mode_{{ $index }}"
                                                       id="card_{{ $index }}" value="Card"
                                                       wire:model="payments.{{ $index }}.mode"
                                                       @disabled($markPaidNoAmount)>
@@ -686,15 +706,16 @@
                                                   </label>
                                               </div>
                                           </div>
-                                          @error('payments.'.$index.'.mode')
+                                          @error('payments.' . $index . '.mode')
                                               <div class="invalid-feedback d-block">{{ $message }}</div>
                                           @enderror
                                       </div>
                                       <div class="col-md-3">
-                                          <input type="number" class="form-control form-control-sm @error('payments.'.$index.'.amount') is-invalid @enderror"
+                                          <input type="number"
+                                              class="form-control form-control-sm @error('payments.' . $index . '.amount') is-invalid @enderror"
                                               wire:model.live="payments.{{ $index }}.amount"
                                               placeholder="Amount" @disabled($markPaidNoAmount)>
-                                          @error('payments.'.$index.'.amount')
+                                          @error('payments.' . $index . '.amount')
                                               <div class="invalid-feedback">{{ $message }}</div>
                                           @enderror
                                       </div>
@@ -767,8 +788,7 @@
                                   wire:click="closeSettlement">Cancel</button>
                               <div class="text-end">
                                   <button class="btn btn-primary" wire:click="savePayments"
-                                      wire:loading.attr="disabled" 
-                                      wire:target="savePayments">
+                                      wire:loading.attr="disabled" wire:target="savePayments">
                                       <span wire:loading.remove wire:target="savePayments">Confirm & Save</span>
                                       <span wire:loading wire:target="savePayments">
                                           <i class="fas fa-spinner fa-spin"></i> Saving...
@@ -861,11 +881,11 @@
                               class="btn  btn-success px-3" />
                           <x-loader-button action="saveOrderAsHold" label="Hold" class="btn  btn-dark px-3" />
 
-                          @if((($isEditing && $order_id) || (!empty($cart) && !$isEditing)) && $this->hasUnprintedItems())
-                          <x-loader-button action="printUnprintedItems" label="Print Unprinted"
-                              class="btn btn-outline-success px-3" />
+                          @if ((($isEditing && $order_id) || (!empty($cart) && !$isEditing)) && $this->hasUnprintedItems())
+                              <x-loader-button action="printUnprintedItems" label="Print Unprinted"
+                                  class="btn btn-outline-success px-3" />
                           @endif
-                          {{-- @if(!empty($cart) && !$isEditing)
+                          {{-- @if (!empty($cart) && !$isEditing)
                           <x-loader-button action="printKOTDirectly" label="Print KOT"
                               class="btn btn-outline-primary px-3" />
                           @endif --}}
@@ -879,89 +899,119 @@
       @endif
       @push('scripts')
           <script>
-              // Debug: Check if Livewire is loaded
+              // Print functionality
               document.addEventListener('livewire:init', () => {
-                  console.log('Livewire initialized');
-              });
-              
-              // Debug: Check if component is loaded
-              Livewire.on('component-loaded', () => {
-                  console.log('OrderFormComponent loaded');
-              });
-              
-              // Function to print directly
-              function printDirectly(url) {
-                  window.open(url, '_blank');
-              }
-
-              Livewire.on('orderSavedForPrint', id => {
-                  const url = `/orders/${id}/print`;
-                  printDirectly(url);
-              });
-
-              Livewire.on('orderSavedForKOTPrint', id => {
-                  const url = `/orders/${id}/kot-print`;
-                  printDirectly(url);
-              });
-              // Function to print specific KOT group
-              function printKOTGroup(kotGroupId) {
-                  if (!kotGroupId) {
-                      alert('Invalid KOT Group ID');
-                      return;
-                  }
-                  // Get order ID from Livewire component
-                  const orderId = @this.order_id;
-                  if (!orderId) {
-                      alert('Order ID not found. Please save the order first.');
-                      return;
-                  }
-                  const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
-                  console.log('Printing KOT Group URL:', url);
-                  printDirectly(url);
-              }
-
-              // Listen for printKOTGroup event from Livewire
-              Livewire.on('printKOTGroup', (kotGroupId) => {
-                  printKOTGroup(kotGroupId);
-              });
-
-              // Listen for direct KOT HTML print
-              Livewire.on('printKOTHTML', (html) => {
-                  printKOTHTML(html);
-              });
-
-              // Function to print KOT HTML directly
-              function printKOTHTML(html) {
-                  console.log('Received HTML for printing:', html);
+                  // Print tracking to prevent duplicates
+                  window.activePrints = new Set();
                   
-                  // Create a new window for printing
-                  const printWindow = window.open('', '_blank', 'width=300,height=600');
+                  // Save & Print handler
+                  Livewire.on('orderSavedForPrint', (orderId) => {
+                      const key = `print_${orderId}`;
+                      if (window.activePrints.has(key)) {
+                          return;
+                      }
+                      
+                      window.activePrints.add(key);
+                      const printUrl = `/orders/${orderId}/print`;
+                      
+                      setTimeout(() => {
+                          const printWindow = window.open(printUrl, '_blank', 'width=800,height=600');
+                          
+                          if (printWindow) {
+                              printWindow.addEventListener('afterprint', () => {
+                                  printWindow.close();
+                              });
+                              
+                              const checkWindow = setInterval(() => {
+                                  if (printWindow.closed) {
+                                      clearInterval(checkWindow);
+                                  }
+                              }, 1000);
+                              
+                              setTimeout(() => {
+                                  if (!printWindow.closed) {
+                                      printWindow.close();
+                                      clearInterval(checkWindow);
+                                  }
+                              }, 10000);
+                          }
+                      }, 100);
+                      
+                      setTimeout(() => {
+                          window.activePrints.delete(key);
+                      }, 2000);
+                  });
                   
-                  if (!printWindow) {
-                      alert('Please allow popups for this site to print KOT');
-                      return;
-                  }
+                  // Save & KOT Print handler
+                  Livewire.on('orderSavedForKOTPrint', (orderId) => {
+                      const key = `kot_print_${orderId}`;
+                      if (window.activePrints.has(key)) {
+                          return;
+                      }
+                      
+                      window.activePrints.add(key);
+                      const printUrl = `/orders/${orderId}/kot-print`;
+                      
+                      setTimeout(() => {
+                          const printWindow = window.open(printUrl, '_blank', 'width=600,height=800');
+                          
+                          if (printWindow) {
+                              printWindow.addEventListener('afterprint', () => {
+                                  printWindow.close();
+                              });
+                              
+                              const checkWindow = setInterval(() => {
+                                  if (printWindow.closed) {
+                                      clearInterval(checkWindow);
+                                  }
+                              }, 1000);
+                              
+                              setTimeout(() => {
+                                  if (!printWindow.closed) {
+                                      printWindow.close();
+                                      clearInterval(checkWindow);
+                                  }
+                              }, 10000);
+                          }
+                      }, 100);
+                      
+                      setTimeout(() => {
+                          window.activePrints.delete(key);
+                      }, 2000);
+                  });
                   
-                  // Write HTML content to the new window
-                  printWindow.document.write(html);
-                  printWindow.document.close();
-                  
-                  // Wait for content to load, then print
-                  printWindow.onload = function() {
-                      console.log('Print window loaded, starting print...');
-                      setTimeout(function() {
-                          printWindow.focus();
-                          printWindow.print();
-                          // Close the window after printing
-                          setTimeout(() => {
+                  // KOT HTML Print handler
+                  Livewire.on('printKOTHTML', (html) => {
+                      const printWindow = window.open('', '_blank', 'width=600,height=500');
+                      
+                      if (!printWindow) {
+                          alert('Please allow popups to print KOT');
+                          return;
+                      }
+                      
+                      printWindow.document.write(html);
+                      printWindow.document.close();
+                      
+                      printWindow.onload = function() {
+                          printWindow.addEventListener('afterprint', () => {
                               printWindow.close();
-                          }, 1000);
-                      }, 500);
-                  };
-              }
-
-          </script>
-      @endpush
+                          });
+                          
+                          setTimeout(() => {
+                              printWindow.focus();
+                              printWindow.print();
+                              
+                              setTimeout(() => {
+                                  if (!printWindow.closed) {
+                                      printWindow.close();
+                                  }
+                              }, 500);
+                          }, 500);
+                      };
+                  });
+              });
+            </script>
+        @endpush
 
 
   </div>
