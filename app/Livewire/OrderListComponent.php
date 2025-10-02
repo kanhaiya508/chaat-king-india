@@ -13,6 +13,10 @@ class OrderListComponent extends Component
     public $search = '';
     public $type = '';           // ⬅️ add
     public $selectedOrder = null;
+    public $showDeleteModal = false;
+    public $orderToDelete = null;
+    public $deletePassword = '';
+    public $deletePasswordError = '';
 
     public function updatedSearch()
     {
@@ -56,14 +60,45 @@ class OrderListComponent extends Component
             ->layout('app.layouts.app');
     }
 
-    public function deleteOrder($orderId)
+    public function confirmDeleteOrder($orderId)
     {
-        if ($order = Order::find($orderId)) {
+        $this->orderToDelete = $orderId;
+        $this->showDeleteModal = true;
+        $this->deletePassword = '';
+        $this->deletePasswordError = '';
+    }
+
+    public function cancelDelete()
+    {
+        $this->showDeleteModal = false;
+        $this->orderToDelete = null;
+        $this->deletePassword = '';
+        $this->deletePasswordError = '';
+    }
+
+    public function deleteOrder()
+    {
+        // Hardcoded password for deletion
+        $correctPassword = 'admin123';
+        
+        if ($this->deletePassword !== $correctPassword) {
+            $this->deletePasswordError = 'Incorrect password. Please try again.';
+            return;
+        }
+
+        if ($order = Order::find($this->orderToDelete)) {
+            $orderId = $order->id;
             $order->items()->delete();
             $order->delete();
+            
+            $this->showDeleteModal = false;
+            $this->orderToDelete = null;
+            $this->deletePassword = '';
+            $this->deletePasswordError = '';
+            
             session()->flash('success', "Order #$orderId deleted successfully.");
         } else {
-            session()->flash('error', "Order not found.");
+            $this->deletePasswordError = "Order not found.";
         }
     }
 }

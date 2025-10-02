@@ -69,8 +69,7 @@
 
                                       <!-- Delete -->
                                       <button class="btn btn-sm btn-outline-danger"
-                                          wire:click.prevent="deleteOrder({{ $order->id }})"
-                                          onclick="return confirm('Are you sure you want to delete this order?')">
+                                          wire:click.prevent="confirmDeleteOrder({{ $order->id }})">
                                           <i class="fas fa-trash"></i>
                                       </button>
                                   </td>
@@ -162,5 +161,52 @@
               </div>
           </div>
       </div>
+
+      <!-- Delete Confirmation Modal -->
+      @if($showDeleteModal)
+      <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+          <div class="modal-dialog modal-dialog-centered">
+              <div class="modal-content">
+                  <div class="modal-header bg-danger text-white">
+                      <h5 class="modal-title">
+                          <i class="fas fa-exclamation-triangle me-2"></i>
+                          Confirm Order Deletion
+                      </h5>
+                  </div>
+                  <div class="modal-body">
+                      <div class="alert alert-warning">
+                          <i class="fas fa-warning me-2"></i>
+                          <strong>Warning:</strong> This action cannot be undone. The order and all its items will be permanently deleted.
+                      </div>
+                      
+                      <p class="mb-3">To confirm deletion, please enter the admin password:</p>
+                      
+                      <div class="form-group">
+                          <label for="deletePassword" class="form-label">Admin Password</label>
+                          <input type="password" 
+                                 class="form-control @error('deletePassword') is-invalid @enderror" 
+                                 id="deletePassword"
+                                 wire:model="deletePassword" 
+                                 placeholder="Enter admin password"
+                                 autofocus>
+                          @if($deletePasswordError)
+                              <div class="invalid-feedback d-block">
+                                  {{ $deletePasswordError }}
+                              </div>
+                          @endif
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" wire:click="cancelDelete">
+                          <i class="fas fa-times me-1"></i> Cancel
+                      </button>
+                      <button type="button" class="btn btn-danger" wire:click="deleteOrder">
+                          <i class="fas fa-trash me-1"></i> Delete Order
+                      </button>
+                  </div>
+              </div>
+          </div>
+      </div>
+      @endif
 
   </div>
