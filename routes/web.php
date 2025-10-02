@@ -30,11 +30,11 @@ use App\Livewire\TableManager;
 
 
 Route::get('/', [IndexController::class, 'index'])->name('index');
-Route::get('/about', [IndexController::class, 'about'])->name('about');
-Route::get('/contact', [IndexController::class, 'contact'])->name('contact');
-Route::get('/service', [IndexController::class, 'service'])->name('service');
-Route::get('/menu', [IndexController::class, 'menu'])->name('menu');
-Route::get('/gallery', [IndexController::class, 'gallery'])->name('gallery');
+// Route::get('/about', [IndexController::class, 'about'])->name('about');
+// Route::get('/contact', [IndexController::class, 'contact'])->name('contact');
+// Route::get('/service', [IndexController::class, 'service'])->name('service');
+// Route::get('/menu', [IndexController::class, 'menu'])->name('menu');
+// Route::get('/gallery', [IndexController::class, 'gallery'])->name('gallery');
 
 Route::get('/orders/{order}/share', [OrderController::class, 'share'])->name('orders.share');
 
