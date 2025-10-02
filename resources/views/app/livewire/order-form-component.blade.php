@@ -865,10 +865,10 @@
                           <x-loader-button action="printUnprintedItems" label="Print Unprinted"
                               class="btn btn-outline-success px-3" />
                           @endif
-                          @if(!empty($cart) && !$isEditing)
+                          {{-- @if(!empty($cart) && !$isEditing)
                           <x-loader-button action="printKOTDirectly" label="Print KOT"
                               class="btn btn-outline-primary px-3" />
-                          @endif
+                          @endif --}}
                       </div>
 
                   </div>
