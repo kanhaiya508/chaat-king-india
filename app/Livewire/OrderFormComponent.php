@@ -491,21 +491,15 @@ class OrderFormComponent extends Component
 
     public function hasUnprintedItems()
     {
-        // Check if we have cart items that are not printed
+        // Check if we have cart items
         if (!empty($this->cart)) {
-            foreach ($this->cart as $item) {
-                if (!($item['kot_printed'] ?? false)) {
-                    return true;
-                }
-            }
+            return true; // Show button if cart has items
         }
 
-        // Check if we have an order with unprinted items
+        // Check if we have an order with any items
         if ($this->order_id) {
-            $unprintedCount = OrderItem::where('order_id', $this->order_id)
-                ->where('kot_printed', false)
-                ->count();
-            return $unprintedCount > 0;
+            $itemCount = OrderItem::where('order_id', $this->order_id)->count();
+            return $itemCount > 0; // Show button if order has items
         }
 
         return false;
@@ -534,23 +528,21 @@ class OrderFormComponent extends Component
             return;
         }
 
-        // Get unprinted items for this order
-        $unprintedItems = OrderItem::where('order_id', $this->order_id)
-            ->where('kot_printed', false)
-            ->get();
+        // Get all items for this order (both printed and unprinted)
+        $allItems = OrderItem::where('order_id', $this->order_id)->get();
 
-        if ($unprintedItems->isEmpty()) {
-            session()->flash('info', 'No unprinted items found.');
+        if ($allItems->isEmpty()) {
+            session()->flash('error', 'No items found in this order.');
             return;
         }
 
-        // Use the markItemsAsPrinted method for consistency
-        $this->markItemsAsPrinted($this->order_id, false); // false = print only unprinted items
+        // Use the markItemsAsPrinted method to print all items
+        $this->markItemsAsPrinted($this->order_id, true); // true = print all items
 
         // Refresh the cart to show updated status
         $this->setOrderValues(Order::find($this->order_id));
         
-        session()->flash('success', 'KOT printed successfully for ' . $unprintedItems->count() . ' unprinted items.');
+        session()->flash('success', 'KOT printed successfully for ' . $allItems->count() . ' items.');
     }
 
 
