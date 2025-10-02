@@ -9,9 +9,29 @@
         /* 80mm thermal approx */
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            width: 280px;
-            margin: 0 auto;
+            font-size: 10px;
+            font-weight: bold;
+            width: 200px;
+            margin: 0;
+            padding: 0;
+            background: white;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+                font-size: 10px;
+                font-weight: bold;
+            }
+            
+            .print-content {
+                width: 100%;
+                max-width: 200px;
+                margin: 0;
+                padding: 0;
+            }
         }
 
         .center {
@@ -28,18 +48,19 @@
 
         .line {
             border-top: 1px dashed #000;
-            margin: 6px 0;
+            margin: 3px 0;
         }
 
         table {
             width: 100%;
-            font-size: 12px;
+            font-size: 10px;
+            font-weight: bold;
             border-collapse: collapse;
         }
 
         td {
             vertical-align: top;
-            padding: 2px 0;
+            padding: 1px 0;
         }
 
         .right {
@@ -55,16 +76,26 @@
         }
 
         .mt-4 {
-            margin-top: 4px;
+            margin-top: 2px;
         }
 
         .mb-4 {
-            margin-bottom: 4px;
+            margin-bottom: 2px;
+        }
+        
+        .print-content {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            max-width: 200px;
+            background: white;
         }
     </style>
 </head>
 
 <body onload="window.print()">
+
+<div class="print-content">
 
     @php
         $branch = $order->branch; // Branch relation
@@ -170,7 +201,7 @@
     <!-- Special Instructions -->
     @if ($order->remark)
         <div class="bold">Special Instructions:</div>
-        <div style="font-size: 11px; margin-bottom: 8px;">{{ $order->remark }}</div>
+        <div style="font-size: 9px; margin-bottom: 8px;">{{ $order->remark }}</div>
         <div class="line"></div>
     @endif
 
@@ -180,6 +211,8 @@
             {{ $branch->name ?? 'Your Store' }} • {{ $branch->contact_number ?? '' }}
         </div>
     </div>
+
+</div>
 
 </body>
 

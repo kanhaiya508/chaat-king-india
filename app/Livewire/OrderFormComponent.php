@@ -1107,49 +1107,44 @@ class OrderFormComponent extends Component
     <style>
         body {
             font-family: "Courier New", monospace;
-            font-size: 14px;
-            width: 280px;
-            margin: 0 auto;
+            font-size: 10px;
+            font-weight: bold;
+            width: 200px;
+            margin: 0;
+            padding: 0;
+            background: white;
         }
         .center { text-align: center; }
         .bold { font-weight: bold; }
         .muted { color: #333; }
-        .line { border-top: 1px dashed #000; margin: 6px 0; }
-        table { width: 100%; font-size: 14px; border-collapse: collapse; }
-        td { vertical-align: top; padding: 3px 0; }
+        .line { border-top: 1px dashed #000; margin: 3px 0; }
+        table { width: 100%; font-size: 10px; font-weight: bold; border-collapse: collapse; }
+        td { vertical-align: top; padding: 1px 0; }
         .right { text-align: right; }
         .w-70 { width: 70%; }
         .w-30 { width: 30%; }
-        .mt-4 { margin-top: 4px; }
-        .mb-4 { margin-bottom: 4px; }
+        .mt-4 { margin-top: 2px; }
+        .mb-4 { margin-bottom: 2px; }
+        .print-content { margin: 0; padding: 0; width: 100%; max-width: 200px; background: white; }
+        @media print {
+            body { margin: 0; padding: 0; width: 100%; font-size: 10px; font-weight: bold; }
+            .print-content { width: 100%; max-width: 200px; margin: 0; padding: 0; }
+        }
     </style>
 </head>
 <body onload="window.print()">
+<div class="print-content">
     <!-- Order Info -->
     <table>
         <tr>
             <td class="w-70"><strong>Order ID:</strong> #' . $order->id . '</td>
-            <td class="right w-30"><strong>' . strtoupper($order->type) . '</strong></td>
         </tr>
         <tr>
             <td><strong>Date:</strong> ' . $order->created_at->format("d M Y, h:i A") . '</td>
-            <td class="right">';
-        
-        if ($order->table) {
-            $html .= '<strong>Table:</strong> ' . $order->table->name;
-        }
-        
-        $html .= '</td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <strong>Customer:</strong> ' . ($order->customer->name ?? "Walk-in") . '
-            </td>
         </tr>
     </table>
-
     <div class="line"></div>
-
+    
     <!-- Items -->
     <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
     
@@ -1163,15 +1158,15 @@ class OrderFormComponent extends Component
             $html .= '<tr>
                 <td class="w-70">
                     <strong>' . $item->item_name . '</strong><br>
-                    <span style="font-size: 12px;">Qty: ' . $item->quantity . '</span>';
+                    <span style="font-size: 10px;">Qty: ' . $item->quantity . '</span>';
             
             if ($item->remark) {
-                $html .= '<br><span style="font-size: 11px; color: #666;">Note: ' . $item->remark . '</span>';
+                $html .= '<br><span style="font-size: 9px; color: #666;">Note: ' . $item->remark . '</span>';
             }
             
             $html .= '</td>
                 <td class="right w-30">
-                    <span style="font-size: 12px;">₹' . number_format($item->total_price, 2) . '</span>
+                    <span style="font-size: 10px;">₹' . number_format($item->total_price, 2) . '</span>
                 </td>
             </tr>';
         }
@@ -1182,7 +1177,7 @@ class OrderFormComponent extends Component
 
     <!-- Special Instructions -->
     ' . ($order->remark ? '<div class="bold">Special Instructions:</div>
-    <div style="font-size: 12px; margin-bottom: 8px;">' . $order->remark . '</div>
+    <div style="font-size: 10px; margin-bottom: 8px;">' . $order->remark . '</div>
     <div class="line"></div>' : '') . '
 
     <!-- Footer -->
@@ -1192,6 +1187,7 @@ class OrderFormComponent extends Component
             Order #' . $order->id . ' • ' . $order->created_at->format("h:i A") . '
         </div>
     </div>
+</div>
 </body>
 </html>';
 
