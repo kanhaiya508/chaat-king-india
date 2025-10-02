@@ -11,7 +11,20 @@
             font-family: 'Courier New', monospace;
             font-size: 14px;
             width: 280px;
-            margin: 0 auto;
+            margin: 0;
+            padding: 0;
+        }
+        
+        @media print {
+            body {
+                margin: 0;
+                padding: 0;
+                width: 100%;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
         }
 
         .center {
@@ -67,10 +80,17 @@
             padding: 8px;
             margin-bottom: 8px;
         }
+        
+        .print-content {
+            margin: 0;
+            padding: 0;
+        }
     </style>
 </head>
 
-<body onload="window.print()">
+<body onload="window.print()" style="margin: 0; padding: 0;">
+
+<div class="print-content">
 
     @php
         $branch = $order->branch; // Branch relation
@@ -109,14 +129,6 @@
     <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
     
     @if ($order->items->count() > 0)
-        @php
-            $kotGroups = $order->items->groupBy('kot_group_id');
-            $firstGroup = $kotGroups->first();
-            $kotGroupId = $firstGroup->first()->kot_group_id ?? 'N/A';
-        @endphp
-        <div class="muted small center" style="margin-bottom: 8px;">
-            KOT Group: {{ $kotGroupId }}
-        </div>
         <div class="muted small center" style="margin-bottom: 8px;">
             Items: {{ $order->items->count() }} | Total: ₹{{ number_format($order->items->sum('total_price'), 2) }}
         </div>
@@ -176,6 +188,8 @@
             Order #{{ $order->id }} • {{ $order->created_at->format('h:i A') }}
         </div>
     </div>
+
+</div>
 
 </body>
 

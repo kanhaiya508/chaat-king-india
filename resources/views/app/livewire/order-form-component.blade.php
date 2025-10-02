@@ -903,21 +903,18 @@
                   const url = `/orders/${id}/kot-print`;
                   printDirectly(url);
               });
-
               // Function to print specific KOT group
               function printKOTGroup(kotGroupId) {
                   if (!kotGroupId) {
                       alert('Invalid KOT Group ID');
                       return;
                   }
-                  
                   // Get order ID from Livewire component
                   const orderId = @this.order_id;
                   if (!orderId) {
                       alert('Order ID not found. Please save the order first.');
                       return;
                   }
-                  
                   const url = `/orders/${orderId}/kot-group-print/${kotGroupId}`;
                   console.log('Printing KOT Group URL:', url);
                   printDirectly(url);
