@@ -750,7 +750,11 @@ a[target="_blank"]:hover {
     transform: scale(0.95);
 }
 
-/* Enhanced Table Card Design - Clean Minimalist Style */
+/* ==============================================
+   TABLE CARDS DESIGN - CLEAN & MINIMALIST
+   ============================================== */
+
+/* Main Table Box Container */
 .table-box {
     border-radius: 12px;
     border: 2px solid rgba(108, 117, 125, 0.2);
@@ -764,6 +768,7 @@ a[target="_blank"]:hover {
     justify-content: center;
     align-items: center;
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    cursor: pointer;
 }
 
 .table-box:hover {
@@ -772,6 +777,7 @@ a[target="_blank"]:hover {
     border-color: rgba(108, 117, 125, 0.4);
 }
 
+/* Table Status Colors */
 .table-box.bg-danger {
     background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
     border-color: rgba(220, 53, 69, 0.2);
@@ -796,7 +802,11 @@ a[target="_blank"]:hover {
     box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
 }
 
-/* Table Layout Sections */
+/* ==============================================
+   TABLE SECTION LAYOUTS
+   ============================================== */
+
+/* Table Name Section */
 .table-name-section {
     text-align: center;
     flex-grow: 1;
@@ -810,32 +820,40 @@ a[target="_blank"]:hover {
     font-weight: bold;
     margin-bottom: 5px;
     color: inherit;
+    font-size: 1.1rem;
 }
 
+/* Order Summary Container */
 .order-summary {
     margin-top: 8px;
     text-align: center;
 }
 
+/* Order Amount Display */
 .order-amount {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
     font-weight: bold;
     color: inherit;
     margin-bottom: 4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
 }
 
+/* Order Timing Display */
 .order-timing {
     font-size: 0.75rem;
     color: rgba(0, 0, 0, 0.7);
     display: flex;
     align-items: center;
     justify-content: center;
+    margin-top: 2px;
 }
 
 .order-timing i {
     font-size: 0.7rem;
+    margin-right: 4px;
 }
 
+/* Digital Clock Timer */
 .time-display {
     font-family: 'Courier New', monospace;
     font-weight: bold;
@@ -844,12 +862,17 @@ a[target="_blank"]:hover {
 
 .minutes-counter {
     font-size: 0.9rem;
+    color: inherit;
 }
 
 .seconds-counter {
     font-size: 0.8rem;
     color: #6c757d;
 }
+
+/* ==============================================
+   ACTION BUTTONS SECTION
+   ============================================== */
 
 .action-buttons {
     display: flex;
@@ -859,6 +882,7 @@ a[target="_blank"]:hover {
     align-items: center;
 }
 
+/* Base Action Button */
 .action-btn {
     width: 36px;
     height: 36px;
@@ -873,6 +897,7 @@ a[target="_blank"]:hover {
     font-size: 14px;
     cursor: pointer;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    text-decoration: none;
 }
 
 .action-btn:hover {
@@ -900,6 +925,7 @@ a[target="_blank"]:hover {
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
+/* Button Specific Colors */
 .print-btn:hover {
     color: #198754;
     border-color: #198754;
@@ -918,6 +944,30 @@ a[target="_blank"]:hover {
 .open-table-btn:hover {
     color: #0d6efd;
     border-color: #0d6efd;
+}
+
+/* ==============================================
+   RESPONSIVE DESIGN
+   ============================================== */
+
+@media (max-width: 768px) {
+    .table-box {
+        min-height: 100px;
+    }
+    
+    .action-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 12px;
+    }
+    
+    .order-amount {
+        font-size: 1rem;
+    }
+    
+    .table-name-section h5 {
+        font-size: 1rem;
+    }
 }
 
 
@@ -1029,6 +1079,8 @@ a[target="_blank"]:hover {
 .qty-btn:hover {
     background-color: #e0e0e0;
 }
+
+/* Livewire table cards styles - Latest update */
 
 .qty-input {
     width: 50px;
