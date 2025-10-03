@@ -607,6 +607,78 @@ a[target="_blank"]:hover {
     background-color: #f8f9fa;
 }
 
+.table-box.bg-teal {
+    background-color: #20c997;
+}
+
+/* Text colors for table box */
+.table-box.text-dark {
+    color: #212529 !important;
+}
+
+.table-box.text-white {
+    color: #fff !important;
+}
+
+/* Order info styling in table boxes */
+.table-box .order-info {
+    margin-top: 5px;
+    padding: 2px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.table-box.text-dark .order-info {
+    border-top-color: rgba(0, 0, 0, 0.1);
+}
+
+.table-box .order-info small {
+    font-size: 0.75rem;
+    line-height: 1.2;
+}
+
+/* Time Running Styling */
+.table-box .time-running {
+    color: #6c757d;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 2px 6px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+.table-box.text-dark .time-running {
+    color: #495057;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.table-box.text-white .time-running {
+    color: rgba(255, 255, 255, 0.9);
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.table-box .time-running i {
+    font-size: 0.6rem;
+}
+
+/* Settlement Button Styling */
+.table-box .btn-success {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.3);
+}
+
+.table-box .btn-success:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(40, 167, 69, 0.4);
+}
+
+.table-box .btn-success:active {
+    transform: scale(0.95);
+}
+
 
 /* Custom Totals & Payment Styling */
 

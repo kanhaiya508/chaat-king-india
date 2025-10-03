@@ -120,10 +120,42 @@
                           <div class="table-grid">
                               @forelse ($category->tables as $table)
                                   <div class="table-box-wrapper position-relative">
-                                      <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative"
-                                          wire:click="openOrderForm({{ $table->id }})" wire:loading.attr="disabled"
-                                          wire:target="openOrderForm({{ $table->id }})">
-                                          <h5> {{ $table->name }}</h5>
+                                      <div
+                                          class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
+                                          <!-- Main table content - clickable area -->
+                                          <div wire:click="openOrderForm({{ $table->id }})"
+                                              wire:loading.attr="disabled"
+                                              wire:target="openOrderForm({{ $table->id }})"
+                                              style="cursor: pointer;">
+                                              <h5>{{ $table->name }}</h5>
+                                              @if ($table->latestOrder && $table->latestOrder->status !== null)
+                                                  <div class="order-info">
+                                                      <small><strong>Order #{{ $table->latestOrder->id }}</strong></small><br>
+                                                      <small>{{ ucfirst($table->latestOrder->status) }}</small><br>
+                                                      @php
+                                                          $minutesRunning = $table->latestOrder->created_at->diffINMinutes(now());
+                                                      @endphp
+                                                      <small class="time-running">
+                                                          <i class="fas fa-clock me-1"></i>{{ $minutesRunning }} Min
+                                                      </small>
+                                                  </div>
+                                              @endif
+                                          </div>
+
+                                          <!-- Settlement Button - only show if table has active order -->
+                                          @if ($table->latestOrder && $table->latestOrder->status !== null)
+                                              <div class="position-absolute top-0 end-0 p-2">
+                                                  <button class="btn btn-sm btn-success shadow-sm"
+                                                      wire:click="openSettlementForTable({{ $table->latestOrder->id }})"
+                                                      wire:loading.attr="disabled"
+                                                      wire:target="openSettlementForTable({{ $table->latestOrder->id }})"
+                                                      title="Quick Settlement"
+                                                      style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
+                                                      <i class="fas fa-receipt" style="font-size: 12px;"></i>
+                                                  </button>
+                                              </div>
+                                          @endif
+
                                           <div wire:loading wire:target="openOrderForm({{ $table->id }})"
                                               class="position-absolute top-50 start-50 translate-middle">
                                               <i class="fas fa-spinner fa-spin text-white"></i>
@@ -606,201 +638,6 @@
               </div>
           @endif
 
-          @if ($saveandsettlement)
-              <div class="modal fade show d-block" tabindex="-1" role="dialog"
-                  style="background-color: rgba(0,0,0,0.5); z-index:1050;">
-                  <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
-                      <div class="modal-content shadow rounded-4">
-                          <div class="modal-header">
-                              <h5 class="modal-title">{{ $selectedItem->name ?? 'Settlement' }}</h5>
-                              <button type="button" class="btn-close" wire:click="closeSettlement"
-                                  aria-label="Close"></button>
-                          </div>
-
-                          <div class="modal-body p-4">
-
-                              <!-- Subtotal -->
-                              <div class="mb-3 d-flex justify-content-between align-items-center border-bottom pb-2">
-                                  <span class="fw-semibold fs-5">Subtotal:</span>
-                                  <span class="fs-5">₹{{ number_format($subtotal, 2) }}</span>
-                              </div>
-
-                              <!-- Discount Section -->
-                              <div class="mb-3 row align-items-center">
-                                  <label class="col-auto col-form-label fw-bold">Discount</label>
-
-                                  <div class="col-auto">
-                                      <div class="btn-group btn-group-sm" role="group">
-                                          <input type="radio" class="btn-check" name="discountType" id="percent"
-                                              wire:model="isPercent" wire:change="applyDiscount" value="1">
-                                          <label class="btn btn-outline-primary" for="percent">%</label>
-
-                                          <input type="radio" class="btn-check" name="discountType" id="flat"
-                                              wire:model="isPercent" wire:change="applyDiscount" value="0">
-                                          <label class="btn btn-outline-primary" for="flat">₹</label>
-                                      </div>
-                                  </div>
-
-                                  <div class="col">
-                                      <input type="number" class="form-control form-control-sm ms-auto"
-                                          placeholder="0" wire:model="discountValue" min="0"
-                                          wire:change="applyDiscount" style="max-width: 100px; float: right;">
-                                  </div>
-                              </div>
-
-
-                              <!-- Final Total -->
-                              <div class="mb-4 d-flex justify-content-between align-items-center border-top pt-2">
-                                  <span class="fw-bold fs-4">Total:</span>
-                                  <span class="fw-bold text-success fs-4">₹{{ number_format($finalTotal, 2) }}</span>
-                              </div>
-
-                              <hr>
-
-                              <div class="d-flex align-items-center justify-content-between mb-3">
-                                  <h5 class="mb-0">Split Payment</h5>
-                                  <div class="form-check">
-                                      <input class="form-check-input" type="checkbox" id="markPaidNoAmount"
-                                          wire:model.live="markPaidNoAmount">
-                                      <label class="form-check-label" for="markPaidNoAmount">
-                                          Mark as PAID without taking amount
-                                      </label>
-                                  </div>
-                              </div>
-
-                              @foreach ($payments as $index => $payment)
-                                  <div class="row g-2 align-items-center mb-2">
-                                      <div class="col-md-4">
-                                          <div class="d-flex gap-3">
-                                              <div class="form-check">
-                                                  <input
-                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
-                                                      type="radio" name="payment_mode_{{ $index }}"
-                                                      id="cash_{{ $index }}" value="Cash"
-                                                      wire:model="payments.{{ $index }}.mode"
-                                                      @disabled($markPaidNoAmount)>
-                                                  <label class="form-check-label" for="cash_{{ $index }}">
-                                                      Cash
-                                                  </label>
-                                              </div>
-                                              <div class="form-check">
-                                                  <input
-                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
-                                                      type="radio" name="payment_mode_{{ $index }}"
-                                                      id="upi_{{ $index }}" value="UPI"
-                                                      wire:model="payments.{{ $index }}.mode"
-                                                      @disabled($markPaidNoAmount)>
-                                                  <label class="form-check-label" for="upi_{{ $index }}">
-                                                      UPI
-                                                  </label>
-                                              </div>
-                                              <div class="form-check">
-                                                  <input
-                                                      class="form-check-input @error('payments.' . $index . '.mode') is-invalid @enderror"
-                                                      type="radio" name="payment_mode_{{ $index }}"
-                                                      id="card_{{ $index }}" value="Card"
-                                                      wire:model="payments.{{ $index }}.mode"
-                                                      @disabled($markPaidNoAmount)>
-                                                  <label class="form-check-label" for="card_{{ $index }}">
-                                                      Card
-                                                  </label>
-                                              </div>
-                                          </div>
-                                          @error('payments.' . $index . '.mode')
-                                              <div class="invalid-feedback d-block">{{ $message }}</div>
-                                          @enderror
-                                      </div>
-                                      <div class="col-md-3">
-                                          <input type="number"
-                                              class="form-control form-control-sm @error('payments.' . $index . '.amount') is-invalid @enderror"
-                                              wire:model.live="payments.{{ $index }}.amount"
-                                              placeholder="Amount" @disabled($markPaidNoAmount)>
-                                          @error('payments.' . $index . '.amount')
-                                              <div class="invalid-feedback">{{ $message }}</div>
-                                          @enderror
-                                      </div>
-                                      <div class="col-md-3">
-                                          <input type="text" class="form-control form-control-sm"
-                                              wire:model="payments.{{ $index }}.note" placeholder="Note"
-                                              @disabled($markPaidNoAmount)>
-                                      </div>
-                                      <div class="col-md-2 text-end">
-                                          @if ($index !== 0)
-                                              <button class="btn btn-sm btn-danger"
-                                                  wire:click="removePaymentRow({{ $index }})"
-                                                  @disabled($markPaidNoAmount)>&times;</button>
-                                          @else
-                                              <button class="btn btn-sm btn-secondary" wire:click="addPaymentRow"
-                                                  @disabled($markPaidNoAmount)>+ Add Mode</button>
-                                          @endif
-                                      </div>
-                                  </div>
-                              @endforeach
-
-                              {{-- Remaining / Change --}}
-                              <div class="d-flex justify-content-between mb-2">
-                                  <strong>Remaining Balance:</strong>
-                                  <strong class="{{ $this->shortfall > 0 ? 'text-danger' : 'text-success' }}">
-                                      ₹{{ number_format($this->shortfall, 2) }}
-                                  </strong>
-                              </div>
-                              @if ($this->changeDue > 0)
-                                  <div class="d-flex justify-content-between mb-2">
-                                      <strong>Change Due to Customer:</strong>
-                                      <strong class="text-info">₹{{ number_format($this->changeDue, 2) }}</strong>
-                                  </div>
-                              @endif
-
-                              {{-- Write-off (visible if shortfall) --}}
-                              @if ($this->shortfall > 0)
-                                  <div class="alert alert-warning py-2">
-                                      <div class="d-flex align-items-center justify-content-between">
-                                          <div>
-                                              <div class="fw-semibold">Shortfall:
-                                                  ₹{{ number_format($this->shortfall, 2) }}</div>
-                                              <small class="text-muted">You can write off up to
-                                                  ₹{{ $maxWriteOff }}.</small>
-                                          </div>
-                                          <div class="d-flex align-items-center gap-2">
-                                              <input type="number" class="form-control form-control-sm"
-                                                  style="width:100px" wire:model.lazy="write_off" min="0"
-                                                  step="0.01">
-                                              <input type="text" class="form-control form-control-sm"
-                                                  placeholder="Reason (optional)" style="width:200px"
-                                                  wire:model.lazy="write_off_reason">
-                                          </div>
-                                      </div>
-                                  </div>
-                              @endif
-
-
-                              <!-- Payment Summary -->
-                              <div class="mb-2 d-flex justify-content-between">
-                                  <strong>Total Paid:</strong>
-                                  <strong>₹{{ number_format($this->paymentTotal, 2) }}</strong>
-                              </div>
-
-
-                          </div>
-
-                          <div class="modal-footer">
-                              <button type="button" class="btn btn-secondary"
-                                  wire:click="closeSettlement">Cancel</button>
-                              <div class="text-end">
-                                  <button class="btn btn-primary" wire:click="savePayments"
-                                      wire:loading.attr="disabled" wire:target="savePayments">
-                                      <span wire:loading.remove wire:target="savePayments">Confirm & Save</span>
-                                      <span wire:loading wire:target="savePayments">
-                                          <i class="fas fa-spinner fa-spin"></i> Saving...
-                                      </span>
-                                  </button>
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          @endif
-
 
           @foreach ($cart as $index => $item)
               <div wire:ignore.self class="modal fade" id="remarkModal{{ $index }}" tabindex="-1"
@@ -897,53 +734,229 @@
 
 
       @endif
+
+      <!-- Settlement Modal - Always accessible but conditionally shown -->
+      <div class="modal fade {{ $saveandsettlement ? 'show d-block' : '' }}" tabindex="-1" role="dialog"
+          style="{{ $saveandsettlement ? 'background-color: rgba(0,0,0,0.5); z-index:1050;' : 'display: none;' }}">
+          <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+              <div class="modal-content shadow rounded-4">
+                  <div class="modal-header">
+                      <h5 class="modal-title">{{ $selectedItem->name ?? 'Settlement' }}</h5>
+                      <button type="button" class="btn-close" wire:click="closeSettlement"
+                          aria-label="Close"></button>
+                  </div>
+
+                  <div class="modal-body p-4">
+
+                      <!-- Subtotal -->
+                      <div class="mb-3 d-flex justify-content-between align-items-center border-bottom pb-2">
+                          <span class="fw-semibold fs-5">Subtotal:</span>
+                          <span class="fs-5">₹{{ number_format($subtotal, 2) }}</span>
+                      </div>
+
+                      <!-- Discount Section -->
+                      <div class="mb-3 row align-items-center">
+                          <label class="col-auto col-form-label fw-bold">Discount</label>
+
+                          <div class="col-auto">
+                              <div class="btn-group btn-group-sm" role="group">
+                                  <input type="radio" class="btn-check" name="discountType" id="percent"
+                                      wire:model="isPercent" wire:change="applyDiscount" value="1">
+                                  <label class="btn btn-outline-primary" for="percent">%</label>
+
+                                  <input type="radio" class="btn-check" name="discountType" id="flat"
+                                      wire:model="isPercent" wire:change="applyDiscount" value="0">
+                                  <label class="btn btn-outline-primary" for="flat">₹</label>
+                              </div>
+                          </div>
+
+                          <div class="col">
+                              <input type="number" class="form-control form-control-sm ms-auto" placeholder="0"
+                                  wire:model="discountValue" min="0" wire:change="applyDiscount"
+                                  style="max-width: 100px; float: right;">
+                          </div>
+                      </div>
+
+
+                      <!-- Final Total -->
+                      <div class="mb-4 d-flex justify-content-between align-items-center border-top pt-2">
+                          <span class="fw-bold fs-4">Total:</span>
+                          <span class="fw-bold text-success fs-4">₹{{ number_format($finalTotal, 2) }}</span>
+                      </div>
+
+                      <hr>
+
+                      <div class="d-flex align-items-center justify-content-between mb-3">
+                          <h5 class="mb-0">Payment</h5>
+                      </div>
+
+
+                      <!-- Payment Mode Section -->
+                      <div class="mb-3">
+                          <label class="form-label">Payment Mode</label>
+                          <div class="d-flex gap-3">
+                              <div class="form-check">
+                                  <input class="form-check-input @error('payments.0.mode') is-invalid @enderror"
+                                      type="radio" name="payment_mode_0" id="cash_0" value="Cash"
+                                      wire:model="payments.0.mode">
+                                  <label class="form-check-label" for="cash_0">
+                                      Cash
+                                  </label>
+                              </div>
+                              <div class="form-check">
+                                  <input class="form-check-input @error('payments.0.mode') is-invalid @enderror"
+                                      type="radio" name="payment_mode_0" id="upi_0" value="UPI"
+                                      wire:model="payments.0.mode">
+                                  <label class="form-check-label" for="upi_0">
+                                      UPI
+                                  </label>
+                              </div>
+                              <div class="form-check">
+                                  <input class="form-check-input @error('payments.0.mode')	is-invalid @enderror"
+                                      type="radio" name="payment_mode_0" id="card_0" value="Card"
+                                      wire:model="payments.0.mode">
+                                  <label class="form-check-label" for="card_0">
+                                      Card
+                                  </label>
+                              </div>
+                          </div>
+                          @error('payments.0.mode')
+                              <div class="invalid-feedback d-block">{{ $message }}</div>
+                          @enderror
+                      </div>
+
+                      <!-- Payment Details Section -->
+                      <div class="row g-2 align-items-center mb-2">
+                          <div class="col-md-4">
+                              <label class="form-label">Amount</label>
+                              <input type="number"
+                                  class="form-control form-control-sm @error('payments.0.amount') is-invalid @enderror"
+                                  wire:model.live="payments.0.amount" placeholder="Amount" step="0.01">
+                              @error('payments.0.amount')
+                                  <div class="invalid-feedback">{{ $message }}</div>
+                              @enderror
+                          </div>
+                          <div class="col-md-4">
+                              <label class="form-label">Tip Amount</label>
+                              <input type="number" class="form-control form-control-sm" wire:model.live="tipAmount"
+                                  placeholder="Tip Amount" step="0.01" min="0">
+                          </div>
+                          <div class="col-md-4">
+                              <label class="form-label">Note</label>
+                              <input type="text" class="form-control form-control-sm" wire:model="payments.0.note"
+                                  placeholder="Note">
+                          </div>
+                      </div>
+
+                      {{-- Remaining / Change --}}
+                      <div class="d-flex justify-content-between mb-2">
+                          <strong>Remaining Balance:</strong>
+                          <strong class="{{ $this->shortfall > 0 ? 'text-danger' : 'text-success' }}">
+                              ₹{{ number_format($this->shortfall, 2) }}
+                          </strong>
+                      </div>
+                      @if ($this->changeDue > 0)
+                          <div class="d-flex justify-content-between mb-2">
+                              <strong>Change Due to Customer:</strong>
+                              <strong class="text-info">₹{{ number_format($this->changeDue, 2) }}</strong>
+                          </div>
+                      @endif
+
+                       {{-- Shortfall warning --}}
+                       @if ($this->shortfall > 0)
+                           <div class="alert alert-warning py-2">
+                               <div class="d-flex align-items-center justify-content-between">
+                                   <div>
+                                       <div class="fw-semibold">Payment Shortfall:
+                                           ₹{{ number_format($this->shortfall, 2) }}</div>
+                                       <small class="text-muted">Customer still owes ₹{{ number_format($this->shortfall, 2) }}</small>
+                                   </div>
+                               </div>
+                           </div>
+                       @endif
+
+
+                      <!-- Payment Summary -->
+                      @if ($tipAmount > 0)
+                          <div class="mb-2 d-flex justify-content-between">
+                              <strong>Tip Amount:</strong>
+                              <strong class="text-info">₹{{ number_format($tipAmount, 2) }}</strong>
+                          </div>
+                      @endif
+                      <div class="mb-2 d-flex justify-content-between">
+                          <strong>Total Paid:</strong>
+                          <strong>₹{{ number_format($this->paymentTotal, 2) }}</strong>
+                      </div>
+
+
+                  </div>
+
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" wire:click="closeSettlement">Cancel</button>
+                      <div class="text-end">
+                          <button class="btn btn-primary" wire:click="savePayments" wire:loading.attr="disabled"
+                              wire:target="savePayments">
+                              <span wire:loading.remove wire:target="savePayments">Confirm & Save</span>
+                              <span wire:loading wire:target="savePayments">
+                                  <i class="fas fa-spinner fa-spin"></i> Saving...
+                              </span>
+                          </button>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+
       @push('scripts')
           <script>
               // Print functionality
               document.addEventListener('livewire:init', () => {
                   // Print tracking to prevent duplicates
                   window.activePrints = new Set();
-                  
+
                   // Save & Print handler
                   Livewire.on('orderSavedForPrint', (orderId) => {
                       const key = `print_${orderId}`;
                       if (window.activePrints.has(key)) {
                           return;
                       }
-                      
+
                       window.activePrints.add(key);
                       const printUrl = `/orders/${orderId}/print`;
-                      
-                setTimeout(() => {
-                    // Center the popup window
-                    const width = 800;
-                    const height = 600;
-                    const left = (screen.width / 2) - (width / 2);
-                    const top = (screen.height / 2) - (height / 2);
-                    
-                    const printWindow = window.open(printUrl, '_blank', 
-                        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-                    
-                    if (printWindow) {
-                        // Override print settings
-                        printWindow.addEventListener('load', () => {
-                            try {
-                                printWindow.document.body.style.setProperty('margin', '0', 'important');
-                                printWindow.document.body.style.setProperty('padding', '0', 'important');
-                            } catch (e) {
-                                // Silent fail for older browsers
-                            }
-                        });
+
+                      setTimeout(() => {
+                          // Center the popup window
+                          const width = 800;
+                          const height = 600;
+                          const left = (screen.width / 2) - (width / 2);
+                          const top = (screen.height / 2) - (height / 2);
+
+                          const printWindow = window.open(printUrl, '_blank',
+                              `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                          );
+
+                          if (printWindow) {
+                              // Override print settings
+                              printWindow.addEventListener('load', () => {
+                                  try {
+                                      printWindow.document.body.style.setProperty('margin', '0',
+                                          'important');
+                                      printWindow.document.body.style.setProperty('padding', '0',
+                                          'important');
+                                  } catch (e) {
+                                      // Silent fail for older browsers
+                                  }
+                              });
                               printWindow.addEventListener('afterprint', () => {
                                   printWindow.close();
                               });
-                              
+
                               const checkWindow = setInterval(() => {
                                   if (printWindow.closed) {
                                       clearInterval(checkWindow);
                                   }
                               }, 1000);
-                              
+
                               setTimeout(() => {
                                   if (!printWindow.closed) {
                                       printWindow.close();
@@ -952,45 +965,46 @@
                               }, 10000);
                           }
                       }, 100);
-                      
+
                       setTimeout(() => {
                           window.activePrints.delete(key);
                       }, 2000);
                   });
-                  
+
                   // Save & KOT Print handler
                   Livewire.on('orderSavedForKOTPrint', (orderId) => {
                       const key = `kot_print_${orderId}`;
                       if (window.activePrints.has(key)) {
                           return;
                       }
-                      
+
                       window.activePrints.add(key);
                       const printUrl = `/orders/${orderId}/kot-print`;
-                      
-                    setTimeout(() => {
-                        // Center the popup window
-                        const screenLeft = window.screenLeft || screen.left;
-                        const screenTop = window.screenTop || screen.top;
-                        const width = 600;
-                        const height = 500;
-                        const left = (screen.width / 2) - (width / 2);
-                        const top = (screen.height / 2) - (height / 2);
-                        
-                        const printWindow = window.open(printUrl, '_blank', 
-                            `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-                        
-                        if (printWindow) {
+
+                      setTimeout(() => {
+                          // Center the popup window
+                          const screenLeft = window.screenLeft || screen.left;
+                          const screenTop = window.screenTop || screen.top;
+                          const width = 600;
+                          const height = 500;
+                          const left = (screen.width / 2) - (width / 2);
+                          const top = (screen.height / 2) - (height / 2);
+
+                          const printWindow = window.open(printUrl, '_blank',
+                              `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                          );
+
+                          if (printWindow) {
                               printWindow.addEventListener('afterprint', () => {
                                   printWindow.close();
                               });
-                              
+
                               const checkWindow = setInterval(() => {
                                   if (printWindow.closed) {
                                       clearInterval(checkWindow);
                                   }
                               }, 1000);
-                              
+
                               setTimeout(() => {
                                   if (!printWindow.closed) {
                                       printWindow.close();
@@ -999,12 +1013,12 @@
                               }, 10000);
                           }
                       }, 100);
-                      
+
                       setTimeout(() => {
                           window.activePrints.delete(key);
                       }, 2000);
                   });
-                  
+
                   // KOT HTML Print handler
                   Livewire.on('printKOTHTML', (html) => {
                       // Center the popup window
@@ -1012,27 +1026,28 @@
                       const height = 500;
                       const left = (screen.width / 2) - (width / 2);
                       const top = (screen.height / 2) - (height / 2);
-                      
-                      const printWindow = window.open('', '_blank', 
-                          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
-                      
+
+                      const printWindow = window.open('', '_blank',
+                          `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
+                      );
+
                       if (!printWindow) {
                           alert('Please allow popups to print KOT');
                           return;
                       }
-                      
+
                       printWindow.document.write(html);
                       printWindow.document.close();
-                      
+
                       printWindow.onload = function() {
                           printWindow.addEventListener('afterprint', () => {
                               printWindow.close();
                           });
-                          
+
                           setTimeout(() => {
                               printWindow.focus();
                               printWindow.print();
-                              
+
                               setTimeout(() => {
                                   if (!printWindow.closed) {
                                       printWindow.close();
@@ -1042,8 +1057,8 @@
                       };
                   });
               });
-            </script>
-        @endpush
+          </script>
+      @endpush
 
 
   </div>

@@ -87,12 +87,12 @@ class OrderListComponent extends Component
     {
         // Get current user's password for validation
         $currentUser = auth()->user();
-        
+
         if (!$currentUser) {
             $this->deletePasswordError = 'User not authenticated.';
             return;
         }
-        
+
         // Check if entered password matches current user's password
         if (!password_verify($this->deletePassword, $currentUser->password)) {
             $this->deletePasswordError = 'Incorrect password. Please try again.';
@@ -101,13 +101,13 @@ class OrderListComponent extends Component
 
         if ($order = Order::find($this->orderToDelete)) {
             $orderId = $order->id;
-            
+
             // Validate cancel reason
             if (empty(trim($this->cancelReason))) {
                 $this->deletePasswordError = 'Please provide a reason for cancellation.';
                 return;
             }
-            
+
             // Cancel the order instead of deleting
             $order->update([
                 'status' => 'cancelled',
@@ -115,13 +115,13 @@ class OrderListComponent extends Component
                 'cancelled_by' => $currentUser->id,
                 'cancel_reason' => trim($this->cancelReason)
             ]);
-            
+
             $this->showDeleteModal = false;
             $this->orderToDelete = null;
             $this->deletePassword = '';
             $this->deletePasswordError = '';
             $this->cancelReason = '';
-            
+
             session()->flash('success', "Order #$orderId cancelled successfully.");
         } else {
             $this->deletePasswordError = "Order not found.";

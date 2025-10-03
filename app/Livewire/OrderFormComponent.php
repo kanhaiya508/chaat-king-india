@@ -66,14 +66,13 @@ class OrderFormComponent extends Component
     public string $tabelcat = '';
     public string $tabelnam = '';
     public int $activeCategoryTab = 0; // Track which category tab is active
+    
+    public $tipAmount = 0; // Tip amount for the order
 
 
     public $staff_id = null;
     public $staffList = [];
 
-    public $write_off = 0;           // user confirm karega
-    public $write_off_reason = '';   // optional note
-    public $maxWriteOff = 500;        // policy: max ₹10 waive (aap change kar sakte ho)
 
 
     protected $listeners = ['openOrderForm'];
@@ -81,7 +80,33 @@ class OrderFormComponent extends Component
     public function mount()
     {
         $this->staffList = Staff::all();
-        $this->tablecategories = Tablecategory::with('tables')->get();
+        $this->tablecategories = Tablecategory::with(['tables.latestOrder'])->get();
+        
+        \Log::info('Mount completed - Settlement ready', [
+            'saveandsettlement' => $this->saveandsettlement,
+        ]);
+        
+        \Log::info('Tables loaded in mount', [
+            'categories_count' => $this->tablecategories->count(),
+            'tables_data' => $this->tablecategories->map(function($category) {
+                return [
+                    'category_name' => $category->name,
+                    'tables_count' => $category->tables->count(),
+                    'tables_with_orders' => $category->tables->map(function($table) {
+                        return [
+                            'table_id' => $table->id,
+                            'table_name' => $table->name,
+                            'has_latest_order' => $table->latestOrder ? true : false,
+                            'latest_order_id' => $table->latestOrder->id ?? null,
+                            'latest_order_status' => $table->latestOrder->status ?? null,
+                            'latest_order_is_paid' => $table->latestOrder->is_paid ?? null,
+                            'latest_order_cancelled_at' => $table->latestOrder->cancelled_at ?? null,
+                        ];
+                    })->toArray()
+                ];
+            })->toArray()
+        ]);
+        
         $this->categories = Category::with('items.variants', 'items.addons')->get();
         
         // Debug: Check if categories are loaded
@@ -277,6 +302,7 @@ class OrderFormComponent extends Component
 
     public function saveOrderData($status = 'saved')
     {
+        Log::info('saveOrderData', ['status' => $status]);
         // Validation: Ensure at least one item is in cart
         $this->validate([
             'cart' => 'required|array|min:1',
@@ -323,6 +349,7 @@ class OrderFormComponent extends Component
                     'subtotal' => $this->subtotal,
                     'discount' => $this->discountTotal,
                     'total' => $this->finalTotal,
+                    'tip_amount' => $this->tipAmount ?? 0,
                     'remark' => $this->orderRemark,
                     'status' => $status,
                     'type' => $this->type,
@@ -347,11 +374,11 @@ class OrderFormComponent extends Component
                 // Create a new order
                 $order = Order::create([
                     'customer_id' => $this->customerId,
-
                     'staff_id' => $this->staff_id,
                     'subtotal' => $this->subtotal,
                     'discount' => $this->discountTotal,
                     'total' => $this->finalTotal,
+                    'tip_amount' => $this->tipAmount ?? 0,
                     'remark' => $this->orderRemark,
                     'table_id' => $this->selectedTableId,
                     'status' => $status,
@@ -636,17 +663,66 @@ class OrderFormComponent extends Component
     // saveandsettlement
     public function saveandSettlement()
     {
-
+        // Initialize single payment with tip
         $this->payments = [
-            ['mode' => 'Cash', 'amount' => $this->finalTotal, 'note' => '']
+            ['mode' => 'Cash', 'amount' => $this->finalTotal + $this->tipAmount, 'note' => '']
         ];
 
         $this->saveandsettlement = true;
     }
 
+    public function openSettlementForTable($orderId)
+    {
+        \Log::info('===> openSettlementForTable called', [
+            'order_id' => $orderId,
+            'order_id_type' => gettype($orderId),
+        ]);
+        
+        // Load the order and set values
+        $order = Order::with(['customer', 'items'])->find($orderId);
+        
+        if ($order) {
+            \Log::info('Order found:', [
+                'order_id' => $order->id,
+                'order_status' => $order->status,
+                'order_total' => $order->total,
+            ]);
+            
+            $this->isEditing = true;
+            $this->order_id = $order->id;
+            $this->setOrderValues($order);
+            
+            // Reset tip amount for settlement
+            $this->tipAmount = 0;
+            
+            // Initialize settlement
+            $this->payments = [
+                ['mode' => 'Cash', 'amount' => $this->finalTotal, 'note' => '']
+            ];
+            
+            $this->saveandsettlement = true;
+            $this->showForm = true; // Keep showing tables
+            
+            \Log::info('Settlement state updated:', [
+                'saveandsettlement' => $this->saveandsettlement,
+                'show_form' => $this->showForm,
+                'final_total' => $this->finalTotal,
+                'tip_amount' => $this->tipAmount,
+                'payment_amount' => $this->payments[0]['amount'] ?? 'N/A',
+            ]);
+            
+            session()->flash('success', 'Settlement opened successfully.');
+        } else {
+            \Log::error('Order not found', ['order_id' => $orderId]);
+            session()->flash('error', 'Order not found.');
+        }
+    }
+
     public function closeSettlement()
     {
+        \Log::info('closeSettlement called, saving state was:', ['saveandsettlement' => $this->saveandsettlement]);
         $this->saveandsettlement = false;
+        \Log::info('Settlement closed', ['saveandsettlement' => $this->saveandsettlement]);
     }
 
 
@@ -679,6 +755,7 @@ class OrderFormComponent extends Component
         $this->discountTotal = 0;
         $this->subtotal = 0;
         $this->finalTotal = 0;
+        $this->tipAmount = 0;
 
         $this->customerName = '';
         $this->phone = '';
@@ -689,21 +766,56 @@ class OrderFormComponent extends Component
 
     public function openOrderForm($tableId)
     {
+        \Log::info('openOrderForm called', [
+            'table_id' => $tableId,
+        ]);
+
         $this->selectedTableId = $tableId;
-        $order = Order::where('table_id', $tableId)
-            ->where('status', '!=', 'paid')->first();
-        $tabledata = Table::where('id', $tableId)->first();
+        
+        // Get table data with latest order relationship
+        $tabledata = Table::with('latestOrder')->find($tableId);
+        
+        \Log::info('Table data loaded', [
+            'table_id' => $tableId,
+            'table_name' => $tabledata->name ?? 'N/A',
+            'has_latest_order' => $tabledata->latestOrder ? true : false,
+            'latest_order_id' => $tabledata->latestOrder->id ?? null,
+            'latest_order_status' => $tabledata->latestOrder->status ?? null,
+            'latest_order_is_paid' => $tabledata->latestOrder->is_paid ?? null,
+            'latest_order_cancelled_at' => $tabledata->latestOrder->cancelled_at ?? null,
+        ]);
+
         $this->tabelcat = $tabledata->tablecategory->name ?? '';
         $this->tabelnam = $tabledata->name ?? '';
+        
+        // Use the latestOrder relationship instead of manual query
+        $order = $tabledata->latestOrder;
+        
         if ($order) {
-            $this->order_id = $order->id ?? null;
+            \Log::info('Found active order for table', [
+                'order_id' => $order->id,
+                'order_status' => $order->status,
+                'order_is_paid' => $order->is_paid,
+                'order_cancelled_at' => $order->cancelled_at,
+            ]);
+            
+            $this->order_id = $order->id;
             $this->isEditing = true;
             $this->setOrderValues($order);
         } else {
+            \Log::info('No active order found for table, starting fresh');
             $this->cart = [];
         }
+        
         $this->showForm = false;
         $this->type = 'dine-in';
+        
+        \Log::info('openOrderForm completed', [
+            'is_editing' => $this->isEditing,
+            'order_id' => $this->order_id ?: 'N/A',
+            'show_form' => $this->showForm,
+            'type' => $this->type,
+        ]);
     }
 
     public function viewOrder($orderId)
@@ -859,9 +971,15 @@ class OrderFormComponent extends Component
 
     public function getTableStatusClass($status)
     {
-        return match ($status) {
+        \Log::debug('getTableStatusClass called', [
+            'status' => $status,
+            'status_type' => gettype($status),
+            'status_is_null' => is_null($status),
+        ]);
+        
+        $cssClass = match ($status) {
             'occupied' => 'bg-danger text-white',
-            'saved' => 'bg-success text-dark',
+            'saved' => 'bg-danger text-white',
             'saved_and_printed' => 'bg-danger text-white',
             'saved_and_billed' => 'bg-primary text-white',
             'kot' => 'bg-success text-white',
@@ -869,18 +987,26 @@ class OrderFormComponent extends Component
             'hold' => 'bg-secondary text-white',
             default => 'bg-light text-dark',
         };
+        
+        \Log::debug('getTableStatusClass result', [
+            'status' => $status,
+            'css_class' => $cssClass,
+        ]);
+        
+        return $cssClass;
     }
 
 
     public function addPaymentRow()
     {
-        $this->payments[] = ['mode' => '', 'amount' => '', 'note' => ''];
+        // Single payment mode - don't add multiple rows
+        return;
     }
 
     public function removePaymentRow($index)
     {
-        unset($this->payments[$index]);
-        $this->payments = array_values($this->payments); // Reindex
+        // Single payment mode - don't remove the only row
+        return;
     }
 
     public function getPaymentTotalProperty()
@@ -910,9 +1036,7 @@ class OrderFormComponent extends Component
                 // कोई payment row save नहीं करेंगे
                 $order = \App\Models\Order::find($this->order_id);
                 if ($order) {
-                    $order->is_paid = true;                  // ⬅️ नया फील्ड
-                    $order->write_off = $this->write_off ?? 0; // चाहो तो 0 ही रहने दो
-                    $order->write_off_reason = $this->write_off_reason ?: null;
+                    $order->is_paid = true;                  // ⬅️ नया field
                     $order->save();
                 }
 
@@ -926,23 +1050,6 @@ class OrderFormComponent extends Component
         }
 
         // 2) Normal flow (amount के साथ)
-        $short  = $this->shortfall;
-        $change = $this->changeDue;
-
-        if ($short > 0) {
-            if (!$this->write_off) $this->write_off = $short;
-
-            if (abs($this->write_off - $short) > 0.01) {
-                session()->flash('error', 'Write-off amount must match the shortfall.');
-                return;
-            }
-            if ($this->write_off > $this->maxWriteOff) {
-                session()->flash('error', "Write-off exceeds allowed limit (Max ₹{$this->maxWriteOff}).");
-                return;
-            }
-        } else {
-            $this->write_off = 0;
-        }
 
         $orderId = $this->saveOrderData('paid');
 
@@ -964,15 +1071,13 @@ class OrderFormComponent extends Component
 
             $order = \App\Models\Order::find($this->order_id);
             if ($order) {
-                $order->is_paid          = true; // ⬅️ normal में भी true
-                $order->write_off        = $this->write_off ?? 0;
-                $order->write_off_reason = $this->write_off_reason ?: ($this->write_off ? 'Cash short' : null);
+                $order->is_paid = true; // ⬅️ normal में भी true
                 $order->save();
             }
 
             $this->resetOrderForm();
             $this->saveandsettlement = false;
-            $this->dispatch('show-toast', 'Order paid (write-off applied if any).');
+            $this->dispatch('show-toast', 'Order paid successfully.');
         } else {
             session()->flash('error', 'Failed to save payment.');
         }
@@ -1003,8 +1108,6 @@ class OrderFormComponent extends Component
             $this->payments = [
                 ['mode' => '', 'amount' => null, 'note' => null],
             ];
-            // write_off / change वगैरह reset (ताकि validations न टकराएँ)
-            $this->write_off = 0;
             $this->discountValue = $this->discountValue; // no-op to keep totals as-is
         }
     }

@@ -27,6 +27,9 @@ class Table extends Model
 
     public function latestOrder()
     {
-        return $this->hasOne(Order::class)->latestOfMany();
+        return $this->hasOne(Order::class)
+            ->where('is_paid', false)
+            ->whereNull('cancelled_at')
+            ->latestOfMany();
     }
 }

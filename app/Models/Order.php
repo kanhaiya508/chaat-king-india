@@ -15,6 +15,7 @@ class Order extends Model
         'subtotal',
         'discount',
         'total',
+        'tip_amount',
         'remark',
         'customer_id',
         'table_id',
