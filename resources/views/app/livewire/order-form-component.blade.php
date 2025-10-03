@@ -60,7 +60,7 @@
                       @forelse($allOrders as $order)
                           <div class="col-lg-3 col-md-4 col-sm-6 mb-4" wire:click="viewOrder({{ $order->id }})"
                               style="cursor:pointer;">
-                              <div class="card border shadow-sm rounded-3 h-100">
+                              <div class="card border shadow-sm rounded-3 h-100 position-relative">
                                   <div class="card-body p-3">
                                       <div class="d-flex justify-content-between align-items-center mb-3">
                                           <h4 class="card-title mb-0 text-primary">#{{ $order->id }}</h4>
@@ -94,11 +94,25 @@
                                               class="text-danger fw-bold fs-5">₹{{ number_format($order->total, 2) }}</span>
                                       </div>
 
-                                      <div class="text-muted small">
-                                          <i
-                                              class="fas fa-clock me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
+                                      <!-- Created Time Display -->
+                                      <div class="text-muted small mb-2">
+                                          <i class="fas fa-calendar me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
                                       </div>
                                   </div>
+                                  
+                                  <!-- Running Time Display - Bottom Right (for active orders only) -->
+                                  @if($order->status && $order->status !== 'paid' && $order->status !== 'cancelled' && $order->status !== 'hold')
+                                      <div class="order-timing-bottom-right">
+                                          <div class="order-timing" 
+                                               data-order-id="{{ $order->id }}" 
+                                               data-start-time="{{ $order->created_at->timestamp }}">
+                                              <i class="fas fa-stopwatch me-1"></i>
+                                              <span class="time-display">
+                                                  <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
+                                              </span>
+                                          </div>
+                                      </div>
+                                  @endif
                               </div>
                           </div>
                       @empty
@@ -121,18 +135,25 @@
                               @forelse ($category->tables as $table)
                                   <div class="table-box-wrapper position-relative">
                                       <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
-                                          <!-- Table Name - Top Center -->
+                                          
+                                          <!-- Timing Display - Top Left -->
+                                          @if ($table->latestOrder && $table->latestOrder->status !== null)
+                                              <div class="table-timing-top-left">
+                                                  <div class="order-timing" data-order-id="{{ $table->latestOrder->id }}" data-start-time="{{ $table->latestOrder->created_at->timestamp }}">
+                                                      <i class="fas fa-clock me-1"></i>
+                                                      <span class="time-display">
+                                                          <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
+                                                      </span>
+                                                  </div>
+                                              </div>
+                                          @endif
+                                          
+                                          <!-- Table Name - Center -->
                                           <div class="table-name-section">
                                               <h5 class="mb-0">{{ $table->name }}</h5>
                                               @if ($table->latestOrder && $table->latestOrder->status !== null)
                                                   <div class="order-summary">
                                                       <div class="order-amount">₹{{ number_format($table->latestOrder->total, 0) }}</div>
-                                                      <div class="order-timing" data-order-id="{{ $table->latestOrder->id }}" data-start-time="{{ $table->latestOrder->created_at->timestamp }}">
-                                                          <i class="fas fa-clock me-1"></i>
-                                                          <span class="time-display">
-                                                              <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
-                                                          </span>
-                                                      </div>
                                                   </div>
                                               @endif
                                           </div>
@@ -947,10 +968,15 @@
        @push('scripts')
            <script>
                // Real-time digital clock for table cards
+               // Real-time digital clock with animations
+               let previousMinutes = {};
+               let previousSeconds = {};
+               
                function updateDigitalClocks() {
                    document.querySelectorAll('.order-timing[data-start-time]').forEach(element => {
+                       const orderId = element.getAttribute('data-order-id') || 'default';
                        const startTime = parseInt(element.getAttribute('data-start-time'));
-                       const now = Date.now() / 1000; // Current timestamp in seconds
+                       const now = Date.now() / 1000;
                        const diffInSeconds = Math.floor(now - startTime);
                        
                        const minutes = Math.floor(diffInSeconds / 60);
@@ -958,10 +984,35 @@
                        
                        const minutesCounter = element.querySelector('.minutes-counter');
                        const secondsCounter = element.querySelector('.seconds-counter');
+                       const timeDisplay = element.querySelector('.time-display');
                        
-                       if (minutesCounter && secondsCounter) {
+                       // Always update minutes and animate
+                       if (minutesCounter) {
+                           if (previousMinutes[orderId] !== undefined && previousMinutes[orderId] !== minutes) {
+                               minutesCounter.classList.add('updating');
+                               setTimeout(() => minutesCounter.classList.remove('updating'), 500);
+                           }
                            minutesCounter.textContent = minutes;
+                           previousMinutes[orderId] = minutes;
+                       }
+                       
+                       // Animate on second change
+                       if (secondsCounter && previousSeconds[orderId] !== seconds) {
+                           if (previousSeconds[orderId] !== undefined) {
+                               secondsCounter.classList.add('updating');
+                               timeDisplay.classList.add('updating');
+                               setTimeout(() => {
+                                   secondsCounter.classList.remove('updating');
+                                   timeDisplay.classList.remove('updating');
+                               }, 300);
+                           }
                            secondsCounter.textContent = seconds.toString().padStart(2, '0');
+                           previousSeconds[orderId] = seconds;
+                       }
+                       
+                       // Add active timer glow effect after 1 minute
+                       if (minutes > 0) {
+                           element.classList.add('active-timer');
                        }
                    });
                }

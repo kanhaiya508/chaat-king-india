@@ -15,7 +15,7 @@
 
                       <!-- Search -->
                       <input type="text" class="form-control form-control-sm w-auto" wire:model.lazy="search"
-                          placeholder="Search by ID / Name / Phone" />
+                          placeholder="Search by ID / Name / Phone" autocomplete="off" />
                   </div>
               </h5>
               <div class="table-responsive text-nowrap">
@@ -76,7 +76,7 @@
                                       </a>
 
                                       <!-- Cancel Order -->
-                                      @if($order->status !== 'cancelled' && $order->status !== 'paid')
+                                      @if($order->status !== 'cancelled')
                                       <button class="btn btn-sm btn-outline-warning"
                                           wire:click.prevent="confirmDeleteOrder({{ $order->id }})" title="Cancel Order">
                                           <i class="fas fa-ban"></i>
@@ -221,7 +221,7 @@
                       
                       <div class="form-group">
                           <label for="deletePassword" class="form-label" style="color: #800020; font-weight: 600;">Your Password</label>
-                          <input type="password" 
+                          <input type="text" 
                                  class="form-control @error('deletePassword') is-invalid @enderror" 
                                  id="deletePassword"
                                  wire:model="deletePassword" 
@@ -236,10 +236,10 @@
                       </div>
                   </div>
                   <div class="modal-footer" style="border-top: 1px solid rgba(128, 0, 32, 0.2); padding: 20px 25px;">
-                      <button type="button" class="btn btn-secondary" wire:click="cancelDelete" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
+                      <button type="button" class="btn btn-secondary" wire:click="cancelDelete" onclick="clearSearchField()" style="border-radius: 8px; padding: 10px 20px; font-weight: 500;">
                           <i class="fas fa-times me-1"></i> Cancel
                       </button>
-                      <button type="button" class="btn" wire:click="deleteOrder" style="background: #800020; border: 2px solid #800020; color: white; border-radius: 8px; padding: 10px 20px; font-weight: 600;">
+                      <button type="button" class="btn" wire:click="deleteOrder" onclick="clearSearchField()" style="background: #800020; border: 2px solid #800020; color: white; border-radius: 8px; padding: 10px 20px; font-weight: 600;">
                           <i class="fas fa-ban me-1"></i> Cancel Order
                       </button>
                   </div>
@@ -249,4 +249,37 @@
       @endif
 
   </div>
+
+<script>
+// Clear search field when cancel buttons are clicked
+function clearSearchField() {
+    // Find the search input field
+    const searchInput = document.querySelector('input[placeholder="Search by ID / Name / Phone"]');
+    if (searchInput) {
+        // Clear the value
+        searchInput.value = '';
+        // Trigger Livewire update
+        searchInput.dispatchEvent(new Event('input'));
+        searchInput.dispatchEvent(new Event('blur'));
+    }
+    
+    // Also clear any autocomplete suggestions
+    setTimeout(() => {
+        if (searchInput) {
+            searchInput.value = '';
+            searchInput.focus();
+            searchInput.blur();
+        }
+    }, 100);
+}
+
+// Prevent browser autofill when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.querySelector('input[placeholder="Search by ID / Name / Phone"]');
+    if (searchInput) {
+        searchInput.setAttribute('autocomplete', 'off');
+        searchInput.setAttribute('data-form-type', 'other');
+    }
+});
+</script>
 

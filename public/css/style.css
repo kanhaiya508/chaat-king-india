@@ -370,12 +370,7 @@ a[target="_blank"]:hover {
     flex-direction: column;
 }
 
-.table-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-    border-color: #c99390;
-    background-color: #fff7f6;
-}
+/* Table hover effect removed */
 
 .table-box h5 {
     margin: 0;
@@ -575,41 +570,7 @@ a[target="_blank"]:hover {
     text-decoration: underline solid;
 }
 
-.table-box.bg-danger {
-    background-color: #dc3545;
-}
-
-.table-box.bg-warning {
-    background-color: #ffc107;
-}
-
-.table-box.bg-info {
-    background-color: #17a2b8;
-}
-
-.table-box.bg-primary {
-    background-color: #007bff;
-}
-
-.table-box.bg-success {
-    background-color: #28a745;
-}
-
-.table-box.bg-teal {
-    background-color: #20c997;
-}
-
-.table-box.bg-secondary {
-    background-color: #6c757d;
-}
-
-.table-box.bg-light {
-    background-color: #f8f9fa;
-}
-
-.table-box.bg-teal {
-    background-color: #20c997;
-}
+/* OLD DUPLICATE CLASSES REMOVED */
 
 /* Text colors for table box */
 .table-box.text-dark {
@@ -772,36 +733,376 @@ a[target="_blank"]:hover {
     color: white;
 }
 
-.table-box:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(139, 69, 19, 0.4);
-    border-color: rgba(255, 255, 255, 0.2);
-    background: linear-gradient(135deg, #A52A2A 0%, #770000 100%);
+/* Main table box hover effect removed */
+
+/* ==============================================
+   TABLE STATUS COLORS - CLEAN ORGANIZED VERSION
+   ============================================== */
+
+/* Status: Cancelled/Saved (Red) */
+.table-box.bg-danger {
+    background: linear-gradient(135deg, #8B0000 0%, #660000 100%);
+    border-color: rgba(139, 69, 19, 0.3);
+    box-shadow: 0 2px 8px rgba(139, 69, 19, 0.25);
+    color: white;
 }
 
-/* Table Status Colors */
-/* .table-box.bg-danger {
-    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
-    border-color: rgba(220, 53, 69, 0.2);
-    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
-} */
-
-.table-box.bg-success {
-    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-    border-color: rgba(40, 167, 69, 0.2);
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+/* Status: On Hold (Gray) */
+.table-box.bg-secondary {
+    background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
+    border-color: rgba(108, 117, 125, 0.3);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.25);
+    color: white;
 }
 
-.table-box.bg-primary {
-    background: linear-gradient(135deg, #cce7ff 0%, #b8daff 100%);
-    border-color: rgba(13, 110, 253, 0.2);
-    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
-}
-
+/* Status: Blank/Empty (Light Gray) */
 .table-box.bg-light {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border-color: rgba(108, 117, 125, 0.2);
-    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
+    border-color: rgba(108, 117, 125, 0.3);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.25);
+    color: #333;
+}
+
+/* Status: KOT (Green) */
+.table-box.bg-success {
+    background: linear-gradient(135deg, #28a745 0%, #1e7e34 100%);
+    border-color: rgba(40, 167, 69, 0.3);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.25);
+    color: white;
+}
+
+/* Status: KOT Printed (Teal) */
+.table-box.bg-info {
+    background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%);
+    border-color: rgba(32, 201, 151, 0.3);
+    box-shadow: 0 2px 8px rgba(32, 201, 151, 0.25);
+    color: white;
+}
+
+/* Status: Billed (Blue) */
+.table-box.bg-primary {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    border-color: rgba(0, 123, 255, 0.3);
+    box-shadow: 0 2px 8px rgba(0, 123, 255, 0.25);
+    color: white;
+}
+
+/* Text color overrides for light backgrounds */
+.table-box.bg-light .table-name-section h5,
+.table-box.bg-light .order-amount,
+.table-box.bg-light .order-timing,
+.table-box.bg-light .minutes-counter,
+.table-box.bg-light .seconds-counter {
+    color: #333 !important;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.3);
+}
+
+/* White table name when order is active (for non-light backgrounds) */
+.table-box:not(.bg-light) .table-name-section h5 {
+    color: rgba(255, 255, 255, 0.95) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+}
+
+/* ==============================================
+   TIMING ANIMATIONS & POSITIONING
+   ============================================== */
+
+/* Table Card - Top Left Timing */
+.table-timing-top-left {
+    position: absolute;
+    top: 8px;
+    left: 8px;
+    z-index: 10;
+}
+
+.table-timing-top-left .order-timing {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 4px 8px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+}
+
+.table-timing-top-left .fa-clock {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.8rem;
+}
+
+/* Order Card - Digital Watch Design */
+.order-timing-bottom-right {
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    z-index: 100;
+}
+
+.order-timing-bottom-right .order-timing {
+    background: linear-gradient(145deg, #dc3545, #c82333);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 2px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 
+        0 3px 10px rgba(220, 53, 69, 0.4),
+        inset 0 1px 3px rgba(255, 255, 255, 0.2),
+        inset 0 -1px 3px rgba(0, 0, 0, 0.2);
+    font-size: 0.75rem;
+    color: white;
+    font-weight: bold;
+    font-family: 'Courier New', monospace;
+    position: relative;
+}
+
+/* Animated background gradient */
+.order-timing-bottom-right .order-timing::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+    animation: shimmer 3s infinite;
+    z-index: -1;
+}
+
+@keyframes shimmer {
+    0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+    100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+}
+
+.order-timing-bottom-right .fa-stopwatch {
+    color: white;
+    font-size: 0.7rem;
+    margin-right: 4px;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.6; }
+}
+
+.order-timing-bottom-right .time-display {
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    font-weight: bold;
+    letter-spacing: 0.5px;
+}
+
+.order-timing-bottom-right .minutes-counter {
+    color: white;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.order-timing-bottom-right .seconds-counter {
+    color: #ffeb3b;
+    font-weight: bold;
+    font-size: 0.85rem;
+}
+
+/* ==============================================
+   ANIMATION EFFECTS
+   ============================================== */
+
+/* Time Counter Animations */
+.time-display {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.minutes-counter, .seconds-counter {
+    position: relative;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+/* Pulse animation on time update */
+.time-display.updating {
+    animation: timePulse 0.6s ease-in-out;
+}
+
+.minutes-counter.updating {
+    animation: counterBounce 0.5s ease-in-out;
+    color: #ff6b6b;
+}
+
+.seconds-counter.updating {
+    animation: counterFlash 0.3s ease-in-out;
+    color: #ffa726;
+}
+
+/* Keyframes */
+@keyframes timePulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+@keyframes counterBounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-2px); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes counterFlash {
+    0% { background: transparent; }
+    50% { background: rgba(255, 215, 0, 0.3); }
+    100% { background: transparent; }
+}
+
+/* Glow effect for active timers */
+.order-timing.active-timer::before {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
+    border-radius: inherit;
+    opacity:.7;
+    z-index: -1;
+    animation: timerGlow 2s linear infinite;
+}
+
+@keyframes timerGlow {
+    0% { opacity: 0.3; }
+    50% { opacity: 0.8; }
+    100% { opacity: 0.3; }
+}
+
+/* ==============================================
+   MODERN ORDER CARDS DESIGN
+   ============================================== */
+
+.order-card-modern {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    height: 100%;
+    cursor: pointer;
+}
+
+.order-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    border-color: rgba(13, 123, 255, 0.3);
+}
+
+/* Header Section */
+.order-card-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    padding: 15px 20px;
+    color: white;
+    position: relative;
+}
+
+.order-id-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.order-id-text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.status-indicator.saved { background: #dc3545; }
+.status-indicator.kot { background: #28a745; }
+.status-indicator.printed { background: #17a2b8; }
+.status-indicator.billed { background: #ffc107; }
+.status-indicator.paid { background: #6c757d; }
+.status-indicator.cancelled { background: #6c757d; }
+.status-indicator.hold { background: #fd7e14; }
+
+.order-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge-type {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-status {
+    background: rgba(255, 255, 255, 0.9);
+    color: #007bff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Body Section */
+.order-card-body {
+    padding: 20px;
+}
+
+.order-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.order-icon {
+    color: #007bff;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.order-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.order-label {
+    font-size: 0.7rem;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-value {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.order-value.amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #dc3545;
 }
 
 /* ==============================================
@@ -1114,4 +1415,136 @@ table thead th {
     padding: 12px;
     text-align: left;
     font-weight: 600;
+}
+
+/* ==============================================
+   MODERN ORDER CARDS DESIGN - CACHE FIXED
+   ============================================== */
+
+.order-card-modern {
+    background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+    border-radius: 16px;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s ease;
+    position: relative;
+    height: 100%;
+    cursor: pointer;
+}
+
+.order-card-modern:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+    border-color: rgba(13, 123, 255, 0.3);
+}
+
+/* Header Section */
+.order-card-header {
+    background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+    padding: 15px 20px;
+    color: white;
+    position: relative;
+}
+
+.order-id-section {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.order-id-text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    margin: 0;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.status-indicator {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 2px solid white;
+}
+
+.status-indicator.saved { background: #dc3545; }
+.status-indicator.kot { background: #28a745; }
+.status-indicator.printed { background: #17a2b8; }
+.status-indicator.billed { background: #ffc107; }
+.status-indicator.paid { background: #6c757d; }
+.status-indicator.cancelled { background: #6c757d; }
+.status-indicator.hold { background: #fd7e14; }
+
+.order-badges {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.badge-type {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+}
+
+.badge-status {
+    background: rgba(255, 255, 255, 0.9);
+    color: #007bff;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* Body Section */
+.order-card-body {
+    padding: 20px;
+}
+
+.order-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    padding: 8px 0;
+}
+
+.order-icon {
+    color: #007bff;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.order-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.order-label {
+    font-size: 0.7rem;
+    color: #6c757d;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.order-value {
+    font-size: 0.9rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.order-value.amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: #dc3545;
 }
