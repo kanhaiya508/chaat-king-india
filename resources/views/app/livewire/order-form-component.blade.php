@@ -1010,10 +1010,7 @@
                            previousSeconds[orderId] = seconds;
                        }
                        
-                       // Add active timer glow effect after 1 minute
-                       if (minutes > 0) {
-                           element.classList.add('active-timer');
-                       }
+                       // Timer glow effect removed
                    });
                }
                

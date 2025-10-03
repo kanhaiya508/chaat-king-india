@@ -952,26 +952,7 @@ a[target="_blank"]:hover {
     100% { background: transparent; }
 }
 
-/* Glow effect for active timers */
-.order-timing.active-timer::before {
-    content: '';
-    position: absolute;
-    top: -2px;
-    left: -2px;
-    right: -2px;
-    bottom: -2px;
-    background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #ff6b6b);
-    border-radius: inherit;
-    opacity:.7;
-    z-index: -1;
-    animation: timerGlow 2s linear infinite;
-}
-
-@keyframes timerGlow {
-    0% { opacity: 0.3; }
-    50% { opacity: 0.8; }
-    100% { opacity: 0.3; }
-}
+/* Timer glow effects removed */
 
 /* ==============================================
    MODERN ORDER CARDS DESIGN
