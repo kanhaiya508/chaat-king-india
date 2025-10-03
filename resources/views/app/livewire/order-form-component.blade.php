@@ -120,46 +120,83 @@
                           <div class="table-grid">
                               @forelse ($category->tables as $table)
                                   <div class="table-box-wrapper position-relative">
-                                      <div
-                                          class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
-                                          <!-- Main table content - clickable area -->
-                                          <div wire:click="openOrderForm({{ $table->id }})"
-                                              wire:loading.attr="disabled"
-                                              wire:target="openOrderForm({{ $table->id }})"
-                                              style="cursor: pointer;">
-                                              <h5>{{ $table->name }}</h5>
+                                      <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
+                                          <!-- Table Name - Top Center -->
+                                          <div class="table-name-section">
+                                              <h5 class="mb-0">{{ $table->name }}</h5>
                                               @if ($table->latestOrder && $table->latestOrder->status !== null)
-                                                  <div class="order-info">
-                                                      <small><strong>Order #{{ $table->latestOrder->id }}</strong></small><br>
-                                                      <small>{{ ucfirst($table->latestOrder->status) }}</small><br>
-                                                      @php
-                                                          $minutesRunning = $table->latestOrder->created_at->diffINMinutes(now());
-                                                      @endphp
-                                                      <small class="time-running">
-                                                          <i class="fas fa-clock me-1"></i>{{ $minutesRunning }} Min
-                                                      </small>
+                                                  <div class="order-summary">
+                                                      <div class="order-amount">₹{{ number_format($table->latestOrder->total, 0) }}</div>
+                                                      <div class="order-timing" data-order-id="{{ $table->latestOrder->id }}" data-start-time="{{ $table->latestOrder->created_at->timestamp }}">
+                                                          <i class="fas fa-clock me-1"></i>
+                                                          <span class="time-display">
+                                                              <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
+                                                          </span>
+                                                      </div>
                                                   </div>
                                               @endif
                                           </div>
 
-                                          <!-- Settlement Button - only show if table has active order -->
+                                          <!-- Action Buttons - Bottom -->
                                           @if ($table->latestOrder && $table->latestOrder->status !== null)
-                                              <div class="position-absolute top-0 end-0 p-2">
-                                                  <button class="btn btn-sm btn-success shadow-sm"
-                                                      wire:click="openSettlementForTable({{ $table->latestOrder->id }})"
+                                              <div class="action-buttons">
+                                                  <button class="action-btn print-btn" 
+                                                      wire:click="printOrder({{ $table->latestOrder->id }})" 
+                                                      wire:loading.attr="disabled"
+                                                      wire:target="printOrder({{ $table->latestOrder->id }})"
+                                                      title="Print Bill"
+                                                      wire:click.stop>
+                                                      <span wire:loading.remove wire:target="printOrder({{ $table->latestOrder->id }})">
+                                                          <i class="fas fa-print"></i>
+                                                      </span>
+                                                      <span wire:loading wire:target="printOrder({{ $table->latestOrder->id }})">
+                                                          <i class="fas fa-spinner fa-spin"></i>
+                                                      </span>
+                                                  </button>
+                                                  <button class="action-btn eye-btn" 
+                                                      wire:click="openOrderForm({{ $table->id }})" 
+                                                      wire:loading.attr="disabled"
+                                                      wire:target="openOrderForm({{ $table->id }})"
+                                                      title="View/Edit Order"
+                                                      wire:click.stop>
+                                                      <span wire:loading.remove wire:target="openOrderForm({{ $table->id }})">
+                                                          <i class="fas fa-eye"></i>
+                                                      </span>
+                                                      <span wire:loading wire:target="openOrderForm({{ $table->id }})">
+                                                          <i class="fas fa-spinner fa-spin"></i>
+                                                      </span>
+                                                  </button>
+                                                  <button class="action-btn settlement-btn-white" 
+                                                      wire:click="openSettlementForTable({{ $table->latestOrder->id }})" 
                                                       wire:loading.attr="disabled"
                                                       wire:target="openSettlementForTable({{ $table->latestOrder->id }})"
-                                                      title="Quick Settlement"
-                                                      style="border-radius: 50%; width: 35px; height: 35px; padding: 0;">
-                                                      <i class="fas fa-receipt" style="font-size: 12px;"></i>
+                                                      title="Settlement"
+                                                      wire:click.stop>
+                                                      <span wire:loading.remove wire:target="openSettlementForTable({{ $table->latestOrder->id }})">
+                                                          <i class="fas fa-cash-register"></i>
+                                                      </span>
+                                                      <span wire:loading wire:target="openSettlementForTable({{ $table->latestOrder->id }})">
+                                                          <i class="fas fa-spinner fa-spin"></i>
+                                                      </span>
+                                                  </button>
+                                              </div>
+                                          @else
+                                              <div class="action-buttons">
+                                                  <button class="action-btn open-table-btn" 
+                                                      wire:click="openOrderForm({{ $table->id }})" 
+                                                      wire:loading.attr="disabled"
+                                                      wire:target="openOrderForm({{ $table->id }})"
+                                                      title="Open Table">
+                                                      <span wire:loading.remove wire:target="openOrderForm({{ $table->id }})">
+                                                          <i class="fas fa-plus"></i>
+                                                      </span>
+                                                      <span wire:loading wire:target="openOrderForm({{ $table->id }})">
+                                                          <i class="fas fa-spinner fa-spin"></i>
+                                                      </span>
                                                   </button>
                                               </div>
                                           @endif
 
-                                          <div wire:loading wire:target="openOrderForm({{ $table->id }})"
-                                              class="position-absolute top-50 start-50 translate-middle">
-                                              <i class="fas fa-spinner fa-spin text-white"></i>
-                                          </div>
                                       </div>
                                   </div>
                               @empty
@@ -907,8 +944,35 @@
           </div>
       </div>
 
-      @push('scripts')
-          <script>
+       @push('scripts')
+           <script>
+               // Real-time digital clock for table cards
+               function updateDigitalClocks() {
+                   document.querySelectorAll('.order-timing[data-start-time]').forEach(element => {
+                       const startTime = parseInt(element.getAttribute('data-start-time'));
+                       const now = Date.now() / 1000; // Current timestamp in seconds
+                       const diffInSeconds = Math.floor(now - startTime);
+                       
+                       const minutes = Math.floor(diffInSeconds / 60);
+                       const seconds = diffInSeconds % 60;
+                       
+                       const minutesCounter = element.querySelector('.minutes-counter');
+                       const secondsCounter = element.querySelector('.seconds-counter');
+                       
+                       if (minutesCounter && secondsCounter) {
+                           minutesCounter.textContent = minutes;
+                           secondsCounter.textContent = seconds.toString().padStart(2, '0');
+                       }
+                   });
+               }
+               
+               // Initialize all timers immediately
+               updateDigitalClocks();
+               
+               // Update every second like a digital clock
+               setInterval(updateDigitalClocks, 1000);
+           </script>
+           <script>
               // Print functionality
               document.addEventListener('livewire:init', () => {
                   // Print tracking to prevent duplicates

@@ -725,6 +725,16 @@ class OrderFormComponent extends Component
         \Log::info('Settlement closed', ['saveandsettlement' => $this->saveandsettlement]);
     }
 
+    public function printOrder($orderId)
+    {
+        \Log::info('printOrder called', ['order_id' => $orderId]);
+        
+        // Dispatch same event as saveOrderAndPrint for new window printing
+        $this->dispatch('orderSavedForPrint', $orderId);
+        
+        session()->flash('success', 'Print initiated for Order #' . $orderId);
+    }
+
 
     public function saveOrderAsHold()
     {

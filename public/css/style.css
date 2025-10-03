@@ -636,7 +636,15 @@ a[target="_blank"]:hover {
     line-height: 1.2;
 }
 
-/* Time Running Styling */
+/* Order Info Elements Styling */
+.table-box .order-total {
+    font-weight: bold;
+    font-size: 1rem;
+    color: inherit;
+    margin-bottom: 4px;
+    display: block;
+}
+
 .table-box .time-running {
     color: #6c757d;
     font-weight: 500;
@@ -645,7 +653,26 @@ a[target="_blank"]:hover {
     border-radius: 12px;
     font-size: 0.7rem;
     display: inline-block;
-    margin-top: 2px;
+    margin: 2px 0;
+}
+
+.table-box .order-id {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 600;
+}
+
+.table-box .order-status {
+    font-size: 0.7rem;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Dark theme adjustments */
+.table-box.text-dark .order-total {
+    color: #212529;
 }
 
 .table-box.text-dark .time-running {
@@ -653,6 +680,12 @@ a[target="_blank"]:hover {
     background: rgba(0, 0, 0, 0.1);
 }
 
+.table-box.text-dark .order-id,
+.table-box.text-dark .order-status {
+    color: #6c757d;
+}
+
+/* White theme adjustments */
 .table-box.text-white .time-running {
     color: rgba(255, 255, 255, 0.9);
     background: rgba(255, 255, 255, 0.2);
@@ -663,6 +696,44 @@ a[target="_blank"]:hover {
 }
 
 /* Settlement Button Styling */
+.table-box .settlement-btn {
+    background: white;
+    border: 2px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    color: #198754;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-box .settlement-btn:hover {
+    background: #198754;
+    border-color: #198754;
+    color: white;
+    transform: scale(1.1);
+    box-shadow: 0 6px 20px rgba(25, 135, 84, 0.4);
+}
+
+.table-box .settlement-btn:active {
+    transform: scale(0.95);
+}
+
+.table-box .settlement-btn:disabled {
+    opacity: 0.6;
+    transform: none;
+}
+
+.table-box .settlement-btn i {
+    font-size: 16px;
+}
+
+/* Legacy btn-success styling for compatibility */
 .table-box .btn-success {
     background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
     border: none;
@@ -677,6 +748,176 @@ a[target="_blank"]:hover {
 
 .table-box .btn-success:active {
     transform: scale(0.95);
+}
+
+/* Enhanced Table Card Design - Clean Minimalist Style */
+.table-box {
+    border-radius: 12px;
+    border: 2px solid rgba(108, 117, 125, 0.2);
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.table-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(108, 117, 125, 0.25);
+    border-color: rgba(108, 117, 125, 0.4);
+}
+
+.table-box.bg-danger {
+    background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+    border-color: rgba(220, 53, 69, 0.2);
+    box-shadow: 0 2px 8px rgba(220, 53, 69, 0.15);
+}
+
+.table-box.bg-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-color: rgba(40, 167, 69, 0.2);
+    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.15);
+}
+
+.table-box.bg-primary {
+    background: linear-gradient(135deg, #cce7ff 0%, #b8daff 100%);
+    border-color: rgba(13, 110, 253, 0.2);
+    box-shadow: 0 2px 8px rgba(13, 110, 253, 0.15);
+}
+
+.table-box.bg-light {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-color: rgba(108, 117, 125, 0.2);
+    box-shadow: 0 2px 8px rgba(108, 117, 125, 0.15);
+}
+
+/* Table Layout Sections */
+.table-name-section {
+    text-align: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 15px 10px;
+}
+
+.table-name-section h5 {
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: inherit;
+}
+
+.order-summary {
+    margin-top: 8px;
+    text-align: center;
+}
+
+.order-amount {
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: inherit;
+    margin-bottom: 4px;
+}
+
+.order-timing {
+    font-size: 0.75rem;
+    color: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.order-timing i {
+    font-size: 0.7rem;
+}
+
+.time-display {
+    font-family: 'Courier New', monospace;
+    font-weight: bold;
+    color: rgba(0, 0, 0, 0.8);
+}
+
+.minutes-counter {
+    font-size: 0.9rem;
+}
+
+.seconds-counter {
+    font-size: 0.8rem;
+    color: #6c757d;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    padding: 0 10px 10px 10px;
+    align-items: center;
+}
+
+.action-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+    background: white;
+    color: #6c757d;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:hover {
+    background: #f8f9fa;
+    border-color: rgba(0, 0, 0, 0.2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.action-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.action-btn:disabled:hover {
+    background: white;
+    border-color: rgba(0, 0, 0, 0.1);
+    transform: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.print-btn:hover {
+    color: #198754;
+    border-color: #198754;
+}
+
+.eye-btn:hover {
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.settlement-btn-white:hover {
+    color: #dc3545;
+    border-color: #dc3545;
+}
+
+.open-table-btn:hover {
+    color: #0d6efd;
+    border-color: #0d6efd;
 }
 
 
