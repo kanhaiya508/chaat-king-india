@@ -339,12 +339,20 @@ class OrderFormComponent extends Component
     {
         Log::info('saveOrderData', ['status' => $status]);
         // Validation: Ensure at least one item is in cart
-        $this->validate([
-            'cart' => 'required|array|min:1',
-        ], [
-            'cart.required' => 'At least one item must be added to the order.',
-            'cart.min' => 'At least one item must be added to the order.',
-        ]);
+        // Check if cart is empty
+        if (empty($this->cart)) {
+            // If order exists but no items, show confirmation popup
+            if ($this->isEditing && $this->order_id) {
+                \Log::info('Dispatching show-cancel-confirmation event');
+                $this->dispatch('show-cancel-confirmation');
+                $this->dispatch('showCancelModal'); // Alternative method
+                return;
+            }
+            
+            // Reset the order form
+            $this->resetOrderForm();
+            return;
+        }
 
         DB::beginTransaction();
         try {
@@ -807,6 +815,35 @@ class OrderFormComponent extends Component
         $this->address = '';
         $this->orderRemark = '';
         $this->customerId = null;
+    }
+    
+    public function confirmCancelOrder()
+    {
+        if ($this->isEditing && $this->order_id) {
+            $order = Order::find($this->order_id);
+            if ($order) {
+                $currentUser = auth()->user();
+                $order->update([
+                    'status' => 'cancelled',
+                    'cancelled_at' => now(),
+                    'cancelled_by' => $currentUser->id,
+                    'cancel_reason' => 'No items in order - automatically cancelled'
+                ]);
+                
+                // Show success message
+                session()->flash('order-cancelled', 'Order has been cancelled successfully.');
+                $this->dispatch('order-cancelled');
+            }
+        }
+        
+        // Reset the order form
+        $this->resetOrderForm();
+    }
+    
+    // Alternative method for fallback event
+    public function confirmCancelOrderEvent()
+    {
+        $this->confirmCancelOrder();
     }
 
     public function openOrderForm($tableId)

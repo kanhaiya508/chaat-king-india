@@ -12,15 +12,49 @@
                       <x-loader-button action="RunningOrder" :label="$isRunningOrder ? 'Back to Tables' : 'Orders'" class="btn btn-light" />
                   </div>
 
-                  <!-- Right Side Legends -->
-                  <div class="d-flex gap-2 align-items-center flex-wrap">
-                      <span class="legend-circle" style="background-color: #f8f9fa;"></span> <small>Empty</small>
-                      <span class="legend-circle" style="background-color: #8B0000;"></span> <small>Occupied</small>
-                      <span class="legend-circle" style="background-color: #ffc107;"></span> <small>Saved</small>
-                      <span class="legend-circle" style="background-color: #20c997;"></span> <small>Saved &
-                          Printed</small>
-                      <span class="legend-circle" style="background-color: #6c757d;"></span> <small>On Hold</small>
+              <!-- Right Side Legends -->
+              <div class="d-flex gap-2 align-items-center flex-wrap">
+                  <span class="legend-circle" style="background-color: #f8f9fa;"></span> <small>Empty</small>
+                  <span class="legend-circle" style="background-color: #8B0000;"></span> <small>Occupied</small>
+                  <span class="legend-circle" style="background-color: #ffc107;"></span> <small>Saved</small>
+                  <span class="legend-circle" style="background-color: #20c997;"></span> <small>Saved &
+                      Printed</small>
+                  <span class="legend-circle" style="background-color: #6c757d;"></span> <small>On Hold</small>
+              </div>
+              
+            
+              
+              <!-- Cancel Confirmation Modal -->
+              <div class="modal fade" id="cancelConfirmationModal" tabindex="-1" aria-labelledby="cancelConfirmationModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                      <div class="modal-content">
+                          <div class="modal-header bg-warning">
+                              <h5 class="modal-title" id="cancelConfirmationModalLabel">
+                                  <i class="fas fa-exclamation-triangle me-2"></i>
+                                  Confirm Order Cancellation
+                              </h5>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <div class="modal-body">
+                              <p class="mb-3">
+                                  <i class="fas fa-info-circle text-info me-2"></i>
+                                  You are about to cancel this order because no items are found in the cart.
+                              </p>
+                              <div class="alert alert-warning">
+                                  <strong>Warning:</strong> This action cannot be undone. The order will be marked as cancelled.
+                              </div>
+                          </div>
+                          <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                                  <i class="fas fa-times me-1"></i> Cancel
+                              </button>
+                              <button type="button" class="btn btn-danger" wire:click="confirmCancelOrder" data-bs-dismiss="modal">
+                                  <i class="fas fa-trash me-1"></i> Yes, Cancel Order
+                              </button>
+                          </div>
+                      </div>
                   </div>
+              </div>
 
               </div>
 
@@ -906,10 +940,112 @@
           </div>
       </div>
 
-      @push('scripts')
-          <script>
-              // Timing functionality removed - clean table cards
-          </script>
+       @push('scripts')
+           <script>
+               // Timing functionality removed - clean table cards
+               
+               // Listen for cancel confirmation event
+               document.addEventListener('livewire:init', () => {
+                   Livewire.on('show-cancel-confirmation', () => {
+                       console.log('Cancel confirmation event received');
+                       console.log('Bootstrap available:', typeof bootstrap !== 'undefined');
+                       console.log('Modal element exists:', document.getElementById('cancelConfirmationModal') !== null);
+                       
+                       setTimeout(() => {
+                           const modalElement = document.getElementById('cancelConfirmationModal');
+                           console.log('Modal element after timeout:', modalElement);
+                           
+                           if (modalElement) {
+                               if (typeof bootstrap !== 'undefined') {
+                                   const modal = new bootstrap.Modal(modalElement);
+                                   modal.show();
+                                   console.log('Modal should be showing now');
+                               } else {
+                                   console.error('Bootstrap not available');
+                                   // Fallback: show modal manually
+                                   modalElement.style.display = 'block';
+                                   modalElement.classList.add('show');
+                                   document.body.classList.add('modal-open');
+                               }
+                           } else {
+                               console.error('Modal element not found');
+                               // Create modal dynamically
+                               createModal();
+                           }
+                       }, 100);
+                   });
+               });
+               
+               // Alternative method using window event
+               window.addEventListener('showCancelModal', function() {
+                   console.log('Window event received');
+                   const modalElement = document.getElementById('cancelConfirmationModal');
+                   if (modalElement) {
+                       const modal = new bootstrap.Modal(modalElement);
+                       modal.show();
+                   }
+               });
+               
+               // Listen for fallback cancel event
+               document.addEventListener('livewire:init', () => {
+                   Livewire.on('confirm-cancel-order', () => {
+                       console.log('Fallback cancel event received');
+                       const component = Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));
+                       if (component) {
+                           component.call('confirmCancelOrderEvent');
+                       }
+                   });
+               });
+               
+               // Function to create modal dynamically
+               function createModal() {
+                   console.log('Creating modal dynamically');
+                   const modalHtml = `
+                       <div class="modal fade show" id="cancelConfirmationModal" tabindex="-1" style="display: block; background: rgba(0,0,0,0.5);">
+                           <div class="modal-dialog">
+                               <div class="modal-content">
+                                   <div class="modal-header bg-warning">
+                                       <h5 class="modal-title">Confirm Order Cancellation</h5>
+                                       <button type="button" class="btn-close" onclick="closeModal()"></button>
+                                   </div>
+                                   <div class="modal-body">
+                                       <p>You are about to cancel this order because no items are found in the cart.</p>
+                                       <div class="alert alert-warning">
+                                           <strong>Warning:</strong> This action cannot be undone.
+                                       </div>
+                                   </div>
+                                   <div class="modal-footer">
+                                       <button type="button" class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                                       <button type="button" class="btn btn-danger" onclick="confirmCancel()">Yes, Cancel Order</button>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   `;
+                   document.body.insertAdjacentHTML('beforeend', modalHtml);
+               }
+               
+               // Function to close modal
+               function closeModal() {
+                   const modal = document.getElementById('cancelConfirmationModal');
+                   if (modal) {
+                       modal.remove();
+                   }
+               }
+               
+               // Function to confirm cancel
+               function confirmCancel() {
+                   closeModal();
+                   // Trigger Livewire method using wire:click
+                   const component = Livewire.find(document.querySelector('[wire\\:id]').getAttribute('wire:id'));
+                   if (component) {
+                       component.call('confirmCancelOrder');
+                   } else {
+                       // Fallback: dispatch event
+                       Livewire.dispatch('confirm-cancel-order');
+                   }
+               }
+           </script>
           <script>
               // Print functionality
               document.addEventListener('livewire:init', () => {
