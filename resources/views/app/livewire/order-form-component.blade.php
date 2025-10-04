@@ -14,11 +14,12 @@
 
                   <!-- Right Side Legends -->
                   <div class="d-flex gap-2 align-items-center flex-wrap">
-                      <span class="legend-circle" style="background-color: #e0e0e0;"></span> <small>Blank Table</small>
-                      <span class="legend-circle" style="background-color: #4ae42b;"></span> <small>Running
-                          Table</small>
-                      <span class="legend-circle" style="background-color: #de3918;"></span> <small>Printed
-                          Table</small>
+                      <span class="legend-circle" style="background-color: #f8f9fa;"></span> <small>Empty</small>
+                      <span class="legend-circle" style="background-color: #8B0000;"></span> <small>Occupied</small>
+                      <span class="legend-circle" style="background-color: #ffc107;"></span> <small>Saved</small>
+                      <span class="legend-circle" style="background-color: #20c997;"></span> <small>Saved &
+                          Printed</small>
+                      <span class="legend-circle" style="background-color: #6c757d;"></span> <small>On Hold</small>
                   </div>
 
               </div>
@@ -96,19 +97,20 @@
 
                                       <!-- Created Time Display -->
                                       <div class="text-muted small mb-2">
-                                          <i class="fas fa-calendar me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
+                                          <i
+                                              class="fas fa-calendar me-1"></i>{{ $order->created_at->format('d M, h:i A') }}
                                       </div>
                                   </div>
-                                  
+
                                   <!-- Running Time Display - Bottom Right (for active orders only) -->
-                                  @if($order->status && $order->status !== 'paid' && $order->status !== 'cancelled' && $order->status !== 'hold')
+                                  @if ($order->status && $order->status !== 'paid' && $order->status !== 'cancelled' && $order->status !== 'hold')
                                       <div class="order-timing-bottom-right">
-                                          <div class="order-timing" 
-                                               data-order-id="{{ $order->id }}" 
-                                               data-start-time="{{ $order->created_at->timestamp }}">
+                                          <div class="order-timing" data-order-id="{{ $order->id }}"
+                                              data-start-time="{{ $order->created_at->timestamp }}">
                                               <i class="fas fa-stopwatch me-1"></i>
                                               <span class="time-display">
-                                                  <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
+                                                  <span class="minutes-counter">0</span>:<span
+                                                      class="seconds-counter">00</span>
                                               </span>
                                           </div>
                                       </div>
@@ -133,76 +135,47 @@
                           <!-- Tables Grid -->
                           <div class="table-grid">
                               @forelse ($category->tables as $table)
-                                  <div class="table-box-wrapper position-relative" 
-                                       wire:click="openOrderForm({{ $table->id }})" 
-                                       wire:loading.attr="disabled"
-                                       wire:target="openOrderForm({{ $table->id }})"
-                                       style="cursor: pointer;">
-                                      
-                                      <!-- Loading Overlay -->
-                                      <div wire:loading wire:target="openOrderForm({{ $table->id }})" 
-                                           class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" 
-                                           style="background: rgba(0,0,0,0.5); z-index: 10; border-radius: 8px; display: none;">
-                                          <div class="text-white">
-                                              <i class="fas fa-spinner fa-spin fa-2x"></i>
-                                          </div>
-                                      </div>
-                                      
-                                      <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
-                                          
-                                          <!-- Timing Display - Top Left -->
-                                          @if ($table->latestOrder && $table->latestOrder->status !== null)
-                                              <div class="table-timing-top-left">
-                                                  <div class="order-timing" data-order-id="{{ $table->latestOrder->id }}" data-start-time="{{ $table->latestOrder->created_at->timestamp }}">
-                                                      <i class="fas fa-clock me-1"></i>
-                                                      <span class="time-display">
-                                                          <span class="minutes-counter">0</span>:<span class="seconds-counter">00</span>
-                                                      </span>
-                                                  </div>
+                                  <div class="table-box-wrapper position-relative"
+                                      wire:click="openOrderForm({{ $table->id }})" wire:loading.attr="disabled"
+                                      wire:target="openOrderForm({{ $table->id }})" style="cursor: pointer;">
+
+                                      <div
+                                          class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
+
+                                          <!-- Table Card Content - Simple Layout -->
+                                          <div
+                                              class="table-card-content w-100 d-flex justify-content-between align-items-center h-100">
+
+                                              <!-- Center - Table Name -->
+                                              <div class="table-name-section text-start">
+                                                  <h5 class="mb-0 text-start">{{ $table->name }}</h5>
                                               </div>
-                                          @endif
-                                          
-                                          <!-- Table Name - Center -->
-                                          <div class="table-name-section">
-                                              <h5 class="mb-0">{{ $table->name }}</h5>
-                                              @if ($table->latestOrder && $table->latestOrder->status !== null)
-                                                  <div class="order-summary">
-                                                      <div class="order-amount">₹{{ number_format($table->latestOrder->total, 0) }}</div>
-                                                  </div>
-                                              @endif
+                                              <div class="text-end">
+                                                  @if ($table->latestOrder && $table->latestOrder->status !== null)
+                                                      <div class="order-amount ">
+                                                          ₹{{ number_format($table->latestOrder->total, 0) }}</div>
+                                                  @endif
+                                              </div>
                                           </div>
 
                                           <!-- Action Buttons - Bottom -->
-                                          @if ($table->latestOrder && $table->latestOrder->status !== null)
-                                              <div class="action-buttons">
-                                                  <button class="action-btn print-btn" 
-                                                      wire:click="printOrder({{ $table->latestOrder->id }})" 
-                                                      wire:loading.attr="disabled"
-                                                      wire:target="printOrder({{ $table->latestOrder->id }})"
-                                                      title="Print Bill"
-                                                      wire:click.stop>
-                                                      <span wire:loading.remove wire:target="printOrder({{ $table->latestOrder->id }})">
-                                                          <i class="fas fa-print"></i>
-                                                      </span>
-                                                      <span wire:loading wire:target="printOrder({{ $table->latestOrder->id }})">
-                                                          <i class="fas fa-spinner fa-spin"></i>
-                                                      </span>
-                                                  </button>
-                                                  <button class="action-btn settlement-btn-white" 
-                                                      wire:click="openSettlementForTable({{ $table->latestOrder->id }})" 
-                                                      wire:loading.attr="disabled"
-                                                      wire:target="openSettlementForTable({{ $table->latestOrder->id }})"
-                                                      title="Settlement"
-                                                      wire:click.stop>
-                                                      <span wire:loading.remove wire:target="openSettlementForTable({{ $table->latestOrder->id }})">
-                                                          <i class="fas fa-cash-register"></i>
-                                                      </span>
-                                                      <span wire:loading wire:target="openSettlementForTable({{ $table->latestOrder->id }})">
-                                                          <i class="fas fa-spinner fa-spin"></i>
-                                                      </span>
-                                                  </button>
-                                              </div>
-                                          @endif
+                                          <div class="action-buttons">
+                                              @if ($table->latestOrder && $table->latestOrder->status !== null)
+                                                  <img src="{{ asset('icone/printer.png') }}" alt="Print"
+                                                      class="action-image"
+                                                      wire:click="printOrder({{ $table->latestOrder->id }})"
+                                                      wire:click.stop title="Print Bill">
+                                                  <img src="{{ asset('icone/money.png') }}" alt="Settlement"
+                                                      class="action-image"
+                                                      wire:click="openSettlementForTable({{ $table->latestOrder->id }})"
+                                                      wire:click.stop title="Settlement">
+                                              @endif
+
+                                              <img src="{{ asset('icone/bibimbap.png') }}" alt="Open Order"
+                                                  class="action-image center-action-image"
+                                                  wire:click="openOrderForm({{ $table->id }})" wire:click.stop
+                                                  title="Open Order">
+                                          </div>
 
                                       </div>
                                   </div>
@@ -275,6 +248,8 @@
                                   @endforeach
                               </div>
                           </div>
+
+
                       </div>
 
                   </div>
@@ -310,12 +285,6 @@
                                       </button>
                                   </li>
                               @endif
-                              <li class="nav-item">
-                                  <button class="nav-link {{ $activeTab === 'remark-tab' ? 'active' : '' }}"
-                                      wire:click="$set('activeTab','remark-tab')" type="button" role="tab">
-                                      <i class="ti tabler-message-dots me-1"></i> Remark
-                                  </button>
-                              </li>
 
 
 
@@ -336,12 +305,8 @@
                                       @endif
                                   </div>
                                   <div class="">
-                                      <select class="form-control form-control-sm  mb-2" wire:model="staff_id">
-                                          <option value="">-- Select Staff --</option>
-                                          @foreach ($staffList as $staff)
-                                              <option value="{{ $staff->id }}">{{ $staff->name }}</option>
-                                          @endforeach
-                                      </select>
+                                      <textarea class="form-control form-control-sm mb-2" rows="1" placeholder="Order Remark (optional)"
+                                          wire:model="orderRemark"></textarea>
                                   </div>
 
                                   <button class="btn btn-sm btn-outline-danger" wire:click="$set('cart', [])"
@@ -420,8 +385,8 @@
                                                   <tr class="table-warning">
                                                       <td colspan="4" class="fw-bold">
                                                           <i class="fas fa-shopping-cart me-2"></i>
-                                                          New Items (Not Saved Yet)
-                                                          <span class="badge bg-info ms-2">Cart</span>
+                                                          New Items (Not Generated KOT) <span
+                                                              class="badge bg-info ms-2">Cart</span>
                                                           <small class="text-muted ms-2">
                                                               ({{ $groupItems->count() }} items)
                                                           </small>
@@ -591,18 +556,7 @@
                                       wire:model.lazy="deliveryDistance">
                               </div>
                           </div>
-
-
-                          <!-- Remark Tab -->
-                          <div class="tab-pane  {{ $activeTab === 'remark-tab' ? 'show active' : '' }} fade"
-                              id="remark-tab" role="tabpanel">
-                              <textarea class="form-control form-control mb-2" rows="3" placeholder="Order Remark (optional)"
-                                  wire:model.lazy="orderRemark"></textarea>
-                          </div>
                       </div>
-
-
-
                   </div>
               </div>
 
@@ -906,18 +860,19 @@
                           </div>
                       @endif
 
-                       {{-- Shortfall warning --}}
-                       @if ($this->shortfall > 0)
-                           <div class="alert alert-warning py-2">
-                               <div class="d-flex align-items-center justify-content-between">
-                                   <div>
-                                       <div class="fw-semibold">Payment Shortfall:
-                                           ₹{{ number_format($this->shortfall, 2) }}</div>
-                                       <small class="text-muted">Customer still owes ₹{{ number_format($this->shortfall, 2) }}</small>
-                                   </div>
-                               </div>
-                           </div>
-                       @endif
+                      {{-- Shortfall warning --}}
+                      @if ($this->shortfall > 0)
+                          <div class="alert alert-warning py-2">
+                              <div class="d-flex align-items-center justify-content-between">
+                                  <div>
+                                      <div class="fw-semibold">Payment Shortfall:
+                                          ₹{{ number_format($this->shortfall, 2) }}</div>
+                                      <small class="text-muted">Customer still owes
+                                          ₹{{ number_format($this->shortfall, 2) }}</small>
+                                  </div>
+                              </div>
+                          </div>
+                      @endif
 
 
                       <!-- Payment Summary -->
@@ -951,62 +906,11 @@
           </div>
       </div>
 
-       @push('scripts')
-           <script>
-               // Real-time digital clock for table cards
-               // Real-time digital clock with animations
-               let previousMinutes = {};
-               let previousSeconds = {};
-               
-               function updateDigitalClocks() {
-                   document.querySelectorAll('.order-timing[data-start-time]').forEach(element => {
-                       const orderId = element.getAttribute('data-order-id') || 'default';
-                       const startTime = parseInt(element.getAttribute('data-start-time'));
-                       const now = Date.now() / 1000;
-                       const diffInSeconds = Math.floor(now - startTime);
-                       
-                       const minutes = Math.floor(diffInSeconds / 60);
-                       const seconds = diffInSeconds % 60;
-                       
-                       const minutesCounter = element.querySelector('.minutes-counter');
-                       const secondsCounter = element.querySelector('.seconds-counter');
-                       const timeDisplay = element.querySelector('.time-display');
-                       
-                       // Always update minutes and animate
-                       if (minutesCounter) {
-                           if (previousMinutes[orderId] !== undefined && previousMinutes[orderId] !== minutes) {
-                               minutesCounter.classList.add('updating');
-                               setTimeout(() => minutesCounter.classList.remove('updating'), 500);
-                           }
-                           minutesCounter.textContent = minutes;
-                           previousMinutes[orderId] = minutes;
-                       }
-                       
-                       // Animate on second change
-                       if (secondsCounter && previousSeconds[orderId] !== seconds) {
-                           if (previousSeconds[orderId] !== undefined) {
-                               secondsCounter.classList.add('updating');
-                               timeDisplay.classList.add('updating');
-                               setTimeout(() => {
-                                   secondsCounter.classList.remove('updating');
-                                   timeDisplay.classList.remove('updating');
-                               }, 300);
-                           }
-                           secondsCounter.textContent = seconds.toString().padStart(2, '0');
-                           previousSeconds[orderId] = seconds;
-                       }
-                       
-                       // Timer glow effect removed
-                   });
-               }
-               
-               // Initialize all timers immediately
-               updateDigitalClocks();
-               
-               // Update every second like a digital clock
-               setInterval(updateDigitalClocks, 1000);
-           </script>
-           <script>
+      @push('scripts')
+          <script>
+              // Timing functionality removed - clean table cards
+          </script>
+          <script>
               // Print functionality
               document.addEventListener('livewire:init', () => {
                   // Print tracking to prevent duplicates

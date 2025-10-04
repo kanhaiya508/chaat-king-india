@@ -185,7 +185,7 @@ class TableController extends Controller
             'saved_and_printed' => [
                 'status' => 'saved_and_printed',
                 'label' => 'Saved & Printed',
-                'class' => 'bg-danger text-white'
+                'class' => 'bg-success text-white'
             ],
             'saved_and_billed' => [
                 'status' => 'saved_and_billed',
@@ -200,7 +200,7 @@ class TableController extends Controller
             'kot_print' => [
                 'status' => 'kot_print',
                 'label' => 'KOT Printed',
-                'class' => 'bg-teal text-white'
+                'class' => 'bg-success text-white'
             ],
             'hold' => [
                 'status' => 'hold',

@@ -111,6 +111,7 @@
             {{ $branch->address ?? '' }}<br>
             {{ $branch->contact_number ? 'Phone: ' . $branch->contact_number : '' }}<br>
             {{ $branch->gst_number ? 'GSTIN: ' . $branch->gst_number : '' }}
+
         </span>
         <div class="line"></div>
     </div>
@@ -124,8 +125,8 @@
         <tr>
             <td><strong>Date:</strong> {{ $order->created_at->format('d M Y, h:i A') }}</td>
             <td class="right">
-                @if ($order->staff)
-                    <strong>Staff:</strong> {{ $order->staff->name }}
+                @if ($order->remark)
+                    <strong>Remark:</strong> {{ $order->remark }}
                 @endif
             </td>
         </tr>

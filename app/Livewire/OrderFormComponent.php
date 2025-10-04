@@ -123,9 +123,44 @@ class OrderFormComponent extends Component
     public function openModal($itemId)
     {
         $this->selectedItem = Item::with('variants', 'addons')->find($itemId);
-        $this->selectedItemVariants = null;
-        $this->selectedItemAddons = [];
-        $this->showModal = true;
+        
+        // Check if item has multiple variants
+        if ($this->selectedItem->variants->count() > 1) {
+            // Multiple variants - show popup
+            $this->selectedItemVariants = null;
+            $this->selectedItemAddons = [];
+            $this->showModal = true;
+        } else {
+            // Single or no variants - add directly to cart
+            $this->addToCartDirectly($itemId);
+        }
+    }
+    
+    public function addToCartDirectly($itemId)
+    {
+        $item = Item::with('variants', 'addons')->find($itemId);
+        
+        // Use first variant if exists, otherwise null
+        $variantId = $item->variants->count() > 0 ? $item->variants->first()->id : null;
+        
+        // Add new item at the beginning of cart array (top of the list)
+        array_unshift($this->cart, [
+            'item' => $item,
+            'variant_id' => $variantId,
+            'addon_ids' => [],
+            'quantity' => 1,
+            'remark' => '',
+            'kot_group_id' => null, // Will be set when KOT is printed
+            'kot_printed' => false,
+            'kot_printed_at' => null,
+            'order_item_id' => null, // Will be set when saved
+        ]);
+        $this->calculateTotals();
+
+        // If editing existing order, save to database immediately
+        if ($this->isEditing && $this->order_id) {
+            $this->saveCartItemToDatabase();
+        }
     }
 
     public function selectCategoryTab($tabIndex)
@@ -179,13 +214,13 @@ class OrderFormComponent extends Component
     public function removeItem($index)
     {
         // If editing existing order, remove from database too
-        if ($this->isEditing && $this->order_id && isset($this->cart[$index])) {
-            $cartItem = $this->cart[$index];
-            if (isset($cartItem['order_item_id'])) {
-                // Remove from database
-                OrderItem::where('id', $cartItem['order_item_id'])->delete();
-            }
-        }
+        // if ($this->isEditing && $this->order_id && isset($this->cart[$index])) {
+        //     $cartItem = $this->cart[$index];
+        //     if (isset($cartItem['order_item_id'])) {
+        //         // Remove from database
+        //         OrderItem::where('id', $cartItem['order_item_id'])->delete();
+        //     }
+        // }
         
         unset($this->cart[$index]);
         $this->cart = array_values($this->cart); // reindex
@@ -251,7 +286,7 @@ class OrderFormComponent extends Component
 
         foreach ($this->cart as $item) {
             $variant = $item['item']->variants->firstWhere('id', $item['variant_id']);
-            $variantPrice = $variant ? $variant->price : 0;
+            $variantPrice = $variant ? $variant->price : ($item['item']->price ?? 0);
 
             $addonTotal = 0;
             if (!empty($item['addon_ids'])) {
@@ -988,14 +1023,14 @@ class OrderFormComponent extends Component
         ]);
         
         $cssClass = match ($status) {
-            'occupied' => 'bg-danger text-white',
-            'saved' => 'bg-danger text-white',
-            'saved_and_printed' => 'bg-danger text-white',
-            'saved_and_billed' => 'bg-primary text-white',
-            'kot' => 'bg-success text-white',
-            'kot_print' => 'bg-teal text-white',
-            'hold' => 'bg-secondary text-white',
-            default => 'bg-light text-dark',
+            'occupied' => 'bg-danger text-white',        // Red - Order in progress
+            'saved' => 'bg-warning text-dark',           // Yellow - Order saved
+            'saved_and_printed' => 'bg-info text-white', // Teal - Order saved and printed
+            'saved_and_billed' => 'bg-primary text-white', // Blue - Order billed
+            'kot' => 'bg-success text-white',            // Green - KOT generated
+            'kot_print' => 'bg-dark text-white',         // Dark - KOT printed
+            'hold' => 'bg-secondary text-white',         // Gray - Order on hold
+            default => 'bg-light text-dark',              // Light Gray - Empty table
         };
         
         \Log::debug('getTableStatusClass result', [
