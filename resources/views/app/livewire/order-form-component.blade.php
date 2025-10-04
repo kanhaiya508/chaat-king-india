@@ -133,7 +133,11 @@
                           <!-- Tables Grid -->
                           <div class="table-grid">
                               @forelse ($category->tables as $table)
-                                  <div class="table-box-wrapper position-relative">
+                                  <div class="table-box-wrapper position-relative" 
+                                       wire:click="openOrderForm({{ $table->id }})" 
+                                       wire:loading.attr="disabled"
+                                       wire:target="openOrderForm({{ $table->id }})"
+                                       style="cursor: pointer;">
                                       <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
                                           
                                           <!-- Timing Display - Top Left -->
@@ -174,19 +178,6 @@
                                                           <i class="fas fa-spinner fa-spin"></i>
                                                       </span>
                                                   </button>
-                                                  <button class="action-btn eye-btn" 
-                                                      wire:click="openOrderForm({{ $table->id }})" 
-                                                      wire:loading.attr="disabled"
-                                                      wire:target="openOrderForm({{ $table->id }})"
-                                                      title="View/Edit Order"
-                                                      wire:click.stop>
-                                                      <span wire:loading.remove wire:target="openOrderForm({{ $table->id }})">
-                                                          <i class="fas fa-eye"></i>
-                                                      </span>
-                                                      <span wire:loading wire:target="openOrderForm({{ $table->id }})">
-                                                          <i class="fas fa-spinner fa-spin"></i>
-                                                      </span>
-                                                  </button>
                                                   <button class="action-btn settlement-btn-white" 
                                                       wire:click="openSettlementForTable({{ $table->latestOrder->id }})" 
                                                       wire:loading.attr="disabled"
@@ -197,21 +188,6 @@
                                                           <i class="fas fa-cash-register"></i>
                                                       </span>
                                                       <span wire:loading wire:target="openSettlementForTable({{ $table->latestOrder->id }})">
-                                                          <i class="fas fa-spinner fa-spin"></i>
-                                                      </span>
-                                                  </button>
-                                              </div>
-                                          @else
-                                              <div class="action-buttons">
-                                                  <button class="action-btn open-table-btn" 
-                                                      wire:click="openOrderForm({{ $table->id }})" 
-                                                      wire:loading.attr="disabled"
-                                                      wire:target="openOrderForm({{ $table->id }})"
-                                                      title="Open Table">
-                                                      <span wire:loading.remove wire:target="openOrderForm({{ $table->id }})">
-                                                          <i class="fas fa-plus"></i>
-                                                      </span>
-                                                      <span wire:loading wire:target="openOrderForm({{ $table->id }})">
                                                           <i class="fas fa-spinner fa-spin"></i>
                                                       </span>
                                                   </button>
