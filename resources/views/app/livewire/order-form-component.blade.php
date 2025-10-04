@@ -138,6 +138,16 @@
                                        wire:loading.attr="disabled"
                                        wire:target="openOrderForm({{ $table->id }})"
                                        style="cursor: pointer;">
+                                      
+                                      <!-- Loading Overlay -->
+                                      <div wire:loading wire:target="openOrderForm({{ $table->id }})" 
+                                           class="position-absolute w-100 h-100 d-flex align-items-center justify-content-center" 
+                                           style="background: rgba(0,0,0,0.5); z-index: 10; border-radius: 8px; display: none;">
+                                          <div class="text-white">
+                                              <i class="fas fa-spinner fa-spin fa-2x"></i>
+                                          </div>
+                                      </div>
+                                      
                                       <div class="table-box {{ $this->getTableStatusClass($table->latestOrder?->status) }} position-relative">
                                           
                                           <!-- Timing Display - Top Left -->
