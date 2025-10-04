@@ -495,7 +495,7 @@ class OrderFormComponent extends Component
 
     public function saveOrderAsKOTAndPrint()
     {
-        $orderId = $this->saveOrderData('kot_print');
+        $orderId = $this->saveOrderData('saved_and_printed');
 
         if ($orderId) {
             // After saving, mark all items as printed with group-wise KOT
