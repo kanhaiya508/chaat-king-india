@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ $title ?? 'Chaat King India' }}</title>
+    <title>{{ $title ?? 'My Laravel App' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Complete restaurant management system for Chaat King India - Orders, KOT, Billing & More">
     <meta name="keywords" content="restaurant, food, chaat, management, POS, billing">
@@ -14,7 +14,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Chaat King">
+    <meta name="apple-mobile-web-app-title" content="My Laravel App">
     <meta name="msapplication-TileColor" content="#800020">
     <meta name="msapplication-tap-highlight" content="no">
     
@@ -250,6 +250,32 @@
 
     <!-- body ke end me -->
 
+
+    <!-- Service Worker Registration -->
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((registration) => {
+                        console.log('✅ Service Worker registered successfully:', registration.scope);
+                        
+                        // Check for updates
+                        registration.addEventListener('updatefound', () => {
+                            const newWorker = registration.installing;
+                            newWorker.addEventListener('statechange', () => {
+                                if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                    console.log('🔄 New service worker available. Reload to update.');
+                                    // You can show a notification to the user here
+                                }
+                            });
+                        });
+                    })
+                    .catch((error) => {
+                        console.log('❌ Service Worker registration failed:', error);
+                    });
+            });
+        }
+    </script>
 
     <!-- PWA Install Prompt -->
     <script>

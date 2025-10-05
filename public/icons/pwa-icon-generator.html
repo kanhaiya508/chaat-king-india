@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA Icon Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #800020;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .icon-preview {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .icon-item {
+            text-align: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        .icon-item canvas {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .icon-item h3 {
+            margin: 0;
+            color: #333;
+            font-size: 14px;
+        }
+        .download-btn {
+            background: #800020;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        .download-btn:hover {
+            background: #600018;
+        }
+        .generate-all {
+            background: #800020;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: block;
+            margin: 30px auto;
+        }
+        .generate-all:hover {
+            background: #600018;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 PWA Icon Generator</h1>
+        <p style="text-align: center; color: #666;">
+            Generate all required PWA icons for "My Laravel App" with theme color #800020
+        </p>
+        
+        <button class="generate-all" onclick="generateAllIcons()">
+            🎨 Generate All Icons
+        </button>
+        
+        <div class="icon-preview" id="iconPreview">
+            <!-- Icons will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const themeColor = '#800020';
+        const appName = 'My Laravel App';
+
+        function generateAllIcons() {
+            const preview = document.getElementById('iconPreview');
+            preview.innerHTML = '';
+
+            sizes.forEach(size => {
+                const canvas = document.createElement('canvas');
+                canvas.width = size;
+                canvas.height = size;
+                const ctx = canvas.getContext('2d');
+
+                // Create gradient background
+                const gradient = ctx.createLinearGradient(0, 0, size, size);
+                gradient.addColorStop(0, '#800020');
+                gradient.addColorStop(1, '#600018');
+                
+                // Draw background
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, size, size);
+
+                // Add border radius effect
+                ctx.globalCompositeOperation = 'destination-in';
+                ctx.beginPath();
+                ctx.roundRect(0, 0, size, size, size * 0.15);
+                ctx.fill();
+                ctx.globalCompositeOperation = 'source-over';
+
+                // Draw icon content
+                ctx.fillStyle = 'white';
+                ctx.font = `bold ${size * 0.3}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                
+                // Draw "M" for My Laravel App
+                ctx.fillText('M', size / 2, size / 2);
+
+                // Create download link
+                const iconItem = document.createElement('div');
+                iconItem.className = 'icon-item';
+                
+                const title = document.createElement('h3');
+                title.textContent = `${size}x${size}`;
+                
+                const downloadBtn = document.createElement('button');
+                downloadBtn.className = 'download-btn';
+                downloadBtn.textContent = 'Download';
+                downloadBtn.onclick = () => downloadIcon(canvas, size);
+
+                iconItem.appendChild(canvas);
+                iconItem.appendChild(title);
+                iconItem.appendChild(downloadBtn);
+                
+                preview.appendChild(iconItem);
+            });
+        }
+
+        function downloadIcon(canvas, size) {
+            const link = document.createElement('a');
+            link.download = `icon-${size}x${size}.png`;
+            link.href = canvas.toDataURL();
+            link.click();
+        }
+
+        // Auto-generate on page load
+        window.onload = generateAllIcons;
+    </script>
+</body>
+</html>
