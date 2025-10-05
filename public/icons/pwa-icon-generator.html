@@ -80,7 +80,7 @@
     <div class="container">
         <h1>🚀 PWA Icon Generator</h1>
         <p style="text-align: center; color: #666;">
-            Generate all required PWA icons for "My Laravel App" with theme color #800020
+            Generate all required PWA icons for "Tabletray" with theme color #800020
         </p>
         
         <button class="generate-all" onclick="generateAllIcons()">
@@ -95,7 +95,7 @@
     <script>
         const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
         const themeColor = '#800020';
-        const appName = 'My Laravel App';
+        const appName = 'Tabletray';
 
         function generateAllIcons() {
             const preview = document.getElementById('iconPreview');
@@ -129,8 +129,8 @@
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'middle';
                 
-                // Draw "M" for My Laravel App
-                ctx.fillText('M', size / 2, size / 2);
+                // Draw "T" for Tabletray
+                ctx.fillText('T', size / 2, size / 2);
 
                 // Create download link
                 const iconItem = document.createElement('div');

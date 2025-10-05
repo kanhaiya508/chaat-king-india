@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>{{ $title ?? 'My Laravel App' }}</title>
+    <title>{{ $title ?? 'Tabletray' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <meta name="description" content="Complete restaurant management system for Chaat King India - Orders, KOT, Billing & More">
     <meta name="keywords" content="restaurant, food, chaat, management, POS, billing">
@@ -14,7 +14,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="My Laravel App">
+    <meta name="apple-mobile-web-app-title" content="Tabletray">
     <meta name="msapplication-TileColor" content="#800020">
     <meta name="msapplication-tap-highlight" content="no">
     

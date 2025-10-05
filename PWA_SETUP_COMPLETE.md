@@ -5,7 +5,7 @@ Your Laravel project has been successfully converted to a Progressive Web App (P
 ## ✅ What's Been Done
 
 ### 1. **Manifest File** (`/public/manifest.json`)
-- App name: "My Laravel App"
+- App name: "Tabletray"
 - Theme color: #800020
 - Standalone display mode
 - All required icon sizes configured
@@ -18,7 +18,7 @@ Your Laravel project has been successfully converted to a Progressive Web App (P
 - Cache management and updates
 
 ### 3. **Layout Updates** (`/resources/views/app/layouts/app.blade.php`)
-- Updated app title to "My Laravel App"
+- Updated app title to "Tabletray"
 - Theme color meta tag (#800020)
 - Service worker registration
 - PWA install prompt functionality
@@ -78,7 +78,7 @@ The placeholder icon files have been created, but you need to replace them with 
 
 ## 🎯 Chrome Install Icon
 
-Once you complete the icon generation and test on HTTPS, Chrome will show the install icon (⊕) in the address bar, allowing users to install your Laravel app as a native-like application!
+Once you complete the icon generation and test on HTTPS, Chrome will show the install icon (⊕) in the address bar, allowing users to install your Tabletray app as a native-like application!
 
 ---
 

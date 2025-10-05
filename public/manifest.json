@@ -1,7 +1,7 @@
 {
-  "name": "My Laravel App",
-  "short_name": "My Laravel App",
-  "description": "Complete restaurant management system for Chaat King India - Orders, KOT, Billing & More",
+  "name": "Tabletray",
+  "short_name": "Tabletray",
+  "description": "Complete restaurant management system for Tabletray - Orders, KOT, Billing & More",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
