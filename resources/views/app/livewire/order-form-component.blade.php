@@ -205,10 +205,7 @@
                                                       wire:click.stop title="Settlement">
                                               @endif
 
-                                              <img src="{{ asset('icone/bibimbap.png') }}" alt="Open Order"
-                                                  class="action-image center-action-image"
-                                                  wire:click="openOrderForm({{ $table->id }})" wire:click.stop
-                                                  title="Open Order">
+                                             
                                           </div>
 
                                       </div>
