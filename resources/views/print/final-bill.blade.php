@@ -151,28 +151,15 @@
         <!-- Transaction Details -->
         <table>
             <tr>
-                <td><strong>Name:</strong></td>
-                <td class="right">{{ $order->customer->name ?? '' }}</td>
+                <td colspan="2"><strong>Name:</strong> {{ $order->customer->name ?? '' }}</td>
             </tr>
             <tr>
-                <td><strong>Date:</strong></td>
-                <td class="right">{{ $order->created_at->format('d/m/y') }}</td>
+                <td><strong>Date:</strong> {{ $order->created_at->format('d/m/y') }} | <strong>Table:</strong> {{ $order->table->name ?? '9' }} | <strong>{{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</strong></td>
+                <td class="right"><strong>Time:</strong> {{ $order->created_at->format('H:i') }}</td>
             </tr>
             <tr>
-                <td><strong>Time:</strong></td>
-                <td class="right">{{ $order->created_at->format('H:i') }}</td>
-            </tr>
-            <tr>
-                <td><strong>Dine In:</strong></td>
-                <td class="right">{{ $order->table->name ?? '9' }}</td>
-            </tr>
-            <tr>
-                <td><strong>Cashier:</strong></td>
-                <td class="right">{{ $order->staff->name ?? 'biller' }}</td>
-            </tr>
-            <tr>
-                <td><strong>Bill No.:</strong></td>
-                <td class="right">{{ $order->id }}</td>
+                <td><strong>Cashier:</strong> {{ $order->staff->name ?? 'biller' }}</td>
+                <td class="right"><strong>Bill No.:</strong> {{ $order->id }}</td>
             </tr>
         </table>
 

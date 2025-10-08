@@ -146,7 +146,7 @@
         <!-- Header / Branch -->
         <div class="center bold">
             <div style="font-size: 16px;">{{ $branch->name ?? 'CHAAT KING' }}</div>
-            <div style="font-size: 12px;">{{ $branch->address ?? 'Shop no 3&4 D-Block Ranjit Avenue, Amritsar' }}</div>
+            <div style="font-size: 12px;">Shop no 3&4 D-Block Ranjit Avenue, Amritsar</div>
             <div style="font-size: 12px;">GST NO: {{ $branch->gst_number ?? '03ABDFK3778P1ZT' }}</div>
         </div>
 
@@ -155,28 +155,37 @@
         <!-- Transaction Details -->
         <table>
             <tr>
-                <td><strong>Name:</strong></td>
-                <td class="right">{{ $order->customer->name ?? '' }}</td>
+                <td colspan="2"><strong>Name:</strong> {{ $order->customer->name ?? '' }}</td>
             </tr>
             <tr>
-                <td><strong>Date:</strong></td>
-                <td class="right">{{ $order->created_at->format('d/m/y') }}</td>
+                <td><strong>Date:</strong> {{ $order->created_at->format('d/m/y') }} | <strong>Table:</strong> {{ $order->table->name ?? '9' }} | <strong>{{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</strong></td>
+                <td class="right"><strong>Time:</strong> {{ $order->created_at->format('H:i') }}</td>
             </tr>
             <tr>
-                <td><strong>Time:</strong></td>
-                <td class="right">{{ $order->created_at->format('H:i') }}</td>
+                <td><strong>Cashier:</strong> {{ $order->staff->name ?? 'biller' }}</td>
+                <td class="right"><strong>Bill No.:</strong> {{ $order->id }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- Summary -->
+        <table>
+            <tr>
+                <td><strong>Total Qty</strong></td>
+                <td class="right">{{ $order->items->sum('quantity') }}</td>
             </tr>
             <tr>
-                <td><strong>Dine In:</strong></td>
-                <td class="right">{{ $order->table->name ?? '9' }}</td>
+                <td><strong>Sub Total</strong></td>
+                <td class="right">{{ number_format($order->subtotal, 2) }}</td>
             </tr>
             <tr>
-                <td><strong>Cashier:</strong></td>
-                <td class="right">{{ $order->staff->name ?? 'biller' }}</td>
+                <td><strong>CGST@ 2.5%</strong></td>
+                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
             </tr>
             <tr>
-                <td><strong>Bill No.:</strong></td>
-                <td class="right">{{ $order->id }}</td>
+                <td><strong>SGST@ 2.5%</strong></td>
+                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
             </tr>
         </table>
 
@@ -222,6 +231,16 @@
             <tr>
                 <td><strong>SGST@ 2.5%</strong></td>
                 <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- Grand Total -->
+        <table>
+            <tr>
+                <td><strong>Grand Total:</strong></td>
+                <td class="right"><strong>₹{{ number_format($grandTotal, 2) }}</strong></td>
             </tr>
         </table>
 
