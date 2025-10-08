@@ -218,11 +218,11 @@
             </tr>
             <tr>
                 <td class="left"><strong>CGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($cgst) }}</td>
+                <td class="right">₹{{ number_format($cgst) }}</td>
             </tr>
             <tr>    
                 <td class="left"><strong>SGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($sgst) }}</td>
+                <td class="right">₹{{ number_format($sgst) }}</td>
             </tr>
         </table>
 
