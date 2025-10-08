@@ -40,9 +40,10 @@
 
             .print-content {
                 width: 100%;
-                max-width: 100%;
-                margin: 0;
+                max-width: 280px;
+                margin: 0 auto;
                 padding: 0;
+                text-align: center;
             }
         }
         
@@ -54,6 +55,8 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
+            background: white;
+            text-align: center;
         }
 
         .center {
@@ -78,6 +81,7 @@
             font-size: 18px;
             font-weight: bold;
             border-collapse: collapse;
+            margin: 0 auto;
         }
 
         td {
