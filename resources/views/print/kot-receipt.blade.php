@@ -171,24 +171,24 @@
         <table>
             <tr>
                 <td class="w-50 left " style="font-weight: normal; font-size: 14px;">Item</td>
-                <td class="w-30 center" style="font-weight: normal; font-size: 14px;">Special Note</td>
-                <td class="w-20 right">Qty.</td>
+                <td class="w-30 center" style="font-weight: normal; font-size: 12px; word-wrap: nowrap;">Special Note</td>
+                <td class="w-20 right " style="font-weight: normal; font-size: 14px;">Qty.</td>
             </tr>
             <tr>
                 <td colspan="3" style="height: 2px;"></td>
             </tr>
             @foreach ($order->items as $item)
                 <tr>
-                    <td class="w-50 left" style="font-weight: normal; font-size: 14px;">{{ $item->item_name }}</td>
-                    <td class="w-30 center" style="font-weight: normal; font-size: 14px;">{{ $item->remark ?: '--' }}</td>
-                    <td class="w-20 right" style="font-weight: normal; font-size: 14px;">{{ $item->quantity }}</td>
+                    <td class="w-50 left">{{ $item->item_name }}</td>
+                    <td class="w-30 center">{{ $item->remark ?: '--' }}</td>
+                    <td class="w-20 right">{{ $item->quantity }}</td>
                 </tr>
                 @php $addons = $item->getAddonDetails(); @endphp
                 @foreach ($addons as $addon)
                     <tr>
-                        <td class="w-50 left" >+ {{ $addon->name }}</td>
-                        <td class="w-30 center">--</td>
-                        <td class="w-20 right">{{ $addon->quantity ?? 1 }}</td>
+                        <td class="w-50 left">+ {{ $addon->name }}</td>
+                        <td class="w-30 center"></td>
+                        <td class="w-20 right"></td>
                     </tr>
                 @endforeach
             @endforeach
