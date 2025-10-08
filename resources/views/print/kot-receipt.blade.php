@@ -145,7 +145,7 @@
             <div style="font-size: 14px;">Running Table</div>
             <div style="font-size: 10px;">{{ $order->created_at->format('d/m/y H:i') }}</div>
             <div style="font-size: 12px;">KOT - {{ $order->id }}</div>
-            <div style="font-size: 10px;">{{ $order->order_type ?? 'Dine In' }}</div>
+            <div style="font-size: 10px;">{{ $order->type ?? 'Dine In' }}</div>
             <div style="font-size: 10px;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
         </div>
 
