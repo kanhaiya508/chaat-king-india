@@ -22,7 +22,7 @@
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 18px;
             font-weight: bold;
             width: 100%;
             max-width: 1000px;
@@ -36,7 +36,7 @@
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                font-size: 12px;
+                font-size: 18px;
                 font-weight: bold;
             }
             
@@ -82,7 +82,7 @@
 
         table {
             width: 100%;
-            font-size: 12px;
+            font-size: 18px;
             font-weight: bold;
             border-collapse: collapse;
         }
@@ -142,11 +142,11 @@
 
         <!-- Header -->
         <div class="center bold">
-            <div style="font-size: 14px;">Running Table</div>
-            <div style="font-size: 10px;">{{ $order->created_at->format('d/m/y H:i') }}</div>
-            <div style="font-size: 12px;">KOT - {{ $order->id }}</div>
-            <div style="font-size: 10px;">{{ $order->type ?? 'Dine In' }}</div>
-            <div style="font-size: 10px;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
+            <div style="font-size: 20px; text-align: center;">Running Table</div>
+            <div style="font-size: 16px; text-align: center;">{{ $order->created_at->format('d/m/y H:i') }}</div>
+            <div style="font-size: 18px; text-align: center;">KOT - {{ $order->id }}</div>
+            <div style="font-size: 18px; text-align: center;">{{ $order->type ?? 'Dine In' }}</div>
+            <div style="font-size: 18px; text-align: center;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
         </div>
 
         <div class="line"></div>
