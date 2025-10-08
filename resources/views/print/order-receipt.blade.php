@@ -155,16 +155,15 @@
         <table>
             <tr>
                 <td colspan="2">Name: {{ $order->customer->name ?? '' }}</td>
-
             </tr>
             <tr>
-                <td>Date: {{ $order->created_at->format('d/m/y') }} {{ $order->table->name ?? '9' }}
-                    {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }} </td>
-                <td class="right"> {{ $order->created_at->format('H:i') }} </td>
+                <td>Date: {{ $order->created_at->format('d/m/y H:i') }} |</td>
+
+                <td> {{ $order->table->name ?? '9' }} |
+                    {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
             </tr>
             <tr>
                 <td>Cashier: {{ $order->staff->name ?? 'biller' }}</td>
-
             </tr>
             <tr>
                 <td>Bill No.: {{ $order->id }}</td>
