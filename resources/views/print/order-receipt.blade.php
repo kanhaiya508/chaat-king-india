@@ -168,10 +168,10 @@
                 <td class="left">Name: {{ $order->customer->name ?? '' }}</td>
             </tr>
             <tr>
-                <td class="left">Date: {{ $order->created_at->format('d/m/y H:i') }} |</td>
+                <td class="left">Date: {{ $order->created_at->format('d/m/y H:i') }}</td>
             </tr>
             <tr>
-                <td class="left"> {{ $order->table->name ?? '9' }} |
+                <td class="left"> {{ $order->table->name ?? '9' }} 
                     {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
             </tr>
             <tr>
