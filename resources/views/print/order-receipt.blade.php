@@ -155,40 +155,22 @@
         <!-- Transaction Details -->
         <table>
             <tr>
-                <td colspan="2"><strong>Name:</strong> {{ $order->customer->name ?? '' }}</td>
+                <td colspan="2">Name: {{ $order->customer->name ?? '' }}</td>
+                
             </tr>
             <tr>
-                <td><strong>Date:</strong> {{ $order->created_at->format('d/m/y') }} | <strong>Table:</strong> {{ $order->table->name ?? '9' }} | <strong>{{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</strong></td>
-                <td class="right"><strong>Time:</strong> {{ $order->created_at->format('H:i') }}</td>
+                <td>Date: {{ $order->created_at->format('d/m/y') }} | {{ $order->table->name ?? '9' }} | {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
+                <td class="right">{{ $order->created_at->format('H:i') }}</td>
             </tr>
             <tr>
-                <td><strong>Cashier:</strong> {{ $order->staff->name ?? 'biller' }}</td>
-                <td class="right"><strong>Bill No.:</strong> {{ $order->id }}</td>
+                <td>Cashier: {{ $order->staff->name ?? 'biller' }}</td>
+                <td class="right">Bill No.: {{ $order->id }}</td>
             </tr>
-        </table>
+        </table>             
 
         <div class="line"></div>
 
-        <!-- Summary -->
-        <table>
-            <tr>
-                <td><strong>Total Qty</strong></td>
-                <td class="right">{{ $order->items->sum('quantity') }}</td>
-            </tr>
-            <tr>
-                <td><strong>Sub Total</strong></td>
-                <td class="right">{{ number_format($order->subtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>CGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>SGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
-            </tr>
-        </table>
-
+   
         <div class="line"></div>
 
         <!-- Items -->
