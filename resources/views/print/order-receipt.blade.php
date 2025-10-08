@@ -138,7 +138,14 @@
             $byMode = $order->payments->groupBy('mode'); // ['cash','upi','card'...]
             $round = (float) ($order->round_off ?? 0);
             $write = (float) ($order->write_off ?? 0);
-            $grandTotal = (float) $order->total; // already subtotal - discount (+ taxes if any)
+            
+            // GST Calculation
+            $subtotal = (float) $order->subtotal;
+            $cgst = $subtotal * 0.025; // 2.5%
+            $sgst = $subtotal * 0.025; // 2.5%
+            $totalGST = $cgst + $sgst;
+            $grandTotal = $subtotal + $totalGST; // Subtotal + GST
+            
             $due = max(0, $grandTotal - $paid - $write);
         @endphp
 
@@ -154,11 +161,12 @@
         <!-- Transaction Details -->
         <table>
             <tr>
-                <td colspan="2">Name: {{ $order->customer->name ?? '' }}</td>
+                <td>Name: {{ $order->customer->name ?? '' }}</td>
             </tr>
             <tr>
                 <td>Date: {{ $order->created_at->format('d/m/y H:i') }} |</td>
-
+            </tr>
+            <tr>
                 <td> {{ $order->table->name ?? '9' }} |
                     {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
             </tr>
@@ -171,10 +179,6 @@
         </table>
 
         <div class="line"></div>
-
-
-        <div class="line"></div>
-
         <!-- Items -->
         <table>
             <tr>
@@ -210,16 +214,15 @@
             </tr>
             <tr>
                 <td><strong>CGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
+                <td class="right">{{ number_format($cgst, 2) }}</td>
             </tr>
             <tr>
                 <td><strong>SGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
+                <td class="right">{{ number_format($sgst, 2) }}</td>
             </tr>
         </table>
 
         <div class="line"></div>
-
         <!-- Grand Total -->
         <table>
             <tr>
@@ -229,17 +232,7 @@
         </table>
 
         <div class="line"></div>
-
-        <!-- Grand Total -->
-        <table>
-            <tr>
-                <td><strong>Grand Total:</strong></td>
-                <td class="right"><strong>₹{{ number_format($grandTotal, 2) }}</strong></td>
-            </tr>
-        </table>
-
-        <div class="line"></div>
-
+       
         <!-- Footer -->
         <div class="center">
             <div style="font-size: 14px;"><strong>Thanks</strong></div>
