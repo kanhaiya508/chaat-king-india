@@ -9,8 +9,14 @@
         /* Landscape print layout */
         @media print {
             @page {
-                size: 80mm auto landscape;
+                size: A4 landscape;
                 margin: 0.5in;
+            }
+            
+            body {
+                transform: rotate(0deg);
+                width: 100%;
+                max-width: none;
             }
         }
         

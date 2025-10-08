@@ -9,8 +9,14 @@
         /* Landscape print layout */
         @media print {
             @page {
-                size: 80mm auto landscape;
+                size: A4 landscape;
                 margin: 0.5in;
+            }
+            
+            body {
+                transform: rotate(0deg);
+                width: 100%;
+                max-width: none;
             }
         }
         
@@ -18,9 +24,10 @@
             font-family: 'Courier New', monospace;
             font-size: 12px;
             font-weight: bold;
-            width: 280px;
+            width: 100%;
+            max-width: 1000px;
             margin: 0 auto;
-            padding: 10px;
+            padding: 20px;
             background: white;
         }
         
