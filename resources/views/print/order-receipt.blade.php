@@ -12,7 +12,7 @@
                 size: A4 landscape;
                 margin: 0.5in;
             }
-            
+
             body {
                 transform: rotate(0deg);
                 width: 100%;
@@ -22,7 +22,7 @@
                 font-size: 18px;
                 font-weight: bold;
             }
-            
+
             @page {
                 margin: 0 !important;
                 size: auto;
@@ -31,7 +31,7 @@
             .no-print {
                 display: none !important;
             }
-            
+
             /* Disable print backgrounds */
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -46,7 +46,7 @@
                 text-align: center;
             }
         }
-        
+
         body {
             font-family: 'Courier New', monospace;
             font-size: 18px;
@@ -125,7 +125,6 @@
             font-size: 10px;
             font-weight: bold;
         }
-        
     </style>
 </head>
 
@@ -156,21 +155,25 @@
         <table>
             <tr>
                 <td colspan="2">Name: {{ $order->customer->name ?? '' }}</td>
-                
+
             </tr>
             <tr>
-                <td>Date: {{ $order->created_at->format('d/m/y') }} | {{ $order->table->name ?? '9' }} | {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
-                <td class="right">{{ $order->created_at->format('H:i') }}</td>
+                <td>Date: {{ $order->created_at->format('d/m/y') }}  {{ $order->created_at->format('H:i') }}</td>
+                <td class="right"> {{ $order->table->name ?? '9' }} 
+                    {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
             </tr>
             <tr>
                 <td>Cashier: {{ $order->staff->name ?? 'biller' }}</td>
+
+            </tr>
+            <tr>
                 <td class="right">Bill No.: {{ $order->id }}</td>
             </tr>
-        </table>             
+        </table>
 
         <div class="line"></div>
 
-   
+
         <div class="line"></div>
 
         <!-- Items -->
