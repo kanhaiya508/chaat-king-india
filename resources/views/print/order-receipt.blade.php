@@ -161,20 +161,20 @@
         <!-- Transaction Details -->
         <table>
             <tr>
-                <td>Name: {{ $order->customer->name ?? '' }}</td>
+                <td class="left">Name: {{ $order->customer->name ?? '' }}</td>
             </tr>
             <tr>
-                <td>Date: {{ $order->created_at->format('d/m/y H:i') }} |</td>
+                <td class="left">Date: {{ $order->created_at->format('d/m/y H:i') }} |</td>
             </tr>
             <tr>
-                <td> {{ $order->table->name ?? '9' }} |
+                <td class="left"> {{ $order->table->name ?? '9' }} |
                     {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</td>
             </tr>
             <tr>
-                <td>Cashier: {{ $order->staff->name ?? 'biller' }}</td>
+                <td class="left">Cashier: {{ $order->staff->name ?? 'biller' }}</td>
             </tr>
             <tr>
-                <td>Bill No.: {{ $order->id }}</td>
+                <td class="left">Bill No.: {{ $order->id }}</td>
             </tr>
         </table>
 
@@ -182,7 +182,7 @@
         <!-- Items -->
         <table>
             <tr>
-                <td class="w-50"><strong>Item</strong></td>
+                <td class="w-50 left"><strong>Item</strong></td>
                 <td class="w-15 center"><strong>Qty.</strong></td>
                 <td class="w-20 right"><strong>Price</strong></td>
                 <td class="w-15 right"><strong>Amount</strong></td>
@@ -192,7 +192,7 @@
             </tr>
             @foreach ($order->items as $item)
                 <tr>
-                    <td class="w-50">{{ $item->item_name }}</td>
+                    <td class="w-50 left">{{ $item->item_name }}</td>
                     <td class="w-15 center">{{ $item->quantity }}</td>
                     <td class="w-20 right">{{ number_format($item->price) }}</td>
                     <td class="w-15 right">{{ number_format($item->total_price) }}</td>
