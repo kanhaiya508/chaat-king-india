@@ -93,6 +93,10 @@
             text-align: right;
         }
 
+        .left {
+            text-align: left;
+        }
+
         .w-70 {
             width: 70%;
         }
