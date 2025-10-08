@@ -12,14 +12,14 @@
                 size: A4 landscape;
                 margin: 0.5in;
             }
-            
+
             body {
                 transform: rotate(0deg);
                 width: 100%;
                 max-width: none;
             }
         }
-        
+
         body {
             font-family: 'Courier New', monospace;
             font-size: 14px;
@@ -40,7 +40,7 @@
                 font-size: 18px;
                 font-weight: bold;
             }
-            
+
             @page {
                 margin: 0 !important;
                 size: auto;
@@ -49,7 +49,7 @@
             .no-print {
                 display: none !important;
             }
-            
+
             /* Disable print backgrounds */
             * {
                 -webkit-print-color-adjust: exact !important;
@@ -111,6 +111,18 @@
             width: 25%;
         }
 
+        .w-20 {
+            width: 20%;
+        }
+
+        .w-30 {
+            width: 30%;
+        }
+
+        .w-10 {
+            width: 10%;
+        }
+
         .mt-4 {
             margin-top: 2px;
         }
@@ -148,7 +160,8 @@
         <div class="center bold">
             <div style="font-size: 14px; text-align: center;">{{ $order->created_at->format('d/m/y H:i') }}</div>
             <div style="font-size: 14px; text-align: center;">KOT - {{ $order->id }}</div>
-            <div style="font-size: 18px; text-align: center;">{{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</div>
+            <div style="font-size: 18px; text-align: center;">
+                {{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</div>
             <div style="font-size: 18px; text-align: center;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
         </div>
 
@@ -157,25 +170,25 @@
         <!-- Items Table -->
         <table>
             <tr>
-                <td class="w-50 ">Item</td>
-                <td class="w-25 center">Special Note</td>
-                <td class="w-25 right">Qty.</td>
+                <td class="w-50 left ">Item</td>
+                <td class="w-30 center">Special Note</td>
+                <td class="w-20 right">Qty.</td>
             </tr>
             <tr>
                 <td colspan="3" style="height: 2px;"></td>
             </tr>
             @foreach ($order->items as $item)
                 <tr>
-                    <td class="w-50">{{ $item->item_name }}</td>
-                    <td class="w-25 center">{{ $item->remark ?: '--' }}</td>
-                    <td class="w-25 right">{{ $item->quantity }}</td>
+                    <td class="w-50 left">{{ $item->item_name }}</td>
+                    <td class="w-30 center">{{ $item->remark ?: '--' }}</td>
+                    <td class="w-20 right">{{ $item->quantity }}</td>
                 </tr>
                 @php $addons = $item->getAddonDetails(); @endphp
                 @foreach ($addons as $addon)
                     <tr>
-                        <td class="w-50" style="padding-left:10px;">+ {{ $addon->name }}</td>
-                        <td class="w-25 center">--</td>
-                        <td class="w-25 right">{{ $addon->quantity ?? 1 }}</td>
+                        <td class="w-50 left">+ {{ $addon->name }}</td>
+                        <td class="w-30 center">--</td>
+                        <td class="w-20 right">{{ $addon->quantity ?? 1 }}</td>
                     </tr>
                 @endforeach
             @endforeach
@@ -186,4 +199,3 @@
 </body>
 
 </html>
-
