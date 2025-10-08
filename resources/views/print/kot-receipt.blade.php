@@ -22,7 +22,7 @@
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 12px;
             font-weight: bold;
             width: 100%;
             max-width: 1000px;
@@ -36,7 +36,7 @@
                 margin: 0;
                 padding: 0;
                 width: 100%;
-                font-size: 10px;
+                font-size: 12px;
                 font-weight: bold;
             }
             
@@ -82,7 +82,7 @@
 
         table {
             width: 100%;
-            font-size: 18px;
+            font-size: 12px;
             font-weight: bold;
             border-collapse: collapse;
         }
@@ -100,8 +100,12 @@
             width: 70%;
         }
 
-        .w-30 {
-            width: 30%;
+        .w-50 {
+            width: 50%;
+        }
+
+        .w-25 {
+            width: 25%;
         }
 
         .mt-4 {
@@ -136,85 +140,47 @@
             $branch = $order->branch; // Branch relation
         @endphp
 
-        {{-- <!-- KOT Header -->
-    <div class="kot-header center bold">
-        <div style="font-size: 16px;">KITCHEN ORDER TICKET</div>
-        <div style="font-size: 12px;">{{ $branch->name ?? 'Your Store' }}</div>
-    </div> --}}
+        <!-- Header -->
+        <div class="center bold">
+            <div style="font-size: 14px;">Running Table</div>
+            <div style="font-size: 10px;">{{ $order->created_at->format('d/m/y H:i') }}</div>
+            <div style="font-size: 12px;">KOT - {{ $order->id }}</div>
+            <div style="font-size: 10px;">{{ $order->order_type ?? 'Dine In' }}</div>
+            <div style="font-size: 10px;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
+        </div>
 
-        <!-- Order Info -->
-        <table>
-            <tr>
-                <td class="w-70"><strong>Order ID:</strong> #{{ $order->id }}</td>
-            </tr>
-            <tr>
-                <td><strong>Date:</strong> {{ $order->created_at->format('d M Y, h:i A') }}</td>
-            </tr>
-        </table>
         <div class="line"></div>
-        <!-- Items Only -->
-        <div class="bold center" style="margin-bottom: 8px;">KITCHEN ORDER TICKET</div>
-        @if ($order->items->count() > 0)
-            <div class="muted small center" style="margin-bottom: 8px;">
-                Items: {{ $order->items->count() }} | Total: ₹{{ number_format($order->items->sum('total_price'), 2) }}
-            </div>
-        @endif
+
+        <!-- Items Table -->
         <table>
-            @php $itemCount = 0; @endphp
+            <tr>
+                <td class="w-50"><strong>Item</strong></td>
+                <td class="w-25 center"><strong>Special Note</strong></td>
+                <td class="w-25 right"><strong>Qty.</strong></td>
+            </tr>
+            <tr>
+                <td colspan="3" style="height: 2px;"></td>
+            </tr>
             @foreach ($order->items as $item)
-                @php $itemCount++; @endphp
                 <tr>
-                    <td class="w-70">
-                        <strong>{{ $item->item_name }}</strong><br>
-                        <span style="font-size: 12px;">Qty: {{ $item->quantity }}</span>
-                        @if ($item->remark)
-                            <br><span style="font-size: 11px; color: #666;">Note: {{ $item->remark }}</span>
-                        @endif
-                    </td>
-                    <td class="right w-30">
-                        <span style="font-size: 12px;">₹{{ number_format($item->total_price, 2) }}</span>
-                    </td>
+                    <td class="w-50">{{ $item->item_name }}</td>
+                    <td class="w-25 center">{{ $item->remark ?: '--' }}</td>
+                    <td class="w-25 right">{{ $item->quantity }}</td>
                 </tr>
                 @php $addons = $item->getAddonDetails(); @endphp
                 @foreach ($addons as $addon)
                     <tr>
-                        <td class="w-70" style="padding-left:15px; font-size: 12px;">+ {{ $addon->name }}</td>
-                        <td class="right w-30" style="font-size: 12px;">₹{{ number_format($addon->price, 2) }}</td>
+                        <td class="w-50" style="padding-left:10px;">+ {{ $addon->name }}</td>
+                        <td class="w-25 center">--</td>
+                        <td class="w-25 right">{{ $addon->quantity ?? 1 }}</td>
                     </tr>
                 @endforeach
-
-                @if ($itemCount < $order->items->count())
-                    <tr>
-                        <td colspan="2" style="height: 4px;"></td>
-                    </tr>
-                @endif
             @endforeach
         </table>
-
-        @if ($order->items->count() == 0)
-            <div class="center muted" style="padding: 20px;">
-                <strong>No items to prepare</strong><br>
-                <small>No items found in this order</small>
-            </div>
-        @endif
-        <div class="line"></div>
-        <!-- Special Instructions -->
-        @if ($order->remark)
-            <div class="bold">Special Instructions:</div>
-            <div style="font-size: 12px; margin-bottom: 8px;">{{ $order->remark }}</div>
-            <div class="line"></div>
-        @endif
-
-        <!-- Footer -->
-        <div class="center">
-            <div class="bold">PREPARE FRESH & SERVE HOT!</div>
-            <div class="mt-4 muted">
-                Order #{{ $order->id }} • {{ $order->created_at->format('h:i A') }}
-            </div>
-        </div>
 
     </div>
 
 </body>
 
 </html>
+
