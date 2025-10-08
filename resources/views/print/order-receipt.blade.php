@@ -4,7 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Final Bill - Paid</title>
+    <title>Order Receipt</title>
     <style>
         /* Landscape print layout */
         @media print {
@@ -40,7 +40,7 @@
 
             .print-content {
                 width: 100%;
-                max-width: 200px;
+                max-width: 100%;
                 margin: 0;
                 padding: 0;
             }
