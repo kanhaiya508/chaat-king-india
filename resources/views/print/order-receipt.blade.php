@@ -1,10 +1,10 @@
-{{-- resources/views/print/order-receipt.blade.php --}}
+{{-- resources/views/print/final-bill.blade.php --}}
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset="UTF-8">
-    <title>Order Receipt</title>
+    <title>Final Bill - Paid</title>
     <style>
         /* Landscape print layout */
         @media print {
@@ -54,24 +54,6 @@
             max-width: 1000px;
             margin: 0 auto;
             padding: 20px;
-            background: white;
-        }
-        
-        @media print {
-            body {
-                margin: 0;
-                padding: 0;
-                width: 100%;
-                font-size: 10px;
-                font-weight: bold;
-            }
-            
-            .print-content {
-                width: 100%;
-                max-width: 200px;
-                margin: 0;
-                padding: 0;
-            }
         }
 
         .center {
@@ -93,7 +75,7 @@
 
         table {
             width: 100%;
-            font-size: 10px;
+            font-size: 18px;
             font-weight: bold;
             border-collapse: collapse;
         }
@@ -111,149 +93,152 @@
             width: 70%;
         }
 
-        .w-30 {
-            width: 30%;
+        .w-50 {
+            width: 50%;
+        }
+
+        .w-20 {
+            width: 20%;
+        }
+
+        .w-15 {
+            width: 15%;
         }
 
         .mt-4 {
-            margin-top: 2px;
+            margin-top: 4px;
         }
 
         .mb-4 {
-            margin-bottom: 2px;
+            margin-bottom: 4px;
+        }
+
+        .paid-badge {
+            background-color: #28a745;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: bold;
         }
         
-        .print-content {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            max-width: 200px;
-            background: white;
-        }
     </style>
 </head>
 
 <body onload="window.print()">
 
-<div class="print-content">
+    <div class="print-content">
 
-    @php
-        $branch = $order->branch; // Branch relation
-        $round = (float) ($order->round_off ?? 0);
-        $write = (float) ($order->write_off ?? 0);
-        $grandTotal = (float) $order->total; // already subtotal - discount (+ taxes if any)
-    @endphp
+        @php
+            $branch = $order->branch; // Branch relation
+            $paid = $order->payments->sum('amount');
+            $byMode = $order->payments->groupBy('mode'); // ['cash','upi','card'...]
+            $round = (float) ($order->round_off ?? 0);
+            $write = (float) ($order->write_off ?? 0);
+            $grandTotal = (float) $order->total; // already subtotal - discount (+ taxes if any)
+            $due = max(0, $grandTotal - $paid - $write);
+        @endphp
 
-    <!-- Header / Branch -->
-    <div class="center bold">
-        {{ $branch->name ?? 'Your Store' }}<br>
-        <span class="muted">
-            {{ $branch->address ?? '' }}<br>
-            {{ $branch->contact_number ? 'Phone: ' . $branch->contact_number : '' }}<br>
-            {{ $branch->gst_number ? 'GSTIN: ' . $branch->gst_number : '' }}
+        <!-- Header / Branch -->
+        <div class="center bold">
+            <div style="font-size: 16px;">{{ $branch->name ?? 'CHAAT KING' }}</div>
+            <div style="font-size: 12px;">{{ $branch->address ?? 'Shop no 3&4 D-Block Ranjit Avenue, Amritsar' }}</div>
+            <div style="font-size: 12px;">GST NO: {{ $branch->gst_number ?? '03ABDFK3778P1ZT' }}</div>
+        </div>
 
-        </span>
         <div class="line"></div>
-    </div>
 
-    <!-- Order Meta -->
-    <table>
-        <tr>
-            <td class="w-70"><strong>Order ID:</strong> #{{ $order->id }}</td>
-            <td class="right w-30"><strong>{{ $order->type ? strtoupper($order->type) : '' }}</strong></td>
-        </tr>
-        <tr>
-            <td><strong>Date:</strong> {{ $order->created_at->format('d M Y, h:i A') }}</td>
-            <td class="right">
-                @if ($order->remark)
-                    <strong>Remark:</strong> {{ $order->remark }}
-                @endif
-            </td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <strong>Customer:</strong> {{ $order->customer->name ?? 'Walk-in' }}
-                @if ($order->customer?->phone)
-                    | <strong>Ph:</strong> {{ $order->customer->phone }}
-                @endif
-            </td>
-        </tr>
-        @if ($order->table)
+        <!-- Transaction Details -->
+        <table>
             <tr>
-                <td colspan="2">
-                    <strong>Table:</strong> {{ $order->table->name }}
-                </td>
+                <td><strong>Name:</strong></td>
+                <td class="right">{{ $order->customer->name ?? '' }}</td>
             </tr>
-        @endif
-    </table>
-
-    <div class="line"></div>
-
-    <!-- Items -->
-    <table>
-        @foreach ($order->items as $item)
             <tr>
-                <td class="w-70">
-                    <strong>{{ $item->item_name }}</strong><br>
-                    Qty: {{ $item->quantity }} × ₹{{ number_format($item->price, 2) }}
-                </td>
-                <td class="right w-30">₹{{ number_format($item->total_price, 2) }}</td>
+                <td><strong>Date:</strong></td>
+                <td class="right">{{ $order->created_at->format('d/m/y') }}</td>
             </tr>
+            <tr>
+                <td><strong>Time:</strong></td>
+                <td class="right">{{ $order->created_at->format('H:i') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Dine In:</strong></td>
+                <td class="right">{{ $order->table->name ?? '9' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Cashier:</strong></td>
+                <td class="right">{{ $order->staff->name ?? 'biller' }}</td>
+            </tr>
+            <tr>
+                <td><strong>Bill No.:</strong></td>
+                <td class="right">{{ $order->id }}</td>
+            </tr>
+        </table>
 
-            @php $addons = $item->getAddonDetails(); @endphp
-            @foreach ($addons as $addon)
+        <div class="line"></div>
+
+        <!-- Items -->
+        <table>
+            <tr>
+                <td class="w-50"><strong>Item</strong></td>
+                <td class="w-15 center"><strong>Qty.</strong></td>
+                <td class="w-20 right"><strong>Price</strong></td>
+                <td class="w-15 right"><strong>Amount</strong></td>
+            </tr>
+            <tr>
+                <td colspan="4" style="height: 2px;"></td>
+            </tr>
+            @foreach ($order->items as $item)
                 <tr>
-                    <td class="w-70" style="padding-left:10px;">- {{ $addon->name }}</td>
-                    <td class="right w-30">₹{{ number_format($addon->price, 2) }}</td>
+                    <td class="w-50">{{ $item->item_name }}</td>
+                    <td class="w-15 center">{{ $item->quantity }}</td>
+                    <td class="w-20 right">{{ number_format($item->price, 2) }}</td>
+                    <td class="w-15 right">{{ number_format($item->total_price, 2) }}</td>
                 </tr>
             @endforeach
-        @endforeach
-    </table>
+        </table>
 
-    <div class="line"></div>
-
-    <!-- Totals -->
-    <table>
-        <tr>
-            <td class="bold">Subtotal</td>
-            <td class="right">₹{{ number_format($order->subtotal, 2) }}</td>
-        </tr>
-        <tr>
-            <td class="bold">Discount</td>
-            <td class="right">- ₹{{ number_format($order->discount, 2) }}</td>
-        </tr>
-
-        {{-- Optional rows (show only when non-zero) --}}
-        @if (abs($round) > 0.0001)
-            <tr>
-                <td class="bold">Round Off</td>
-                <td class="right">{{ $round >= 0 ? '+' : '-' }} ₹{{ number_format(abs($round), 2) }}</td>
-            </tr>
-        @endif
-
-        <tr>
-            <td class="bold">Total</td>
-            <td class="right">₹{{ number_format($grandTotal, 2) }}</td>
-        </tr>
-    </table>
-
-    <div class="line"></div>
-
-    <!-- Special Instructions -->
-    @if ($order->remark)
-        <div class="bold">Special Instructions:</div>
-        <div style="font-size: 9px; margin-bottom: 8px;">{{ $order->remark }}</div>
         <div class="line"></div>
-    @endif
 
-    <div class="center">
-        Thank you! Visit Again.
-        <div class="mt-4 muted">
-            {{ $branch->name ?? 'Your Store' }} • {{ $branch->contact_number ?? '' }}
+        <!-- Summary -->
+        <table>
+            <tr>
+                <td><strong>Total Qty</strong></td>
+                <td class="right">{{ $order->items->sum('quantity') }}</td>
+            </tr>
+            <tr>
+                <td><strong>Sub Total</strong></td>
+                <td class="right">{{ number_format($order->subtotal, 2) }}</td>
+            </tr>
+            <tr>
+                <td><strong>CGST@ 2.5%</strong></td>
+                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
+            </tr>
+            <tr>
+                <td><strong>SGST@ 2.5%</strong></td>
+                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- Grand Total -->
+        <table>
+            <tr>
+                <td><strong>Grand Total:</strong></td>
+                <td class="right"><strong>₹{{ number_format($grandTotal, 2) }}</strong></td>
+            </tr>
+        </table>
+
+        <div class="line"></div>
+
+        <!-- Footer -->
+        <div class="center">
+            <div style="font-size: 14px;"><strong>Thanks</strong></div>
         </div>
-    </div>
 
-</div>
+    </div>
 
 </body>
 

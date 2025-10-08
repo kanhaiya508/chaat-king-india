@@ -153,9 +153,9 @@
         <!-- Items Table -->
         <table>
             <tr>
-                <td class="w-50"><strong>Item</strong></td>
-                <td class="w-25 center"><strong>Special Note</strong></td>
-                <td class="w-25 right"><strong>Qty.</strong></td>
+                <td class="w-50 ">Item</td>
+                <td class="w-25 center">Special Note</td>
+                <td class="w-25 right">Qty.</td>
             </tr>
             <tr>
                 <td colspan="3" style="height: 2px;"></td>
