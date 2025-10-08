@@ -6,6 +6,14 @@
     <title>Order #{{ $order->id }} • {{ $order->branch->name ?? 'Store' }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
+        /* Landscape print layout */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0.5in;
+            }
+        }
+        
         :root {
             --muted: #666;
             --line: #e6e6e6;

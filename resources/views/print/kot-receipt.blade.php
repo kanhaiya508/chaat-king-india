@@ -6,14 +6,22 @@
     <meta charset="UTF-8">
     <title></title>
     <style>
-        /* 80mm thermal approx */
+        /* Landscape print layout */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0.5in;
+            }
+        }
+        
         body {
             font-family: 'Courier New', monospace;
-            font-size: 10px;
+            font-size: 14px;
             font-weight: bold;
-            width: 200px;
-            margin: 0;
-            padding: 0;
+            width: 100%;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
             background: white;
         }
 

@@ -6,12 +6,21 @@
     <meta charset="UTF-8">
     <title>Final Bill - Paid</title>
     <style>
-        /* 80mm thermal approx */
+        /* Landscape print layout */
+        @media print {
+            @page {
+                size: A4 landscape;
+                margin: 0.5in;
+            }
+        }
+        
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
-            width: 280px;
+            font-size: 14px;
+            width: 100%;
+            max-width: 1000px;
             margin: 0 auto;
+            padding: 20px;
         }
 
         .center {
@@ -33,7 +42,7 @@
 
         table {
             width: 100%;
-            font-size: 12px;
+            font-size: 14px;
             border-collapse: collapse;
         }
 
