@@ -142,9 +142,9 @@
 
         <!-- Header -->
         <div class="center bold">
-            <div style="font-size: 20px; text-align: center;">Running Table</div>
-            <div style="font-size: 16px; text-align: center;">{{ $order->created_at->format('d/m/y H:i') }}</div>
-            <div style="font-size: 18px; text-align: center;">KOT - {{ $order->id }}</div>
+            <div style="font-size: 14px; text-align: center;">Running Table</div>
+            <div style="font-size: 14px; text-align: center;">{{ $order->created_at->format('d/m/y H:i') }}</div>
+            <div style="font-size: 14px; text-align: center;">KOT - {{ $order->id }}</div>
             <div style="font-size: 18px; text-align: center;">{{ $order->type ?? 'Dine In' }}</div>
             <div style="font-size: 18px; text-align: center;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
         </div>
