@@ -29,6 +29,7 @@
             margin: 0 auto;
             padding: 20px;
             background: white;
+            text-align: center;
         }
 
         @media print {
@@ -57,9 +58,10 @@
 
             .print-content {
                 width: 100%;
-                max-width: 200px;
-                margin: 0;
+                max-width: 280px;
+                margin: 0 auto;
                 padding: 0;
+                text-align: center;
             }
         }
 
@@ -85,6 +87,7 @@
             font-size: 18px;
             font-weight: bold;
             border-collapse: collapse;
+            margin: 0 auto;
         }
 
         td {
@@ -123,11 +126,12 @@
         }
 
         .print-content {
-            margin: 0;
+            margin: 0 auto;
             padding: 0;
             width: 100%;
-            max-width: 200px;
+            max-width: 280px;
             background: white;
+            text-align: center;
         }
     </style>
 </head>
