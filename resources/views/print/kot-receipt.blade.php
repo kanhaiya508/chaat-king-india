@@ -22,7 +22,7 @@
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 18px;
             font-weight: bold;
             width: 100%;
             max-width: 1000px;
@@ -82,7 +82,7 @@
 
         table {
             width: 100%;
-            font-size: 10px;
+            font-size: 18px;
             font-weight: bold;
             border-collapse: collapse;
         }

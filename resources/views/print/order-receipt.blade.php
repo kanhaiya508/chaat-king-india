@@ -17,12 +17,38 @@
                 transform: rotate(0deg);
                 width: 100%;
                 max-width: none;
+                margin: 0;
+                padding: 0;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            
+            @page {
+                margin: 0 !important;
+                size: auto;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+            
+            /* Disable print backgrounds */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            .print-content {
+                width: 100%;
+                max-width: 200px;
+                margin: 0;
+                padding: 0;
             }
         }
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 18px;
             font-weight: bold;
             width: 100%;
             max-width: 1000px;

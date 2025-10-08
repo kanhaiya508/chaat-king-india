@@ -17,12 +17,39 @@
                 transform: rotate(0deg);
                 width: 100%;
                 max-width: none;
+                margin: 0;
+                padding: 0;
+                font-size: 18px;
+                font-weight: bold;
+            }
+            
+            @page {
+                margin: 0 !important;
+                size: auto;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+            
+            /* Disable print backgrounds */
+            * {
+                -webkit-print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+
+            .print-content {
+                width: 100%;
+                max-width: 200px;
+                margin: 0;
+                padding: 0;
             }
         }
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 12px;
+            font-size: 18px;
+            font-weight: bold;
             width: 100%;
             max-width: 1000px;
             margin: 0 auto;
@@ -43,18 +70,19 @@
 
         .line {
             border-top: 1px dashed #000;
-            margin: 6px 0;
+            margin: 3px 0;
         }
 
         table {
             width: 100%;
-            font-size: 12px;
+            font-size: 18px;
+            font-weight: bold;
             border-collapse: collapse;
         }
 
         td {
             vertical-align: top;
-            padding: 2px 0;
+            padding: 1px 0;
         }
 
         .right {
@@ -85,6 +113,7 @@
             font-size: 10px;
             font-weight: bold;
         }
+        
     </style>
 </head>
 
