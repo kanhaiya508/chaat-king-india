@@ -22,7 +22,7 @@
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 18px;
+            font-size: 14px;
             font-weight: bold;
             width: 100%;
             max-width: 1000px;
@@ -148,7 +148,7 @@
         <div class="center bold">
             <div style="font-size: 14px; text-align: center;">{{ $order->created_at->format('d/m/y H:i') }}</div>
             <div style="font-size: 14px; text-align: center;">KOT - {{ $order->id }}</div>
-            <div style="font-size: 18px; text-align: center;">{{ $order->type ?? 'Dine In' }}</div>
+            <div style="font-size: 18px; text-align: center;">{{ ucwords(str_replace('_', ' ', $order->type ?? 'dine_in')) }}</div>
             <div style="font-size: 18px; text-align: center;">Table No: {{ $order->table->name ?? 'N/A' }}</div>
         </div>
 
