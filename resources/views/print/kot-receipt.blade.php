@@ -93,10 +93,15 @@
         td {
             vertical-align: top;
             padding: 1px 0;
+            white-space: nowrap;
         }
 
         .right {
             text-align: right;
+        }
+
+        .left {
+            text-align: left;
         }
 
         .w-70 {
@@ -171,7 +176,7 @@
         <table>
             <tr>
                 <td class="w-50 left " style="font-weight: normal; font-size: 14px;">Item</td>
-                <td class="w-30 center" style="font-weight: normal; font-size: 12px; word-wrap: nowrap;">Special Note</td>
+                <td class="w-30 center" style="font-weight: normal; font-size: 12px; white-space: nowrap;">Special Note</td>
                 <td class="w-20 right " style="font-weight: normal; font-size: 14px;">Qty.</td>
             </tr>
             <tr>
