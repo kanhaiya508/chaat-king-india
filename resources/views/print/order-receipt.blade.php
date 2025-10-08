@@ -194,8 +194,8 @@
                 <tr>
                     <td class="w-50">{{ $item->item_name }}</td>
                     <td class="w-15 center">{{ $item->quantity }}</td>
-                    <td class="w-20 right">{{ number_format($item->price, 2) }}</td>
-                    <td class="w-15 right">{{ number_format($item->total_price, 2) }}</td>
+                    <td class="w-20 right">{{ number_format($item->price) }}</td>
+                    <td class="w-15 right">{{ number_format($item->total_price) }}</td>
                 </tr>
             @endforeach
         </table>
@@ -210,15 +210,15 @@
             </tr>
             <tr>
                 <td><strong>Sub Total</strong></td>
-                <td class="right">{{ number_format($order->subtotal, 2) }}</td>
+                <td class="right">{{ number_format($order->subtotal) }}</td>
             </tr>
             <tr>
                 <td><strong>CGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($cgst, 2) }}</td>
+                <td class="right">{{ number_format($cgst) }}</td>
             </tr>
-            <tr>
+            <tr>    
                 <td><strong>SGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($sgst, 2) }}</td>
+                <td class="right">{{ number_format($sgst) }}</td>
             </tr>
         </table>
 
@@ -227,7 +227,7 @@
         <table>
             <tr>
                 <td><strong>Grand Total:</strong></td>
-                <td class="right"><strong>₹{{ number_format($grandTotal, 2) }}</strong></td>
+                <td class="right"><strong>₹{{ number_format($grandTotal) }}</strong></td>
             </tr>
         </table>
 
