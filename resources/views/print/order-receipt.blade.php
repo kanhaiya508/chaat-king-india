@@ -208,10 +208,10 @@
 
         <!-- Summary -->
         <table>
-            <tr>
+            {{-- <tr>
                 <td class="left"><strong>Total Qty</strong></td>
-                <td class="right">{{ $order->items->sum('quantity') }}</td>
-            </tr>
+                <td class="left">{{ $order->items->sum('quantity') }}</td>
+            </tr> --}}
             <tr>
                 <td class="left"><strong>Sub Total</strong></td>
                 <td class="right">{{ number_format($order->subtotal) }}</td>
@@ -230,7 +230,7 @@
         <!-- Grand Total -->
         <table>
             <tr>
-                <td><strong>Grand Total:</strong></td>
+                <td class="left"><strong>Grand Total:</strong></td>
                 <td class="right"><strong>₹{{ number_format($grandTotal) }}</strong></td>
             </tr>
         </table>
