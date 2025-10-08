@@ -9,7 +9,7 @@
         /* Landscape print layout */
         @media print {
             @page {
-                size: A4 landscape;
+                size: 80mm auto landscape;
                 margin: 0.5in;
             }
         }

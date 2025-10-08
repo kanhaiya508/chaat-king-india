@@ -9,18 +9,17 @@
         /* Landscape print layout */
         @media print {
             @page {
-                size: A4 landscape;
+                size: 80mm auto landscape;
                 margin: 0.5in;
             }
         }
         
         body {
             font-family: 'Courier New', monospace;
-            font-size: 14px;
-            width: 100%;
-            max-width: 1000px;
+            font-size: 12px;
+            width: 280px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 10px;
         }
 
         .center {
@@ -42,7 +41,7 @@
 
         table {
             width: 100%;
-            font-size: 14px;
+            font-size: 12px;
             border-collapse: collapse;
         }
 
