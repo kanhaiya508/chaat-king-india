@@ -135,7 +135,7 @@
             $byMode = $order->payments->groupBy('mode'); // ['cash','upi','card'...]
             $round = (float) ($order->round_off ?? 0);
             $write = (float) ($order->write_off ?? 0);
-            $grandTotal = (float) $order->total; // already subtotal - discount (+ taxes if any)
+            $grandTotal = (float) $order->subtotal; // No GST, grand total equals subtotal
             $due = max(0, $grandTotal - $paid - $write);
         @endphp
 
@@ -143,7 +143,6 @@
         <div class="center bold">
             <div style="font-size: 16px;">{{ $branch->name ?? 'CHAAT KING' }}</div>
             <div style="font-size: 12px;">{{ $branch->address ?? 'Shop no 3&4 D-Block Ranjit Avenue, Amritsar' }}</div>
-            <div style="font-size: 12px;">GST NO: {{ $branch->gst_number ?? '03ABDFK3778P1ZT' }}</div>
         </div>
 
         <div class="line"></div>
@@ -197,14 +196,6 @@
             <tr>
                 <td><strong>Sub Total</strong></td>
                 <td class="right">{{ number_format($order->subtotal, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>CGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
-            </tr>
-            <tr>
-                <td><strong>SGST@ 2.5%</strong></td>
-                <td class="right">{{ number_format($order->subtotal * 0.025, 2) }}</td>
             </tr>
         </table>
 

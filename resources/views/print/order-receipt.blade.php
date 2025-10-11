@@ -143,12 +143,8 @@
             $round = (float) ($order->round_off ?? 0);
             $write = (float) ($order->write_off ?? 0);
             
-            // GST Calculation
             $subtotal = (float) $order->subtotal;
-            $cgst = $subtotal * 0.025; // 2.5%
-            $sgst = $subtotal * 0.025; // 2.5%
-            $totalGST = $cgst + $sgst;
-            $grandTotal = $subtotal + $totalGST; // Subtotal + GST
+            $grandTotal = $subtotal; // No GST, grand total equals subtotal
             
             $due = max(0, $grandTotal - $paid - $write);
         @endphp
@@ -157,7 +153,6 @@
         <div class="center bold">
             <div style="font-size: 16px;">{{ $branch->name ?? 'CHAAT KING' }}</div>
             <div style="font-size: 12px;">Shop no 3&4 D-Block Ranjit Avenue, Amritsar</div>
-            <div style="font-size: 12px;">GST NO: {{ $branch->gst_number ?? '03ABDFK3778P1ZT' }}</div>
         </div>
 
         <div class="line"></div>
@@ -215,14 +210,6 @@
             <tr>
                 <td class="left"><strong>Sub Total</strong></td>
                 <td class="right">{{ number_format($order->subtotal) }}</td>
-            </tr>
-            <tr>
-                <td class="left"><strong>CGST@ 2.5%</strong></td>
-                <td class="right">₹{{ number_format($cgst) }}</td>
-            </tr>
-            <tr>    
-                <td class="left"><strong>SGST@ 2.5%</strong></td>
-                <td class="right">₹{{ number_format($sgst) }}</td>
             </tr>
         </table>
 
